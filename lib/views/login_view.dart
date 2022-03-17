@@ -8,6 +8,8 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
+  var emailController = TextEditingController(text: "test@test.com");
+  var passwordController = TextEditingController(text: "123456");
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,11 +21,11 @@ class _LoginViewState extends State<LoginView> {
           children: [
             TextFormField(
               decoration: InputDecoration(hintText: 'Email'),
-              // controller: emailController,
+              controller: emailController,
             ),
             TextFormField(
               decoration: InputDecoration(hintText: 'Password'),
-              // controller: passwordController,
+              controller: passwordController,
             ),
             SizedBox(
               height: 10,
