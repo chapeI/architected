@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 class ProfileView extends StatelessWidget {
+  static String route = 'profile';
   // UserModel _currentUser = locator.get<UserController>.currentUser;
   String? url;
 

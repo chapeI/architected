@@ -1,3 +1,4 @@
+import 'package:architectured/views/home_view.dart';
 import 'package:architectured/views/login_view.dart';
 import 'package:architectured/views/profile_view.dart';
 import 'package:flutter/material.dart';
@@ -12,10 +13,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: ProfileView());
+        routes: {
+          HomeView.route: (context) => HomeView(),
+          ProfileView.route: (context) => ProfileView(),
+          LoginView.route: (context) => LoginView()
+        },
+        initialRoute: LoginView.route,
+        home: HomeView());
   }
 }

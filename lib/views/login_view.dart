@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 
 class LoginView extends StatefulWidget {
+  static String route = 'login';
   @override
   State<LoginView> createState() => _LoginViewState();
 }
