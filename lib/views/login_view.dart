@@ -1,5 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:architectured/locator.dart';
+import 'package:architectured/user_controller.dart';
+import 'package:architectured/views/home_view.dart';
 import 'package:flutter/material.dart';
 
 class LoginView extends StatefulWidget {
@@ -33,8 +36,19 @@ class _LoginViewState extends State<LoginView> {
             ),
             ElevatedButton(
               child: Text('Sign In'),
-              onPressed: null,
-            )
+              onPressed: () async {
+                try {
+                  await locator
+                      .get<UserController>()
+                      .signIn(emailController.text, passwordController.text);
+                  Navigator.pushNamed(context, HomeView.route);
+                } catch (e) {
+                  print('somethings up: $e');
+                }
+              },
+            ),
+            SizedBox(height: 10),
+            ElevatedButton(onPressed: null, child: Text('Register'))
           ],
         )),
       ),
