@@ -13,7 +13,7 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   var emailController = TextEditingController(text: "test@test.com");
-  var passwordController = TextEditingController(text: "123456");
+  var passwordController = TextEditingController(text: "1234567");
   @override
   Widget build(BuildContext context) {
     return Scaffold(

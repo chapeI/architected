@@ -21,6 +21,6 @@ class StorageRepo {
   }
 
   Future<String> getUserProfileImage(String uid) async {
-    return await _storage.ref().child('user/profile/$uid').getDownloadURL();
+    return await _storage.ref().child('user/profile/$uid.jpg').getDownloadURL();
   }
 }
