@@ -29,4 +29,8 @@ class UserController {
     _currentUser = await _authRepo.signIn(email, password);
     _currentUser.avatarUrl = await getDownloadUrl();
   }
+
+  Future<void> register(email, password) async {
+    _currentUser = await _authRepo.register(email, password);
+  }
 }

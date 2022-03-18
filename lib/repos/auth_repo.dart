@@ -6,6 +6,13 @@ class AuthRepo {
 
   AuthRepo();
 
+  Future<UserModel> register(email, password) async {
+    UserCredential authResult = await _auth.createUserWithEmailAndPassword(
+        email: email, password: password);
+    User? user = authResult.user;
+    return UserModel(user!.uid, displayName: user.displayName);
+  }
+
   Future<UserModel> signIn(email, password) async {
     UserCredential authResult = await _auth.signInWithEmailAndPassword(
         email: email, password: password);
