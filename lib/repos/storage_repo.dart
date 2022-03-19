@@ -13,9 +13,8 @@ class StorageRepo {
     UserModel user = await _authRepo.getUser();
     var userUid = user.uid;
 
-    Reference storageRef = _storage.ref().child('user/profile/$userUid');
+    Reference storageRef = _storage.ref().child('user/profile/$userUid.jpg');
     UploadTask uploadTask = storageRef.putFile(file);
-    // md code had uploadTask.oncomplete, but this should work too
     var url = await uploadTask.snapshot.ref.getDownloadURL();
     return url;
   }
