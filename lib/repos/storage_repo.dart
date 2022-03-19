@@ -20,6 +20,14 @@ class StorageRepo {
   }
 
   Future<String?> getUserProfileImage(String uid) async {
-    return await _storage.ref().child('user/profile/$uid.jpg').getDownloadURL();
+    try {
+      return await _storage
+          .ref()
+          .child('user/profile/$uid.jpg')
+          .getDownloadURL();
+    } catch (e) {
+      // print('catching: $e no profile picture detected');
+      return null;
+    }
   }
 }
