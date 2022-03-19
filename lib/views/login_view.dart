@@ -44,6 +44,8 @@ class _LoginViewState extends State<LoginView> {
                   Navigator.pushNamed(context, HomeView.route);
                 } catch (e) {
                   print('signup errr: $e');
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(SnackBar(content: Text('error: $e')));
                 }
               },
             ),
