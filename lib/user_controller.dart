@@ -1,10 +1,12 @@
+import 'dart:io';
+
 import 'package:architectured/locator.dart';
 import 'package:architectured/repos/auth_repo.dart';
 import 'package:architectured/repos/storage_repo.dart';
 import 'package:architectured/user_model.dart';
 
 class UserController {
-  // add lates? for UserController errors
+// UserController sits bw UI and services, NOT UI AND FIREBASE, UserController shouldnt have any idea about FireBase. there should be no firebase code in there
   late UserModel _currentUser;
   late Future init;
   final AuthRepo _authRepo = locator.get<AuthRepo>();
@@ -28,5 +30,9 @@ class UserController {
   Future<void> signIn(email, password) async {
     _currentUser = await _authRepo.signIn(email, password);
     _currentUser.avatarUrl = await getDownloadUrl();
+  }
+
+  Future<void> uploadProfilePicture(File file) async {
+    _currentUser.avatarUrl = await _storageRepo.uploadFile(file);
   }
 }
