@@ -23,7 +23,7 @@ class UserController {
 
   UserModel get currentUser => _currentUser;
 
-  Future<String> getDownloadUrl() async {
+  Future<String?> getDownloadUrl() async {
     return await _storageRepo.getUserProfileImage(currentUser.uid);
   }
 
