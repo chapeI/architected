@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:architectured/user_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 class LoginView extends StatefulWidget {
   @override
@@ -10,11 +12,12 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  GetIt locator = GetIt.I;
 
   @override
   Widget build(BuildContext context) {
-    emailController.text = 'anoop@gmail.com';
-    passwordController.text = 'test123';
+    emailController.text = 'test@test.com';
+    passwordController.text = '1234567';
     return Scaffold(
       appBar: AppBar(title: const Text('login')),
       body: Padding(
@@ -39,9 +42,17 @@ class _LoginViewState extends State<LoginView> {
               height: 8,
             ),
             ElevatedButton(
-              child: Text('signin'),
-              onPressed: null,
-            )
+                child: Text('signin'),
+                onPressed: () async {
+                  try {
+                    await locator
+                        .get<UserController>()
+                        .signIn(emailController.text, passwordController.text);
+                    Navigator.pushNamed(context, '/home');
+                  } catch (e) {
+                    print('error: $e');
+                  }
+                })
           ],
         ),
       ),
