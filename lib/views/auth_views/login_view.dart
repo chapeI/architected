@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:architectured/singletons.dart';
 
 class LoginView extends StatefulWidget {
+  Function toggleAuthView;
+  LoginView({required this.toggleAuthView});
   @override
   State<LoginView> createState() => _LoginViewState();
 }
@@ -51,7 +53,15 @@ class _LoginViewState extends State<LoginView> {
                   } catch (e) {
                     print('error: $e');
                   }
-                })
+                }),
+            SizedBox(
+              height: 10,
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  widget.toggleAuthView();
+                },
+                child: Text('Sign Up'))
           ],
         ),
       ),
