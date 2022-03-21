@@ -22,4 +22,8 @@ class UserController {
   Future<void> signIn(email, password) async {
     _currentUser = await _authService.signIn(email, password);
   }
+
+  Future<void> register(email, password) async {
+    _currentUser = await _authService.register(email, password);
+  }
 }

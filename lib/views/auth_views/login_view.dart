@@ -20,7 +20,7 @@ class _LoginViewState extends State<LoginView> {
     emailController.text = 'test@test.com';
     passwordController.text = '1234567';
     return Scaffold(
-      appBar: AppBar(title: const Text('login')),
+      appBar: AppBar(title: const Text('Log In')),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -43,7 +43,7 @@ class _LoginViewState extends State<LoginView> {
               height: 8,
             ),
             ElevatedButton(
-                child: Text('signin'),
+                child: Text('Sign In'),
                 onPressed: () async {
                   try {
                     await getIt
@@ -61,7 +61,7 @@ class _LoginViewState extends State<LoginView> {
                 onPressed: () {
                   widget.toggleAuthView();
                 },
-                child: Text('Sign Up'))
+                child: Text('Go to Sign Up'))
           ],
         ),
       ),

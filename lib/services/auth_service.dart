@@ -15,4 +15,11 @@ class AuthService {
     User? user = await _auth.currentUser;
     return UserModel(uid: user!.uid);
   }
+
+  Future<UserModel> register(email, password) async {
+    UserCredential authResult = await _auth.createUserWithEmailAndPassword(
+        email: email, password: password);
+    User? user = authResult.user;
+    return UserModel(uid: user!.uid);
+  }
 }
