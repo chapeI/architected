@@ -1,10 +1,10 @@
+import 'package:architectured/singletons.dart';
 import 'package:architectured/services/auth_service.dart';
 import 'package:architectured/user_model.dart';
-import 'package:flutter/material.dart';
 
 class UserController {
   late UserModel _currentUser;
-  AuthService _authService = AuthService();
+  AuthService _authService = getIt.get<AuthService>();
   UserController() {}
 
   Future<UserModel> signIn(email, password) async {

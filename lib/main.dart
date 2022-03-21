@@ -1,4 +1,4 @@
-import 'package:architectured/locator.dart';
+import 'package:architectured/singletons.dart';
 import 'package:architectured/login_view.dart';
 import 'package:architectured/views/home_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  Locator().setup();
+  setupServices();
   runApp(MyApp());
 }
 

@@ -2,7 +2,7 @@
 
 import 'package:architectured/user_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
+import 'package:architectured/singletons.dart';
 
 class LoginView extends StatefulWidget {
   @override
@@ -12,7 +12,6 @@ class LoginView extends StatefulWidget {
 class _LoginViewState extends State<LoginView> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  GetIt locator = GetIt.I;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +44,7 @@ class _LoginViewState extends State<LoginView> {
                 child: Text('signin'),
                 onPressed: () async {
                   try {
-                    await locator
+                    await getIt
                         .get<UserController>()
                         .signIn(emailController.text, passwordController.text);
                     Navigator.pushNamed(context, '/home');
