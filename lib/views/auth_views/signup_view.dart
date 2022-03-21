@@ -43,10 +43,15 @@ class _SignUpViewState extends State<SignUpView> {
             height: 10,
           ),
           ElevatedButton(
-              onPressed: () {
-                getIt
-                    .get<UserController>()
-                    .register(emailController.text, passwordController.text);
+              onPressed: () async {
+                try {
+                  await getIt
+                      .get<UserController>()
+                      .register(emailController.text, passwordController.text);
+                  Navigator.pushNamed(context, '/home');
+                } catch (e) {
+                  print('error: $e');
+                }
               },
               child: Text('Sign Up')),
           SizedBox(
