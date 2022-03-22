@@ -20,8 +20,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/',
-      routes: {'/': (context) => AuthView(), '/home': (context) => HomeView()},
+      initialRoute: '/auth',
+      routes: {
+        '/auth': (context) => AuthView(),
+        '/home': (context) => HomeView()
+      },
     );
   }
 }

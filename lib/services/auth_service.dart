@@ -27,4 +27,8 @@ class AuthService {
     _databaseService.addToUsersCollection(userModel);
     return userModel;
   }
+
+  Future<void> signOut() async {
+    await _auth.signOut();
+  }
 }
