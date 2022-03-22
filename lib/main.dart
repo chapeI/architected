@@ -1,7 +1,6 @@
 import 'package:architectured/services/singletons.dart';
 import 'package:architectured/views/auth_views/auth_view.dart';
 import 'package:architectured/views/home_view.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -13,8 +12,6 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  final _firestore = FirebaseFirestore.instance;
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
