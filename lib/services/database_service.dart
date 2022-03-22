@@ -7,6 +7,7 @@ class DatabaseService {
   void addToUsersCollection(UserModel userModel) {
     _store.collection('users').doc(userModel.uid).set({
       'uid': userModel.uid,
+      'email': userModel.email,
       'displayName': userModel.displayName,
       'avatarUrl': userModel.avatarUrl
     });
