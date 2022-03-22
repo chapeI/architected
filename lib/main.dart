@@ -1,4 +1,4 @@
-import 'package:architectured/singletons.dart';
+import 'package:architectured/services/singletons.dart';
 import 'package:architectured/views/auth_views/auth_view.dart';
 import 'package:architectured/views/home_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

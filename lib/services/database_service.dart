@@ -1,4 +1,4 @@
-import 'package:architectured/user_model.dart';
+import 'package:architectured/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseService {

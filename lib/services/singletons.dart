@@ -1,5 +1,5 @@
 import 'package:architectured/services/auth_service.dart';
-import 'package:architectured/user_controller.dart';
+import 'package:architectured/services/user_controller.dart';
 import 'package:get_it/get_it.dart';
 
 final getIt = GetIt.instance;

@@ -1,6 +1,6 @@
-import 'package:architectured/singletons.dart';
+import 'package:architectured/services/singletons.dart';
 import 'package:architectured/services/auth_service.dart';
-import 'package:architectured/user_model.dart';
+import 'package:architectured/models/user_model.dart';
 
 class UserController {
   late UserModel _currentUser;

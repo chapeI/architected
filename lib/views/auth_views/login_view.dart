@@ -1,8 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'package:architectured/user_controller.dart';
+import 'package:architectured/services/user_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:architectured/singletons.dart';
+import 'package:architectured/services/singletons.dart';
 
 class LoginView extends StatefulWidget {
   Function toggleAuthView;
