@@ -8,6 +8,7 @@ class DatabaseService {
     _database.collection('users').doc(user.uid).set({
       'uid': user.uid,
       'email': user.email,
+      'displayName': user.displayName
     });
   }
 }

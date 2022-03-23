@@ -4,5 +4,5 @@ class UserModel {
   String? displayName;
   String? avatarUrl;
 
-  UserModel({required this.uid, required this.email});
+  UserModel({required this.uid, required this.email, this.displayName});
 }
