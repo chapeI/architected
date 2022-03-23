@@ -9,6 +9,6 @@ final getIt = GetIt.instance;
 void setupServices() {
   getIt.registerSingleton<DatabaseService>(DatabaseService());
   getIt.registerSingleton<AuthService>(AuthService());
-  getIt.registerSingleton<UserController>(UserController());
   getIt.registerSingleton<StorageService>(StorageService());
+  getIt.registerSingleton<UserController>(UserController());
 }

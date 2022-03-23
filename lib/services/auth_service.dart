@@ -19,14 +19,11 @@ class AuthService {
     return UserModel(uid: user!.uid, email: user.email);
   }
 
-  Future<UserModel> register(email, password, name, imagePath) async {
+  Future<String?> register(email, password) async {
     UserCredential authResult = await _auth.createUserWithEmailAndPassword(
         email: email, password: password);
     User? user = authResult.user;
-    UserModel userModel =
-        UserModel(uid: user!.uid, email: email, displayName: name);
-    _databaseService.addToUsersCollection(userModel);
-    return userModel;
+    return user!.uid;
   }
 
   Future<void> signOut() async {
