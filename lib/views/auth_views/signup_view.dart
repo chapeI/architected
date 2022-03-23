@@ -1,8 +1,11 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:io';
+
 import 'package:architectured/services/singletons.dart';
 import 'package:architectured/services/user_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class SignUpView extends StatefulWidget {
   Function toggleAuthView;
@@ -17,6 +20,17 @@ class _SignUpViewState extends State<SignUpView> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  File? _pickedImagePath;
+
+  Future<void> setImagePath() async {
+    final pickedImage =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedImage == null) return;
+    final pickedImagePath = File(pickedImage.path);
+    setState(() {
+      _pickedImagePath = pickedImagePath;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +45,30 @@ class _SignUpViewState extends State<SignUpView> {
         child: Form(
           key: _formKey,
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Stack(
+              children: [
+                Container(
+                  margin: EdgeInsets.all(50),
+                  child: CircleAvatar(
+                    radius: 50,
+                    backgroundImage: _pickedImagePath == null
+                        ? null
+                        : FileImage(_pickedImagePath!),
+                  ),
+                ),
+                Positioned(
+                  left: 100,
+                  top: 100,
+                  child: ElevatedButton(
+                    child: Icon(
+                      Icons.add_reaction_outlined,
+                      color: Colors.white,
+                    ),
+                    onPressed: setImagePath,
+                  ),
+                )
+              ],
+            ),
             TextFormField(
               controller: nameController,
               validator: (value) {
@@ -76,16 +114,19 @@ class _SignUpViewState extends State<SignUpView> {
             ElevatedButton(
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
-                    try {
-                      await getIt.get<UserController>().register(
-                          emailController.text,
-                          passwordController.text,
-                          nameController.text);
-                      Navigator.pushNamed(context, '/home');
-                    } catch (e) {
-                      ScaffoldMessenger.of(context)
-                          .showSnackBar(SnackBar(content: Text('error: $e')));
-                      print('error: $e');
+                    if (_pickedImagePath == null) {
+                      showSnackBar(context,
+                          'need a profile picture, click on the smiley above to add one');
+                    } else {
+                      try {
+                        await getIt.get<UserController>().register(
+                            emailController.text,
+                            passwordController.text,
+                            nameController.text);
+                        Navigator.pushNamed(context, '/home');
+                      } catch (e) {
+                        showSnackBar(context, 'error: $e');
+                      }
                     }
                   }
                 },
@@ -103,4 +144,10 @@ class _SignUpViewState extends State<SignUpView> {
       ),
     );
   }
+}
+
+ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showSnackBar(
+    BuildContext context, message) {
+  return ScaffoldMessenger.of(context)
+      .showSnackBar(SnackBar(content: Text(message)));
 }
