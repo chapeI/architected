@@ -19,7 +19,7 @@ class AuthService {
     return UserModel(uid: user!.uid, email: user.email);
   }
 
-  Future<UserModel> register(email, password, name) async {
+  Future<UserModel> register(email, password, name, imagePath) async {
     UserCredential authResult = await _auth.createUserWithEmailAndPassword(
         email: email, password: password);
     User? user = authResult.user;

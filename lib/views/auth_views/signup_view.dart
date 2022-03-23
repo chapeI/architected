@@ -122,7 +122,8 @@ class _SignUpViewState extends State<SignUpView> {
                         await getIt.get<UserController>().register(
                             emailController.text,
                             passwordController.text,
-                            nameController.text);
+                            nameController.text,
+                            _pickedImagePath);
                         Navigator.pushNamed(context, '/home');
                       } catch (e) {
                         showSnackBar(context, 'error: $e');
