@@ -37,6 +37,19 @@ class DatabaseService {
         .toList();
   }
 
+  Stream<List<SimpleUserModel>> get getSimpleUsers {
+    return usersCollection.snapshots().map((snapshot) {
+      List<SimpleUserModel> allSimpleUsers = allSimpleList(snapshot);
+      return allSimpleUsers;
+    });
+  }
+
+  List<SimpleUserModel> allSimpleList(QuerySnapshot snapshot) {
+    return snapshot.docs
+        .map((doc) => SimpleUserModel(email: doc['email']))
+        .toList();
+  }
+
   void removeMyUid(List<UserModel> users) async {
     final uid = await _authService.uid;
     print('uid test: $uid');

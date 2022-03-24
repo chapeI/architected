@@ -57,21 +57,18 @@ class SignOutButton extends StatelessWidget {
 class AddFriendScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<UserModel>>(
-        stream: getIt.get<DatabaseService>().all,
+    return StreamBuilder<List<SimpleUserModel>>(
+        stream: getIt.get<DatabaseService>().getSimpleUsers,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final users = snapshot.data;
             return Scaffold(
-              appBar: AppBar(title: Text('add friends ')),
+              appBar: AppBar(title: const Text('add friends ')),
               body: ListView.builder(
                   itemCount: users!.length,
                   itemBuilder: (context, index) {
                     return ListTile(
-                      leading: CircleAvatar(
-                          backgroundImage:
-                              NetworkImage(users[index].avatarUrl!)),
-                      title: Text(users[index].displayName!),
+                      title: Text(users[index].email),
                     );
                   }),
             );
