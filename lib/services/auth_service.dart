@@ -1,11 +1,8 @@
-import 'package:architectured/services/database_service.dart';
 import 'package:architectured/models/user_model.dart';
-import 'package:architectured/services/singletons.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final DatabaseService _databaseService = getIt.get<DatabaseService>();
 
   Future<UserModel> signIn(email, password) async {
     UserCredential authResult = await _auth.signInWithEmailAndPassword(
