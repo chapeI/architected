@@ -12,6 +12,7 @@ class UserModel {
 }
 
 class SimpleUserModel {
-  String email;
-  SimpleUserModel({required this.email});
+  String? email;
+  String uid;
+  SimpleUserModel({required this.email, required this.uid});
 }

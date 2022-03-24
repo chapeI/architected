@@ -18,7 +18,7 @@ class DatabaseService {
     });
   }
 
-  Stream<List<UserModel>> get all {
+  Stream<List<UserModel>> get allUsers {
     return usersCollection.snapshots().map((snapshot) {
       List<UserModel> allUsers = allList(snapshot);
       removeMyUid(allUsers);
@@ -37,7 +37,7 @@ class DatabaseService {
         .toList();
   }
 
-  Stream<List<SimpleUserModel>> get getSimpleUsers {
+  Stream<List<SimpleUserModel>> get simpleUsers {
     return usersCollection.snapshots().map((snapshot) {
       List<SimpleUserModel> allSimpleUsers = allSimpleList(snapshot);
       return allSimpleUsers;
@@ -46,35 +46,34 @@ class DatabaseService {
 
   List<SimpleUserModel> allSimpleList(QuerySnapshot snapshot) {
     return snapshot.docs
-        .map((doc) => SimpleUserModel(email: doc['email']))
+        .map((doc) => SimpleUserModel(email: doc['email'], uid: doc.id))
         .toList();
   }
 
   void removeMyUid(List<UserModel> users) async {
-    final uid = await _authService.uid;
-    print('uid test: $uid');
-    users.removeWhere((user) => user.uid == uid);
+    final user = _authService.me;
+    users.removeWhere((user) => user.uid == user.uid);
   }
 
   Future<void> removeMyFriends(List<UserModel> users) async {}
 
-  Future<void> addFriend() async {
-    final uid = await _authService.uid;
+  Future<void> addFriend(String uid) async {
+    final me = await _authService.me;
     _database.collection('chats').add({'user1': 'uid1', 'user2': 'uid2'}).then(
         (documentReference) async {
       await usersCollection
-          .doc(uid)
+          .doc(me.uid)
           .collection('friends')
           .doc('other_users_uid')
           .set({
         'email': 'user1_email',
-        'name': 'user2_email',
+        'name': 'user1_name',
         'chatsID': documentReference
       }).then((some_response) {
         usersCollection
             .doc('other_users_uid')
             .collection('friends')
-            .doc(uid)
+            .doc(me.uid)
             .set({
           'email': 'my_email',
           'name': 'my_name',
@@ -84,11 +83,31 @@ class DatabaseService {
     });
   }
 
+  Future<void> addSimpleFriend(SimpleUserModel friend) async {
+    final me = _authService.me;
+    // print('test: {$me.email}');
+    _database.collection('chats').add(
+        {'user1': me.uid, 'user2': friend.uid}).then((documentReference) async {
+      await usersCollection
+          .doc(me.uid)
+          .collection('friends')
+          .doc(friend.uid)
+          .set({'email': friend.email, 'chatsID': documentReference}).then(
+              (someResponse) {
+        usersCollection
+            .doc(friend.uid)
+            .collection('friends')
+            .doc(me.uid)
+            .set({'email': me.email, 'chatsID': documentReference});
+      });
+    });
+  }
+
   Stream<List<SimpleUserModel>> get myFriends {
-    // final uid = await _authService.uid;
-    final uid = 'WhDSNfYO26hkykJ7zFwKSOLLS312';
+    final me = _authService.me;
+    print('test: ${me.email}');
     return usersCollection
-        .doc(uid)
+        .doc(me.uid)
         .collection('friends')
         .snapshots()
         .map((snapshot) {
@@ -98,7 +117,7 @@ class DatabaseService {
 
   List<SimpleUserModel> mySimpleFriendsList(QuerySnapshot snapshot) {
     return snapshot.docs
-        .map((doc) => SimpleUserModel(email: doc['email']))
+        .map((doc) => SimpleUserModel(email: doc['email'], uid: doc.id))
         .toList();
   }
 

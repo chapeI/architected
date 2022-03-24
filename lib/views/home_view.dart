@@ -22,7 +22,7 @@ class HomeView extends StatelessWidget {
                   itemCount: myFriends!.length,
                   itemBuilder: (context, index) {
                     return ListTile(
-                      title: Text(myFriends[index].email),
+                      title: Text(myFriends[index].email!),
                     );
                   }),
               floatingActionButton: FloatingActionButton(
@@ -58,7 +58,7 @@ class AddFriendScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<SimpleUserModel>>(
-        stream: getIt.get<DatabaseService>().getSimpleUsers,
+        stream: getIt.get<DatabaseService>().simpleUsers,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final users = snapshot.data;
@@ -68,7 +68,12 @@ class AddFriendScreen extends StatelessWidget {
                   itemCount: users!.length,
                   itemBuilder: (context, index) {
                     return ListTile(
-                      title: Text(users[index].email),
+                      title: Text(users[index].email!),
+                      trailing: ElevatedButton(
+                          child: Text('add'),
+                          onPressed: () {
+                            DatabaseService().addSimpleFriend(users[index]);
+                          }),
                     );
                   }),
             );
