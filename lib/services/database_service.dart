@@ -43,5 +43,59 @@ class DatabaseService {
     users.removeWhere((user) => user.uid == uid);
   }
 
-  void removeMyFriends(List<UserModel> users) async {}
+  Future<void> removeMyFriends(List<UserModel> users) async {}
+
+  Future<void> addFriend() async {
+    final uid = await _authService.uid;
+    _database.collection('chats').add({'user1': 'uid1', 'user2': 'uid2'}).then(
+        (documentReference) async {
+      await usersCollection
+          .doc(uid)
+          .collection('friends')
+          .doc('other_users_uid')
+          .set({
+        'email': 'user1_email',
+        'name': 'user2_email',
+        'chatsID': documentReference
+      }).then((some_response) {
+        usersCollection
+            .doc('other_users_uid')
+            .collection('friends')
+            .doc(uid)
+            .set({
+          'email': 'my_email',
+          'name': 'my_name',
+          'chatsID': documentReference
+        });
+      });
+    });
+  }
+
+  Stream<List<SimpleUserModel>> get myFriends {
+    // final uid = await _authService.uid;
+    final uid = 'WhDSNfYO26hkykJ7zFwKSOLLS312';
+    return usersCollection
+        .doc(uid)
+        .collection('friends')
+        .snapshots()
+        .map((snapshot) {
+      return mySimpleFriendsList(snapshot);
+    });
+  }
+
+  List<SimpleUserModel> mySimpleFriendsList(QuerySnapshot snapshot) {
+    return snapshot.docs
+        .map((doc) => SimpleUserModel(email: doc['email']))
+        .toList();
+  }
+
+  List<UserModel> myFriendsList(QuerySnapshot snapshot) {
+    return snapshot.docs
+        .map((doc) => UserModel(
+            email: doc['email'],
+            uid: doc.id,
+            avatarUrl: doc['avatarUrl'],
+            displayName: doc['displayName']))
+        .toList();
+  }
 }

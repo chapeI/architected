@@ -10,3 +10,8 @@ class UserModel {
       this.displayName,
       this.avatarUrl});
 }
+
+class SimpleUserModel {
+  String email;
+  SimpleUserModel({required this.email});
+}

@@ -8,20 +8,36 @@ import '../services/singletons.dart';
 class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('home view'),
-        actions: [SignOutButton()],
-      ),
-      body: Text('helo'),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => AddFriendScreen()));
-        },
-        child: const Text('add'),
-      ),
-    );
+    return StreamBuilder<List<SimpleUserModel>>(
+        stream: DatabaseService().myFriends,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final myFriends = snapshot.data;
+            return Scaffold(
+              appBar: AppBar(
+                title: const Text('home view'),
+                actions: [SignOutButton()],
+              ),
+              body: ListView.builder(
+                  itemCount: myFriends!.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(myFriends[index].email),
+                    );
+                  }),
+              floatingActionButton: FloatingActionButton(
+                onPressed: () async {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AddFriendScreen()));
+                },
+                child: const Text('add'),
+              ),
+            );
+          }
+          return const Text('null snapshot');
+        });
   }
 }
 
