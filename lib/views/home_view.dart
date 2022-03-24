@@ -52,6 +52,9 @@ class AddFriendScreen extends StatelessWidget {
                   itemCount: users!.length,
                   itemBuilder: (context, index) {
                     return ListTile(
+                      leading: CircleAvatar(
+                          backgroundImage:
+                              NetworkImage(users[index].avatarUrl!)),
                       title: Text(users[index].displayName!),
                     );
                   }),

@@ -15,8 +15,12 @@ class AuthService {
   }
 
   Future<UserModel> getUser() async {
-    User? user = await _auth.currentUser;
+    User? user = _auth.currentUser;
     return UserModel(uid: user!.uid, email: user.email);
+  }
+
+  Future<String> get uid async {
+    return await _auth.currentUser!.uid;
   }
 
   Future<String?> register(email, password) async {

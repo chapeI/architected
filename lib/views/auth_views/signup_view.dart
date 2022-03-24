@@ -124,7 +124,7 @@ class _SignUpViewState extends State<SignUpView> {
                             passwordController.text,
                             nameController.text,
                             _pickedImagePath);
-                        Navigator.pushNamed(context, '/home');
+                        Navigator.pushReplacementNamed(context, '/home');
                       } catch (e) {
                         showSnackBar(context, 'error: $e');
                       }

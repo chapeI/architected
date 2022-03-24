@@ -1,8 +1,11 @@
 import 'package:architectured/models/user_model.dart';
+import 'package:architectured/services/auth_service.dart';
+import 'package:architectured/services/singletons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseService {
   final FirebaseFirestore _database = FirebaseFirestore.instance;
+  final _authService = getIt.get<AuthService>();
   CollectionReference usersCollection =
       FirebaseFirestore.instance.collection('users');
 
@@ -18,9 +21,8 @@ class DatabaseService {
   Stream<List<UserModel>> get all {
     return usersCollection.snapshots().map((snapshot) {
       List<UserModel> allUsers = allList(snapshot);
-      // test
-      test(allUsers);
-      //
+      removeMyUid(allUsers);
+      removeMyFriends(allUsers);
       return allUsers;
     });
   }
@@ -35,7 +37,11 @@ class DatabaseService {
         .toList();
   }
 
-  void test(List<UserModel> users) {
-    users.removeWhere((user) => user.uid == 'DyhqMA4WvkZrI17aO5dhnKmN8p72');
+  void removeMyUid(List<UserModel> users) async {
+    final uid = await _authService.uid;
+    print('uid test: $uid');
+    users.removeWhere((user) => user.uid == uid);
   }
+
+  void removeMyFriends(List<UserModel> users) async {}
 }
