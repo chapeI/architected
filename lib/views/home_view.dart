@@ -48,7 +48,7 @@ class SignOutButton extends StatelessWidget {
         onPressed: () async {
           await getIt.get<UserController>().signOut();
           // Navigator.pushAndRemoveUntil(context, "/auth", (route) => false);
-          Navigator.popUntil(context, ModalRoute.withName('/auth'));
+          Navigator.pop(context, ModalRoute.withName('/auth'));
         },
         child: const Text('signout'));
   }

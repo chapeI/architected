@@ -33,7 +33,7 @@ class UserController {
     var url = await _storageService.uploadFile(uid!, imagePath);
     UserModel userModel =
         UserModel(uid: uid, email: email, displayName: name, avatarUrl: url);
-    _databaseService.addToUsersCollection(userModel);
+    _databaseService.addNewlyRegisteredToUsersCollection(userModel);
   }
 
   Future<void> signOut() async {

@@ -17,7 +17,7 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
-    emailController.text = 'test@test.com';
+    emailController.text = 'tester@test.co-';
     passwordController.text = '1234567';
     return Scaffold(
       appBar: AppBar(title: const Text('Log In')),
