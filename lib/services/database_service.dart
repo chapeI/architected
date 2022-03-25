@@ -9,7 +9,7 @@ class DatabaseService {
   CollectionReference usersCollection =
       FirebaseFirestore.instance.collection('users');
 
-  void addToUsersCollection(UserModel user) async {
+  void addNewlyRegisteredToUsersCollection(UserModel user) async {
     _database.collection('users').doc(user.uid).set({
       'uid': user.uid,
       'email': user.email,
@@ -18,28 +18,11 @@ class DatabaseService {
     });
   }
 
-  Stream<List<UserModel>> get allUsers {
-    return usersCollection.snapshots().map((snapshot) {
-      List<UserModel> allUsers = allList(snapshot);
-      removeMyUid(allUsers);
-      removeMyFriends(allUsers);
-      return allUsers;
-    });
-  }
-
-  List<UserModel> allList(QuerySnapshot snapshot) {
-    return snapshot.docs
-        .map((doc) => UserModel(
-            displayName: doc['displayName'],
-            email: doc['email'],
-            uid: doc.id,
-            avatarUrl: doc['avatarUrl']))
-        .toList();
-  }
-
   Stream<List<SimpleUserModel>> get simpleUsers {
     return usersCollection.snapshots().map((snapshot) {
       List<SimpleUserModel> allSimpleUsers = allSimpleList(snapshot);
+      removeMyUid(allSimpleUsers);
+      removeFriend(allSimpleUsers);
       return allSimpleUsers;
     });
   }
@@ -48,39 +31,6 @@ class DatabaseService {
     return snapshot.docs
         .map((doc) => SimpleUserModel(email: doc['email'], uid: doc.id))
         .toList();
-  }
-
-  void removeMyUid(List<UserModel> users) async {
-    final user = _authService.me;
-    users.removeWhere((user) => user.uid == user.uid);
-  }
-
-  Future<void> removeMyFriends(List<UserModel> users) async {}
-
-  Future<void> addFriend(String uid) async {
-    final me = await _authService.me;
-    _database.collection('chats').add({'user1': 'uid1', 'user2': 'uid2'}).then(
-        (documentReference) async {
-      await usersCollection
-          .doc(me.uid)
-          .collection('friends')
-          .doc('other_users_uid')
-          .set({
-        'email': 'user1_email',
-        'name': 'user1_name',
-        'chatsID': documentReference
-      }).then((some_response) {
-        usersCollection
-            .doc('other_users_uid')
-            .collection('friends')
-            .doc(me.uid)
-            .set({
-          'email': 'my_email',
-          'name': 'my_name',
-          'chatsID': documentReference
-        });
-      });
-    });
   }
 
   Future<void> addSimpleFriend(SimpleUserModel friend) async {
@@ -105,7 +55,6 @@ class DatabaseService {
 
   Stream<List<SimpleUserModel>> get myFriends {
     final me = _authService.me;
-    print('test: ${me.email}');
     return usersCollection
         .doc(me.uid)
         .collection('friends')
@@ -121,13 +70,24 @@ class DatabaseService {
         .toList();
   }
 
-  List<UserModel> myFriendsList(QuerySnapshot snapshot) {
-    return snapshot.docs
-        .map((doc) => UserModel(
-            email: doc['email'],
-            uid: doc.id,
-            avatarUrl: doc['avatarUrl'],
-            displayName: doc['displayName']))
-        .toList();
+// removing users from addFriendsScreen(), glitchy
+  void removeMyUid(List<SimpleUserModel> users) async {
+    final me = _authService.me;
+    users.removeWhere((user) => user.uid == me.uid);
+  }
+
+  void removeFriend(List<SimpleUserModel> users) {
+    final me = _authService.me;
+    usersCollection
+        .doc(me.uid)
+        .collection('friends')
+        .get()
+        .then((querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        users.removeWhere((user) {
+          return user.uid == doc.id;
+        });
+      });
+    });
   }
 }
