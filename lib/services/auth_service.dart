@@ -16,8 +16,8 @@ class AuthService {
     return UserModel(uid: user!.uid, email: user.email);
   }
 
-  SimpleUserModel get me {
-    return SimpleUserModel(
+  UserModel get me {
+    return UserModel(
         email: _auth.currentUser!.email, uid: _auth.currentUser!.uid);
   }
 

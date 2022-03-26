@@ -10,9 +10,3 @@ class UserModel {
       this.displayName,
       this.avatarUrl});
 }
-
-class SimpleUserModel {
-  String? email;
-  String uid;
-  SimpleUserModel({required this.email, required this.uid});
-}

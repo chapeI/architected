@@ -8,7 +8,7 @@ import '../services/singletons.dart';
 class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<SimpleUserModel>>(
+    return StreamBuilder<List<UserModel>>(
         stream: DatabaseService().myFriends,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
@@ -62,22 +62,22 @@ class AddFriendScreen extends StatefulWidget {
 class _AddFriendScreenState extends State<AddFriendScreen> {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<SimpleUserModel>>(
-        future: DatabaseService().friendsToAdd,
+    return FutureBuilder<List<UserModel>>(
+        future: DatabaseService().addUserList,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final users = snapshot.data;
             return Scaffold(
-              appBar: AppBar(title: const Text('add friends ')),
+              appBar: AppBar(title: const Text('add friends')),
               body: ListView.builder(
                   itemCount: users!.length,
                   itemBuilder: (context, index) {
                     return ListTile(
                       title: Text(users[index].email!),
                       trailing: ElevatedButton(
-                          child: Text('add'),
+                          child: const Text('add'),
                           onPressed: () {
-                            DatabaseService().addSimpleFriend(users[index]);
+                            DatabaseService().addFriend(users[index]);
                             Navigator.pop(context);
                           }),
                     );

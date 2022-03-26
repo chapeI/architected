@@ -18,33 +18,8 @@ class DatabaseService {
     });
   }
 
-  Stream<List<SimpleUserModel>> get simpleUsers {
-    return usersCollection.snapshots().map((snapshot) {
-      List<SimpleUserModel> allSimpleUsers = allSimpleList(snapshot);
-      // removeMyUid(allSimpleUsers);
-      // removeFriend(allSimpleUsers);
-      return allSimpleUsers;
-    });
-  }
-
-  Future<List<SimpleUserModel>> get friendsToAdd {
-    return usersCollection.get().then((QuerySnapshot snapshot) async {
-      List<SimpleUserModel> all = snapshot.docs.map((doc) {
-        return SimpleUserModel(email: doc['email'], uid: doc.id);
-      }).toList();
-      return await removeFriend(all);
-    });
-  }
-
-  List<SimpleUserModel> allSimpleList(QuerySnapshot snapshot) {
-    return snapshot.docs
-        .map((doc) => SimpleUserModel(email: doc['email'], uid: doc.id))
-        .toList();
-  }
-
-  Future<void> addSimpleFriend(SimpleUserModel friend) async {
+  Future<void> addFriend(UserModel friend) async {
     final me = _authService.me;
-    // print('test: {$me.email}');
     _database.collection('chats').add(
         {'user1': me.uid, 'user2': friend.uid}).then((documentReference) async {
       await usersCollection
@@ -62,57 +37,55 @@ class DatabaseService {
     });
   }
 
-  Stream<List<SimpleUserModel>> get myFriends {
+  Stream<List<UserModel>> get myFriends {
     final me = _authService.me;
     return usersCollection
         .doc(me.uid)
         .collection('friends')
         .snapshots()
         .map((snapshot) {
-      return mySimpleFriendsList(snapshot);
+      return toList(snapshot);
     });
   }
 
-  List<SimpleUserModel> mySimpleFriendsList(QuerySnapshot snapshot) {
-    return snapshot.docs
-        .map((doc) => SimpleUserModel(email: doc['email'], uid: doc.id))
-        .toList();
+  Future<List<UserModel>> get addUserList {
+    return usersCollection.get().then((QuerySnapshot snapshot) async {
+      List<UserModel> all = snapshot.docs.map((doc) {
+        return UserModel(email: doc['email'], uid: doc.id);
+      }).toList();
+      removeMyUid(all);
+      return await removeMyFriends(all);
+    });
   }
 
-  void removeMyUid(List<SimpleUserModel> users) async {
+  void removeMyUid(List<UserModel> users) async {
     final me = _authService.me;
     users.removeWhere((user) => user.uid == me.uid);
   }
 
-  Future<List<SimpleUserModel>> removeFriend(List<SimpleUserModel> u) async {
-    // print('entered removefriend');
+  Future<List<UserModel>> removeMyFriends(List<UserModel> u) async {
     final me = _authService.me;
-    List<SimpleUserModel> friends = [];
-    List<SimpleUserModel> users = u;
+    List<UserModel> friends = [];
+    List<UserModel> users = u;
 
     await usersCollection
         .doc(me.uid)
         .collection('friends')
         .get()
         .then((snapshot) {
-      friends = allSimpleList(snapshot);
+      friends = toList(snapshot);
     });
 
-    print('quarantine-start');
-    users.forEach((element) {
-      print(element.email);
-    });
-
-    print('removing');
     friends.forEach((friend) {
       users.removeWhere((user) => user.uid == friend.uid);
     });
 
-    print('quarantine-end');
-    users.forEach((element) {
-      print(element.email);
-    });
-
     return users;
+  }
+
+  List<UserModel> toList(QuerySnapshot snapshot) {
+    return snapshot.docs
+        .map((doc) => UserModel(email: doc['email'], uid: doc.id))
+        .toList();
   }
 }
