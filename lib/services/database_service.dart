@@ -6,8 +6,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class DatabaseService {
   final FirebaseFirestore _database = FirebaseFirestore.instance;
   final _authService = getIt.get<AuthService>();
-  CollectionReference usersCollection =
-      FirebaseFirestore.instance.collection('users');
+  final usersCollection = FirebaseFirestore.instance.collection('users');
+  CollectionReference get friendsCollection {
+    final me = _authService.me;
+    return usersCollection.doc(me.uid).collection('friends');
+  }
 
   void addNewlyRegisteredToUsersCollection(UserModel user) async {
     _database.collection('users').doc(user.uid).set({
@@ -37,13 +40,8 @@ class DatabaseService {
     });
   }
 
-  Stream<List<UserModel>> get myFriends {
-    final me = _authService.me;
-    return usersCollection
-        .doc(me.uid)
-        .collection('friends')
-        .snapshots()
-        .map((snapshot) {
+  Stream<List<UserModel>> get friends {
+    return friendsCollection.snapshots().map((snapshot) {
       return toList(snapshot);
     });
   }
@@ -54,7 +52,7 @@ class DatabaseService {
         return UserModel(email: doc['email'], uid: doc.id);
       }).toList();
       removeMyUid(all);
-      return await removeMyFriends(all);
+      return await removeFriends(all);
     });
   }
 
@@ -63,16 +61,11 @@ class DatabaseService {
     users.removeWhere((user) => user.uid == me.uid);
   }
 
-  Future<List<UserModel>> removeMyFriends(List<UserModel> u) async {
-    final me = _authService.me;
+  Future<List<UserModel>> removeFriends(List<UserModel> u) async {
     List<UserModel> friends = [];
     List<UserModel> users = u;
 
-    await usersCollection
-        .doc(me.uid)
-        .collection('friends')
-        .get()
-        .then((snapshot) {
+    await friendsCollection.get().then((snapshot) {
       friends = toList(snapshot);
     });
 

@@ -9,20 +9,20 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<UserModel>>(
-        stream: DatabaseService().myFriends,
+        stream: DatabaseService().friends,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            final myFriends = snapshot.data;
+            final friends = snapshot.data;
             return Scaffold(
               appBar: AppBar(
                 title: const Text('home view'),
                 actions: [SignOutButton()],
               ),
               body: ListView.builder(
-                  itemCount: myFriends!.length,
+                  itemCount: friends!.length,
                   itemBuilder: (context, index) {
                     return ListTile(
-                      title: Text(myFriends[index].email!),
+                      title: Text(friends[index].email!),
                     );
                   }),
               floatingActionButton: FloatingActionButton(
