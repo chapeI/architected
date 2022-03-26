@@ -11,10 +11,8 @@ class _AuthViewState extends State<AuthView> {
   bool loginInView = false;
 
   void toggleAuthView() {
-    print('im alive');
     setState(() {
       loginInView = !loginInView;
-      print('setting state');
     });
   }
 

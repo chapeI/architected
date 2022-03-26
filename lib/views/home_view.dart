@@ -36,7 +36,7 @@ class HomeView extends StatelessWidget {
               ),
             );
           }
-          return const Text('null snapshot');
+          return const Text('null snapshot?');
         });
   }
 }
@@ -47,8 +47,7 @@ class SignOutButton extends StatelessWidget {
     return ElevatedButton(
         onPressed: () async {
           await getIt.get<UserController>().signOut();
-          // Navigator.pushAndRemoveUntil(context, "/auth", (route) => false);
-          Navigator.pop(context, ModalRoute.withName('/auth'));
+          Navigator.pushReplacementNamed(context, '/auth');
         },
         child: const Text('signout'));
   }
