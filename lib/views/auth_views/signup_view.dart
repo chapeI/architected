@@ -35,7 +35,7 @@ class _SignUpViewState extends State<SignUpView> {
   @override
   Widget build(BuildContext context) {
     nameController.text = 'tester';
-    emailController.text = 'tester@test.co-';
+    emailController.text = 't@t.';
     passwordController.text = '1234567';
 
     return Scaffold(

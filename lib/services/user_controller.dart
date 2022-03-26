@@ -10,16 +10,14 @@ class UserController {
   final StorageService _storageService = getIt.get<StorageService>();
   final DatabaseService _databaseService = getIt.get<DatabaseService>();
 
-  // WHY?
   late Future<UserModel> init;
   UserController() {
     init = initUserController();
   }
   Future<UserModel> initUserController() async {
-    _currentUser = await _authService.getUser();
+    _currentUser = _authService.me;
     return _currentUser;
   }
-  // --
 
   UserModel get currentUser => _currentUser;
 
@@ -29,7 +27,7 @@ class UserController {
 
   Future<void> register(email, password, name, imagePath) async {
     String? uid = await _authService.register(email, password);
-    print('usercontroller._authService.register(): $uid  <- cant be null');
+    // print('usercontroller._authService.register(): $uid  <- cant be null');
     var url = await _storageService.uploadFile(uid!, imagePath);
     UserModel userModel =
         UserModel(uid: uid, email: email, displayName: name, avatarUrl: url);
