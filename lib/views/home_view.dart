@@ -54,7 +54,12 @@ class SignOutButton extends StatelessWidget {
   }
 }
 
-class AddFriendScreen extends StatelessWidget {
+class AddFriendScreen extends StatefulWidget {
+  @override
+  State<AddFriendScreen> createState() => _AddFriendScreenState();
+}
+
+class _AddFriendScreenState extends State<AddFriendScreen> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<SimpleUserModel>>(
@@ -73,6 +78,7 @@ class AddFriendScreen extends StatelessWidget {
                           child: Text('add'),
                           onPressed: () {
                             DatabaseService().addSimpleFriend(users[index]);
+                            Navigator.pop(context);
                           }),
                     );
                   }),
