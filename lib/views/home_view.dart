@@ -23,6 +23,9 @@ class HomeView extends StatelessWidget {
                   itemBuilder: (context, index) {
                     return ListTile(
                       title: Text(friends[index].email!),
+                      leading: CircleAvatar(
+                          backgroundImage:
+                              NetworkImage(friends[index].avatarUrl!)),
                     );
                   }),
               floatingActionButton: FloatingActionButton(
@@ -73,6 +76,9 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                   itemBuilder: (context, index) {
                     return ListTile(
                       title: Text(users[index].email!),
+                      leading: CircleAvatar(
+                          backgroundImage:
+                              NetworkImage(users[index].avatarUrl!)),
                       trailing: ElevatedButton(
                           child: const Text('add'),
                           onPressed: () {

@@ -21,6 +21,7 @@ class _SignUpViewState extends State<SignUpView> {
   TextEditingController passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   File? _pickedImagePath;
+  bool signingIn = false;
 
   Future<void> setImagePath() async {
     final pickedImage =
@@ -119,6 +120,9 @@ class _SignUpViewState extends State<SignUpView> {
                           'need a profile picture, click on the smiley above to add one');
                     } else {
                       try {
+                        setState(() {
+                          signingIn = true;
+                        });
                         await getIt.get<UserController>().register(
                             emailController.text,
                             passwordController.text,
@@ -126,12 +130,15 @@ class _SignUpViewState extends State<SignUpView> {
                             _pickedImagePath);
                         Navigator.pushReplacementNamed(context, '/home');
                       } catch (e) {
+                        setState(() {
+                          signingIn = false;
+                        });
                         showSnackBar(context, 'error: $e');
                       }
                     }
                   }
                 },
-                child: Text('Sign Up')),
+                child: signingIn ? Text('WAIT') : Text('Sign Up')),
             SizedBox(
               height: 10,
             ),

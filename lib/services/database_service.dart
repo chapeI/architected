@@ -29,13 +29,16 @@ class DatabaseService {
           .doc(me.uid)
           .collection('friends')
           .doc(friend.uid)
-          .set({'email': friend.email, 'chatsID': documentReference}).then(
-              (someResponse) {
-        usersCollection
-            .doc(friend.uid)
-            .collection('friends')
-            .doc(me.uid)
-            .set({'email': me.email, 'chatsID': documentReference});
+          .set({
+        'email': friend.email,
+        'chatsID': documentReference,
+        'avatarUrl': friend.avatarUrl
+      }).then((someResponse) {
+        usersCollection.doc(friend.uid).collection('friends').doc(me.uid).set({
+          'email': me.email,
+          'chatsID': documentReference,
+          'avatarUrl': me.avatarUrl
+        });
       });
     });
   }
@@ -49,7 +52,8 @@ class DatabaseService {
   Future<List<UserModel>> get addUserList {
     return usersCollection.get().then((QuerySnapshot snapshot) async {
       List<UserModel> all = snapshot.docs.map((doc) {
-        return UserModel(email: doc['email'], uid: doc.id);
+        return UserModel(
+            email: doc['email'], uid: doc.id, avatarUrl: doc['avatarUrl']);
       }).toList();
       removeMyUid(all);
       return await removeFriends(all);
@@ -78,7 +82,8 @@ class DatabaseService {
 
   List<UserModel> toList(QuerySnapshot snapshot) {
     return snapshot.docs
-        .map((doc) => UserModel(email: doc['email'], uid: doc.id))
+        .map((doc) => UserModel(
+            email: doc['email'], uid: doc.id, avatarUrl: doc['avatarUrl']))
         .toList();
   }
 }
