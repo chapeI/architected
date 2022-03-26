@@ -21,9 +21,18 @@ class DatabaseService {
   Stream<List<SimpleUserModel>> get simpleUsers {
     return usersCollection.snapshots().map((snapshot) {
       List<SimpleUserModel> allSimpleUsers = allSimpleList(snapshot);
-      removeMyUid(allSimpleUsers);
-      removeFriend(allSimpleUsers);
+      // removeMyUid(allSimpleUsers);
+      // removeFriend(allSimpleUsers);
       return allSimpleUsers;
+    });
+  }
+
+  Future<List<SimpleUserModel>> get friendsToAdd {
+    return usersCollection.get().then((QuerySnapshot snapshot) async {
+      List<SimpleUserModel> all = snapshot.docs.map((doc) {
+        return SimpleUserModel(email: doc['email'], uid: doc.id);
+      }).toList();
+      return await removeFriend(all);
     });
   }
 
@@ -70,24 +79,40 @@ class DatabaseService {
         .toList();
   }
 
-// removing users from addFriendsScreen(), glitchy
   void removeMyUid(List<SimpleUserModel> users) async {
     final me = _authService.me;
     users.removeWhere((user) => user.uid == me.uid);
   }
 
-  void removeFriend(List<SimpleUserModel> users) {
+  Future<List<SimpleUserModel>> removeFriend(List<SimpleUserModel> u) async {
+    // print('entered removefriend');
     final me = _authService.me;
-    usersCollection
+    List<SimpleUserModel> friends = [];
+    List<SimpleUserModel> users = u;
+
+    await usersCollection
         .doc(me.uid)
         .collection('friends')
         .get()
-        .then((querySnapshot) {
-      querySnapshot.docs.forEach((doc) {
-        users.removeWhere((user) {
-          return user.uid == doc.id;
-        });
-      });
+        .then((snapshot) {
+      friends = allSimpleList(snapshot);
     });
+
+    print('quarantine-start');
+    users.forEach((element) {
+      print(element.email);
+    });
+
+    print('removing');
+    friends.forEach((friend) {
+      users.removeWhere((user) => user.uid == friend.uid);
+    });
+
+    print('quarantine-end');
+    users.forEach((element) {
+      print(element.email);
+    });
+
+    return users;
   }
 }

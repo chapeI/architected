@@ -57,8 +57,8 @@ class SignOutButton extends StatelessWidget {
 class AddFriendScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<SimpleUserModel>>(
-        stream: getIt.get<DatabaseService>().simpleUsers,
+    return FutureBuilder<List<SimpleUserModel>>(
+        future: DatabaseService().friendsToAdd,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final users = snapshot.data;
