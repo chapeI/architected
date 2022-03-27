@@ -35,8 +35,22 @@ class _ChatViewState extends State<ChatView> {
                         })),
                   ),
                   Container(
-                    child: Text('send'),
-                  )
+                      child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: controller,
+                          onChanged: (val) {
+                            message = val;
+                          },
+                        ),
+                      ),
+                      TextButton(
+                        child: Text('send'),
+                        onPressed: FirestoreService().sendMessage(message),
+                      )
+                    ],
+                  ))
                 ]));
           }
           return Container(

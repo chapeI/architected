@@ -29,6 +29,14 @@ class FirestoreService {
         .map((doc) => ChatModel(text: doc['text'], sender: doc['sender']))
         .toList();
   }
+
+  sendMessage(String message) {
+    chatCollection('Rtn0b9AFMAtruXkrIe4y').add({
+      'text': message,
+      'sender': _authService.me.uid,
+      'timestamp': FieldValue.serverTimestamp()
+    });
+  }
   // chat_service.dart
 
   void addNewlyRegisteredToUsersCollection(UserModel user) async {
