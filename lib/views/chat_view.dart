@@ -23,13 +23,21 @@ class _ChatViewState extends State<ChatView> {
             var chats = snapshot.data;
             return Scaffold(
                 appBar: AppBar(title: Text(widget.friend.email!)),
-                body: ListView.builder(
-                    itemCount: chats!.length,
-                    itemBuilder: ((context, index) {
-                      return ListTile(
-                        title: Text(chats[index].text),
-                      );
-                    })));
+                body: Column(children: [
+                  Expanded(
+                    child: ListView.builder(
+                        padding: const EdgeInsets.all(4),
+                        itemCount: chats!.length,
+                        itemBuilder: ((context, index) {
+                          return ListTile(
+                            title: Text(chats[index].text),
+                          );
+                        })),
+                  ),
+                  Container(
+                    child: Text('send'),
+                  )
+                ]));
           }
           return Container(
             child: const Text('null snapshot, or check shape'),
