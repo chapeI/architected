@@ -1,6 +1,7 @@
 import 'package:architectured/models/user_model.dart';
 import 'package:architectured/services/database_service.dart';
 import 'package:architectured/services/user_controller.dart';
+import 'package:architectured/views/chat_view.dart';
 import 'package:flutter/material.dart';
 
 import '../services/singletons.dart';
@@ -28,6 +29,11 @@ class HomeView extends StatelessWidget {
                               NetworkImage(friends[index].avatarUrl!)),
                       onTap: () {
                         print(friends[index].chatsID);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: ((context) =>
+                                    ChatView(friend: friends[index]))));
                       },
                     );
                   }),

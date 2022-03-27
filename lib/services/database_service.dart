@@ -1,19 +1,38 @@
+import 'package:architectured/models/chat_model.dart';
 import 'package:architectured/models/user_model.dart';
 import 'package:architectured/services/auth_service.dart';
 import 'package:architectured/services/singletons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseService {
-  final FirebaseFirestore _database = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final _authService = getIt.get<AuthService>();
-  final usersCollection = FirebaseFirestore.instance.collection('users');
+  final _usersCollection = FirebaseFirestore.instance.collection('users');
   CollectionReference get friendsCollection {
     final me = _authService.me;
-    return usersCollection.doc(me.uid).collection('friends');
+    return _usersCollection.doc(me.uid).collection('friends');
   }
 
+  CollectionReference chatCollection(String docid) {
+    return _firestore.collection('chats').doc(docid).collection('chat');
+  }
+
+  // eventChatService.dart
+  Stream<List<ChatModel>> getChats(UserModel friend) {
+    return chatCollection(friend.chatsID!.id)
+        .snapshots()
+        .map((snapshot) => chatList(snapshot));
+  }
+
+  List<ChatModel> chatList(QuerySnapshot snapshot) {
+    return snapshot.docs
+        .map((doc) => ChatModel(text: doc['text'], sender: doc['sender']))
+        .toList();
+  }
+  // chat_service.dart
+
   void addNewlyRegisteredToUsersCollection(UserModel user) async {
-    _database.collection('users').doc(user.uid).set({
+    _firestore.collection('users').doc(user.uid).set({
       'uid': user.uid,
       'email': user.email,
       'displayName': user.displayName,
@@ -23,9 +42,9 @@ class DatabaseService {
 
   Future<void> addFriend(UserModel friend) async {
     final me = _authService.me;
-    _database.collection('chats').add(
+    _firestore.collection('chats').add(
         {'user1': me.uid, 'user2': friend.uid}).then((documentReference) async {
-      await usersCollection
+      await _usersCollection
           .doc(me.uid)
           .collection('friends')
           .doc(friend.uid)
@@ -34,7 +53,7 @@ class DatabaseService {
         'chatsID': documentReference,
         'avatarUrl': friend.avatarUrl
       }).then((someResponse) {
-        usersCollection.doc(friend.uid).collection('friends').doc(me.uid).set({
+        _usersCollection.doc(friend.uid).collection('friends').doc(me.uid).set({
           'email': me.email,
           'chatsID': documentReference,
           'avatarUrl': me.avatarUrl
@@ -45,12 +64,12 @@ class DatabaseService {
 
   Stream<List<UserModel>> get friends {
     return friendsCollection.snapshots().map((snapshot) {
-      return toFriendsList(snapshot);
+      return friendsList(snapshot);
     });
   }
 
   Future<List<UserModel>> get addUserList {
-    return usersCollection.get().then((QuerySnapshot snapshot) async {
+    return _usersCollection.get().then((QuerySnapshot snapshot) async {
       List<UserModel> all = snapshot.docs.map((doc) {
         return UserModel(
             email: doc['email'], uid: doc.id, avatarUrl: doc['avatarUrl']);
@@ -87,8 +106,8 @@ class DatabaseService {
         .toList();
   }
 
-  List<UserModel> toFriendsList(QuerySnapshot snapshot) {
-    DocumentReference debugDoc = usersCollection.doc('debug doc');
+  List<UserModel> friendsList(QuerySnapshot snapshot) {
+    DocumentReference debugDoc = _usersCollection.doc('debug doc');
     return snapshot.docs
         .map(
           (doc) => UserModel(
