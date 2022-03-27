@@ -16,46 +16,48 @@ class _ChatViewState extends State<ChatView> {
   String message = '';
 
   Widget build(BuildContext context) {
-    return StreamBuilder<List<ChatModel>>(
-        stream: _firestore.getChats(widget.friend),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            var chats = snapshot.data;
-            return Scaffold(
-                appBar: AppBar(title: Text(widget.friend.email!)),
-                body: Column(children: [
-                  Expanded(
+    return Scaffold(
+      appBar: AppBar(title: const Text('this will be slideable')),
+      body: Column(
+        children: [
+          StreamBuilder<List<ChatModel>>(
+              stream: _firestore.getChats(widget.friend),
+              builder: (((context, snapshot) {
+                if (snapshot.hasData) {
+                  var chats = snapshot.data;
+                  return Expanded(
                     child: ListView.builder(
-                        padding: const EdgeInsets.all(4),
                         itemCount: chats!.length,
-                        itemBuilder: ((context, index) {
+                        itemBuilder: (context, index) {
                           return ListTile(
                             title: Text(chats[index].text),
                           );
-                        })),
+                        }),
+                  );
+                }
+                return Text('null snapshot, check shape');
+              }))),
+          Container(
+              padding: EdgeInsets.all(10),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: controller,
+                      onChanged: (val) {
+                        message = val;
+                      },
+                    ),
                   ),
-                  Container(
-                      child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: controller,
-                          onChanged: (val) {
-                            message = val;
-                          },
-                        ),
-                      ),
-                      TextButton(
-                        child: Text('send'),
-                        onPressed: FirestoreService().sendMessage(message),
-                      )
-                    ],
-                  ))
-                ]));
-          }
-          return Container(
-            child: const Text('null snapshot, or check shape'),
-          );
-        });
+                  TextButton(
+                      child: Text('send'),
+                      onPressed: () {
+                        FirestoreService().sendMessage(message);
+                      })
+                ],
+              ))
+        ],
+      ),
+    );
   }
 }

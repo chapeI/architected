@@ -20,6 +20,7 @@ class FirestoreService {
 
   Stream<List<ChatModel>> getChats(UserModel friend) {
     return chatCollection(friend.chatsID!.id)
+        .orderBy('timestamp')
         .snapshots()
         .map((snapshot) => chatList(snapshot));
   }
