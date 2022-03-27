@@ -26,6 +26,9 @@ class HomeView extends StatelessWidget {
                       leading: CircleAvatar(
                           backgroundImage:
                               NetworkImage(friends[index].avatarUrl!)),
+                      onTap: () {
+                        print(friends[index].chatsID);
+                      },
                     );
                   }),
               floatingActionButton: FloatingActionButton(

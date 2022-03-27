@@ -45,7 +45,7 @@ class DatabaseService {
 
   Stream<List<UserModel>> get friends {
     return friendsCollection.snapshots().map((snapshot) {
-      return toList(snapshot);
+      return toFriendsList(snapshot);
     });
   }
 
@@ -84,6 +84,19 @@ class DatabaseService {
     return snapshot.docs
         .map((doc) => UserModel(
             email: doc['email'], uid: doc.id, avatarUrl: doc['avatarUrl']))
+        .toList();
+  }
+
+  List<UserModel> toFriendsList(QuerySnapshot snapshot) {
+    DocumentReference debugDoc = usersCollection.doc('debug doc');
+    return snapshot.docs
+        .map(
+          (doc) => UserModel(
+              email: doc['email'],
+              uid: doc.id,
+              chatsID: doc['chatsID'] ?? doc,
+              avatarUrl: doc['avatarUrl'] ?? 'bad avatarUrl'),
+        )
         .toList();
   }
 }
