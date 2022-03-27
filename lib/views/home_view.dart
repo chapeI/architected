@@ -1,5 +1,5 @@
 import 'package:architectured/models/user_model.dart';
-import 'package:architectured/services/database_service.dart';
+import 'package:architectured/services/firestore_service.dart';
 import 'package:architectured/services/user_controller.dart';
 import 'package:architectured/views/chat_view.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +10,7 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<UserModel>>(
-        stream: DatabaseService().friends,
+        stream: FirestoreService().friends,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final friends = snapshot.data;
@@ -74,7 +74,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<UserModel>>(
-        future: DatabaseService().addUserList,
+        future: FirestoreService().addUserList,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final users = snapshot.data;
@@ -91,7 +91,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                       trailing: ElevatedButton(
                           child: const Text('add'),
                           onPressed: () {
-                            DatabaseService().addFriend(users[index]);
+                            FirestoreService().addFriend(users[index]);
                             Navigator.pop(context);
                           }),
                     );

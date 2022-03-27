@@ -4,7 +4,7 @@ import 'package:architectured/services/auth_service.dart';
 import 'package:architectured/services/singletons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class DatabaseService {
+class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final _authService = getIt.get<AuthService>();
   final _usersCollection = FirebaseFirestore.instance.collection('users');
@@ -13,11 +13,11 @@ class DatabaseService {
     return _usersCollection.doc(me.uid).collection('friends');
   }
 
+  // eventChatService.dart
   CollectionReference chatCollection(String docid) {
     return _firestore.collection('chats').doc(docid).collection('chat');
   }
 
-  // eventChatService.dart
   Stream<List<ChatModel>> getChats(UserModel friend) {
     return chatCollection(friend.chatsID!.id)
         .snapshots()
