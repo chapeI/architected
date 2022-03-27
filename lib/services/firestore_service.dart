@@ -31,8 +31,8 @@ class FirestoreService {
         .toList();
   }
 
-  sendMessage(String message) {
-    chatCollection('Rtn0b9AFMAtruXkrIe4y').add({
+  sendMessage(String message, String chatId) {
+    chatCollection(chatId).add({
       'text': message,
       'sender': _authService.me.uid,
       'timestamp': FieldValue.serverTimestamp()

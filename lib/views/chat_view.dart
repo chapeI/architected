@@ -52,7 +52,8 @@ class _ChatViewState extends State<ChatView> {
                   TextButton(
                       child: Text('send'),
                       onPressed: () {
-                        FirestoreService().sendMessage(message);
+                        FirestoreService()
+                            .sendMessage(message, widget.friend.chatsID!.id);
                       })
                 ],
               ))
