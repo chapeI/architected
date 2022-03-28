@@ -1,3 +1,4 @@
+import 'package:architectured/map/g_map.dart';
 import 'package:architectured/models/user_model.dart';
 import 'package:architectured/services/firestore_service.dart';
 import 'package:architectured/services/user_controller.dart';
@@ -32,8 +33,9 @@ class HomeView extends StatelessWidget {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: ((context) =>
-                                    ChatView(friend: friends[index]))));
+                                builder: ((context) => gMap()
+                                    // ChatView(friend: friends[index])
+                                    )));
                       },
                     );
                   }),
