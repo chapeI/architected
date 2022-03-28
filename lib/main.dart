@@ -1,3 +1,5 @@
+import 'package:architectured/map/g_map.dart';
+import 'package:architectured/map/pop.dart';
 import 'package:architectured/services/singletons.dart';
 import 'package:architectured/views/auth_views/auth_view.dart';
 import 'package:architectured/views/home_view.dart';
@@ -20,8 +22,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/auth',
+      initialRoute: '/',
       routes: {
+        '/': (context) => Pop(),
         '/auth': (context) => AuthView(),
         '/home': (context) => HomeView()
       },
