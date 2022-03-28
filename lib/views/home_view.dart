@@ -3,6 +3,7 @@ import 'package:architectured/models/user_model.dart';
 import 'package:architectured/services/firestore_service.dart';
 import 'package:architectured/services/user_controller.dart';
 import 'package:architectured/views/chat_view.dart';
+import 'package:architectured/views/experimental/sliding_chat.dart';
 import 'package:flutter/material.dart';
 
 import '../services/singletons.dart';
