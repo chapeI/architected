@@ -84,7 +84,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                   itemCount: users!.length,
                   itemBuilder: (context, index) {
                     return ListTile(
-                      title: Text(users[index].email!),
+                      title: Text(users[index].displayName!),
                       leading: CircleAvatar(
                           backgroundImage:
                               NetworkImage(users[index].avatarUrl!)),

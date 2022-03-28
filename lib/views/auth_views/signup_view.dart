@@ -138,6 +138,9 @@ class _SignUpViewState extends State<SignUpView> {
                     }
                   }
                 },
+                style: signingIn
+                    ? ElevatedButton.styleFrom(primary: Colors.red)
+                    : null,
                 child: signingIn ? Text('WAIT') : Text('Sign Up')),
             SizedBox(
               height: 10,

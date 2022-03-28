@@ -27,7 +27,10 @@ class FirestoreService {
 
   List<ChatModel> chatList(QuerySnapshot snapshot) {
     return snapshot.docs
-        .map((doc) => ChatModel(text: doc['text'], sender: doc['sender']))
+        .map((doc) => ChatModel(
+            text: doc['text'],
+            sender: doc['sender'],
+            timestamp: doc['timestamp']))
         .toList();
   }
 
@@ -53,17 +56,23 @@ class FirestoreService {
     final me = _authService.me;
     _firestore.collection('chats').add(
         {'user1': me.uid, 'user2': friend.uid}).then((documentReference) async {
+      print('testing addfriend');
+      print(friend.displayName);
+      print(friend.email);
+      print(friend.toString());
       await _usersCollection
           .doc(me.uid)
           .collection('friends')
           .doc(friend.uid)
           .set({
         'email': friend.email,
+        'displayName': friend.displayName,
         'chatsID': documentReference,
         'avatarUrl': friend.avatarUrl
       }).then((someResponse) {
         _usersCollection.doc(friend.uid).collection('friends').doc(me.uid).set({
           'email': me.email,
+          'displayName': me.displayName,
           'chatsID': documentReference,
           'avatarUrl': me.avatarUrl
         });
@@ -81,7 +90,10 @@ class FirestoreService {
     return _usersCollection.get().then((QuerySnapshot snapshot) async {
       List<UserModel> all = snapshot.docs.map((doc) {
         return UserModel(
-            email: doc['email'], uid: doc.id, avatarUrl: doc['avatarUrl']);
+            email: doc['email'],
+            uid: doc.id,
+            displayName: doc['displayName'],
+            avatarUrl: doc['avatarUrl']);
       }).toList();
       removeMyUid(all);
       return await removeFriends(all);

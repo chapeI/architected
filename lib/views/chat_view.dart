@@ -31,6 +31,7 @@ class _ChatViewState extends State<ChatView> {
                         itemBuilder: (context, index) {
                           return ListTile(
                             title: Text(chats[index].text),
+                            subtitle: Text(chats[index].sender),
                           );
                         }),
                   );

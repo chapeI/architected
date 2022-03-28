@@ -6,7 +6,11 @@ class AuthService {
 
   UserModel get me {
     User? user = _auth.currentUser;
-    return UserModel(uid: user!.uid, email: user.email);
+    return UserModel(
+        uid: user!.uid,
+        email: user.email,
+        displayName: user.displayName,
+        avatarUrl: user.photoURL);
   }
 
   Future<UserModel> signIn(email, password) async {
@@ -16,14 +20,21 @@ class AuthService {
     return UserModel(uid: user!.uid, email: email);
   }
 
-  Future<String?> register(email, password) async {
+  Future<String?> register(email, password, name, imagePath) async {
     UserCredential authResult = await _auth.createUserWithEmailAndPassword(
         email: email, password: password);
     User? user = authResult.user;
-    return user!.uid;
+    // user!.updatePhotoURL(imagePath.toString());
+    user!.updateDisplayName(name);
+    // await Future.delayed(const Duration(seconds: 2));
+    return user.uid;
   }
 
   Future<void> signOut() async {
     await _auth.signOut();
+  }
+
+  void updateAvatarUrl(String url) {
+    _auth.currentUser!.updatePhotoURL(url);
   }
 }

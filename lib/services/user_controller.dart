@@ -26,11 +26,12 @@ class UserController {
   }
 
   Future<void> register(email, password, name, imagePath) async {
-    String? uid = await _auth.register(email, password);
+    String? uid = await _auth.register(email, password, name, imagePath);
     // print('usercontroller._authService.register(): $uid  <- cant be null');
     var url = await _storage.uploadFile(uid!, imagePath);
     UserModel userModel =
         UserModel(uid: uid, email: email, displayName: name, avatarUrl: url);
+    _auth.updateAvatarUrl(url);
     _firestore.addNewlyRegisteredToUsersCollection(userModel);
   }
 
