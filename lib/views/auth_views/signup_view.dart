@@ -128,6 +128,7 @@ class _SignUpViewState extends State<SignUpView> {
                             passwordController.text,
                             nameController.text,
                             _pickedImagePath);
+                        // this should go to /gMap, not /home
                         Navigator.pushReplacementNamed(context, '/home');
                       } catch (e) {
                         setState(() {
