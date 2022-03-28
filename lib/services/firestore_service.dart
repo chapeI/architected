@@ -29,6 +29,7 @@ class FirestoreService {
     return snapshot.docs
         .map((doc) => ChatModel(
             text: doc['text'],
+            uid: doc['uid'],
             sender: doc['sender'],
             timestamp: doc['timestamp']))
         .toList();
@@ -37,7 +38,8 @@ class FirestoreService {
   sendMessage(String message, String chatId) {
     chatCollection(chatId).add({
       'text': message,
-      'sender': _authService.me.uid,
+      'uid': _authService.me.uid,
+      'sender': _authService.me.displayName,
       'timestamp': FieldValue.serverTimestamp()
     });
   }
@@ -56,10 +58,10 @@ class FirestoreService {
     final me = _authService.me;
     _firestore.collection('chats').add(
         {'user1': me.uid, 'user2': friend.uid}).then((documentReference) async {
-      print('testing addfriend');
-      print(friend.displayName);
-      print(friend.email);
-      print(friend.toString());
+      // print('testing addfriend');
+      // print(friend.displayName);
+      // print(friend.email);
+      // print(friend.toString());
       await _usersCollection
           .doc(me.uid)
           .collection('friends')
