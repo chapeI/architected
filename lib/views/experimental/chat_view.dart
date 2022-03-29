@@ -2,6 +2,7 @@ import 'package:architectured/models/chat_model.dart';
 import 'package:architectured/models/user_model.dart';
 import 'package:architectured/services/auth_service.dart';
 import 'package:architectured/services/firestore_service.dart';
+import 'package:architectured/views/experimental/map/g_map.dart';
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -19,63 +20,63 @@ class _ChatViewState extends State<ChatView> {
   String message = '';
 
   Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: AppBar(title: const Text('this will be slideable')),
-      body: SlidingUpPanel(
-        collapsed: Center(child: Text('drag here')),
-        header: Text('input/msg/search-bar'),
-        panel: Column(
-          children: [
-            StreamBuilder<List<ChatModel>>(
-                stream: _firestore.getChats(widget.friend),
-                builder: (((context, snapshot) {
-                  if (snapshot.hasData) {
-                    var data = snapshot.data;
-
-                    return Expanded(
-                      child: ListView.builder(
-                          reverse: true,
-                          itemCount: data!.length,
-                          itemBuilder: (context, index) {
-                            return Row(
-                              mainAxisAlignment: data[index].uid == _auth.me.uid
-                                  ? MainAxisAlignment.end
-                                  : MainAxisAlignment.start,
-                              children: [
-                                Container(
-                                    padding: const EdgeInsets.all(4),
-                                    color: Colors.blue[100],
-                                    child: Text(data[index].text)),
-                              ],
-                            );
-                          }),
-                    );
-                  }
-                  return Text('null snapshot, check shape');
-                }))),
-            Container(
-                padding: EdgeInsets.all(10),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: controller,
-                        onChanged: (val) {
-                          message = val;
-                        },
-                      ),
+    return SlidingUpPanel(
+      // collapsed: Center(child: Text('event summary ?')),
+      // header: Text('header we could perhaps use'),
+      maxHeight: MediaQuery.of(context).size.height - 50,
+      body: gMap(),
+      panel: Column(
+        children: [
+          Container(
+              padding: EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: controller,
+                      onChanged: (val) {
+                        message = val;
+                      },
                     ),
-                    TextButton(
-                        child: Text('send'),
-                        onPressed: () {
-                          FirestoreService()
-                              .sendMessage(message, widget.friend.chatsID!.id);
-                        })
-                  ],
-                ))
-          ],
-        ),
-        body: Text('map'),
+                  ),
+                  TextButton(
+                      child: Text('send'),
+                      onPressed: () {
+                        FirestoreService()
+                            .sendMessage(message, widget.friend.chatsID!.id);
+                      })
+                ],
+              )),
+          StreamBuilder<List<ChatModel>>(
+              stream: _firestore.getChats(widget.friend),
+              builder: (((context, snapshot) {
+                if (snapshot.hasData) {
+                  print('what am i even entering');
+                  var data = snapshot.data;
+                  print('data: $data');
+
+                  return Expanded(
+                    child: ListView.builder(
+                        reverse: false,
+                        itemCount: data!.length,
+                        itemBuilder: (context, index) {
+                          return Row(
+                            mainAxisAlignment: data[index].uid == _auth.me.uid
+                                ? MainAxisAlignment.end
+                                : MainAxisAlignment.start,
+                            children: [
+                              Container(
+                                  padding: const EdgeInsets.all(4),
+                                  color: Colors.blue[100],
+                                  child: Text(data[index].text)),
+                            ],
+                          );
+                        }),
+                  );
+                }
+                return Text('null snapshot, check shape');
+              }))),
+        ],
       ),
     );
   }

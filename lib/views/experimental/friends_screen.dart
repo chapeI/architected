@@ -13,7 +13,12 @@ class FriendsScreen extends StatelessWidget {
           if (snapshot.hasData) {
             final friends = snapshot.data;
             return Scaffold(
-              appBar: AppBar(actions: [SignOut()]),
+              appBar: AppBar(
+                  leading: IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    onPressed: null,
+                  ),
+                  actions: [AddFriendButton(), SignOut()]),
               body: ListView.builder(
                   itemCount: friends!.length,
                   itemBuilder: (context, index) {
@@ -23,25 +28,29 @@ class FriendsScreen extends StatelessWidget {
                           backgroundImage:
                               NetworkImage(friends[index].avatarUrl!)),
                       onTap: () {
-                        // doesnt work..
-                        print(friends[index].displayName);
-                        Navigator.pop(context, friends[index].uid);
+                        // print(friends[index].displayName); // displayName not working
+                        Navigator.pop(context, friends[index]);
                       },
                     );
                   }),
-              floatingActionButton: FloatingActionButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AddFriendScreen(),
-                      ));
-                },
-                child: Text('add'),
-              ),
             );
           }
           return Text('no data in snapshot');
         });
+  }
+}
+
+class AddFriendButton extends StatelessWidget {
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      child: Text('add Friend'),
+      onPressed: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddFriendScreen(),
+            ));
+      },
+    );
   }
 }
