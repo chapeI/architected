@@ -1,7 +1,7 @@
 import 'package:architectured/views/experimental/sliding_chat.dart';
 import 'package:flutter/material.dart';
 
-class Pop extends StatelessWidget {
+class PageTransitionsTesting extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(body: SlidingChat(), floatingActionButton: fade(context));
   }

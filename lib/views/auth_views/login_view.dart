@@ -49,7 +49,7 @@ class _LoginViewState extends State<LoginView> {
                     await getIt
                         .get<UserController>()
                         .signIn(emailController.text, passwordController.text);
-                    Navigator.pushReplacementNamed(context, '/home');
+                    Navigator.pushReplacementNamed(context, '/chat');
                   } catch (e) {
                     print('error: $e');
                   }

@@ -8,7 +8,7 @@ class AuthView extends StatefulWidget {
 }
 
 class _AuthViewState extends State<AuthView> {
-  bool loginInView = false;
+  bool loginInView = true;
 
   void toggleAuthView() {
     setState(() {
