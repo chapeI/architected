@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors
 import 'package:architectured/models/user_model.dart';
+import 'package:architectured/views/google_maps.dart';
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -39,11 +40,12 @@ class _ChatState extends State<Chat> {
             body: SafeArea(
               child: SlidingUpPanel(
                   maxHeight: MediaQuery.of(context).size.height,
-                  body: Center(child: Text('Maps')),
+                  minHeight: 150,
+                  body: GoogleMaps(),
                   panel: Column(
                     children: [
                       Container(
-                        height: 100,
+                        height: 150,
                         decoration: myBoxDecoration(),
                         child: Column(
                           children: [
@@ -52,10 +54,32 @@ class _ChatState extends State<Chat> {
                                 decoration: myBoxDecoration(),
                                 child: Row(
                                   children: [
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text('basketball '),
+                                    Text('6 PM @ '),
+                                    Icon(
+                                      Icons.location_on,
+                                      color: Colors.purple,
+                                    ),
+                                    Text('Dufferin School'),
+                                    Spacer(),
                                     IconButton(
-                                        onPressed: null,
-                                        icon: Icon(Icons.location_on)),
-                                    Text('basketball')
+                                        onPressed: () {},
+                                        icon: Icon(
+                                          Icons.check_circle_outline,
+                                          color: Colors.green,
+                                        )),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(right: 10.0),
+                                      child: CircleAvatar(
+                                        backgroundImage:
+                                            AssetImage('assets/lowry.jpg'),
+                                        radius: 10,
+                                      ),
+                                    )
                                   ],
                                 ),
                               ),
@@ -66,14 +90,56 @@ class _ChatState extends State<Chat> {
                                   IconButton(
                                       onPressed: null,
                                       icon: Icon(Icons.arrow_back)),
-                                  CircleAvatar(),
+                                  CircleAvatar(
+                                    radius: 18,
+                                    backgroundImage:
+                                        AssetImage('assets/pp3.jpeg'),
+                                  ),
                                   SizedBox(
                                     width: 10,
                                   ),
-                                  Text('Jos')
+                                  Text('Jos'),
+                                  Spacer(),
+                                  IconButton(
+                                      onPressed: null, icon: Icon(Icons.phone)),
+                                  IconButton(
+                                      onPressed: null,
+                                      icon: Icon(Icons.more_vert))
                                 ],
                               ),
-                            )
+                            ),
+                            Expanded(
+                                child: Container(
+                                    decoration: myBoxDecoration(),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                            child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 5, bottom: 5.0),
+                                          child: TextField(
+                                            onChanged: ((value) {
+                                              message = value;
+                                            }),
+                                          ),
+                                        )),
+                                        TextButton(
+                                            onPressed: () {},
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  right: 5),
+                                              child: Row(
+                                                children: [
+                                                  Icon(Icons.search),
+                                                  SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  Icon(Icons.message)
+                                                ],
+                                              ),
+                                            ))
+                                      ],
+                                    )))
                           ],
                         ),
                       ),
@@ -84,16 +150,6 @@ class _ChatState extends State<Chat> {
                           child: Text('chat messages'),
                         ),
                       ),
-                      Row(
-                        children: [
-                          Expanded(child: TextField(
-                            onChanged: ((value) {
-                              message = value;
-                            }),
-                          )),
-                          TextButton(onPressed: null, child: Text('send'))
-                        ],
-                      )
                     ],
                   )),
             ),
