@@ -40,12 +40,12 @@ class _ChatState extends State<Chat> {
             body: SafeArea(
               child: SlidingUpPanel(
                   maxHeight: MediaQuery.of(context).size.height,
-                  minHeight: 150,
-                  body: GoogleMaps(),
+                  minHeight: 100,
+                  body: Text('map'),
                   panel: Column(
                     children: [
                       Container(
-                        height: 150,
+                        height: 100,
                         decoration: myBoxDecoration(),
                         child: Column(
                           children: [
@@ -108,38 +108,6 @@ class _ChatState extends State<Chat> {
                                 ],
                               ),
                             ),
-                            Expanded(
-                                child: Container(
-                                    decoration: myBoxDecoration(),
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                            child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 5, bottom: 5.0),
-                                          child: TextField(
-                                            onChanged: ((value) {
-                                              message = value;
-                                            }),
-                                          ),
-                                        )),
-                                        TextButton(
-                                            onPressed: () {},
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  right: 5),
-                                              child: Row(
-                                                children: [
-                                                  Icon(Icons.search),
-                                                  SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  Icon(Icons.message)
-                                                ],
-                                              ),
-                                            ))
-                                      ],
-                                    )))
                           ],
                         ),
                       ),
@@ -153,7 +121,33 @@ class _ChatState extends State<Chat> {
                     ],
                   )),
             ),
-          );
+            bottomNavigationBar: Row(
+              children: [
+                Expanded(
+                    child: Padding(
+                  padding: const EdgeInsets.only(left: 5, bottom: 5.0),
+                  child: TextField(
+                    onChanged: ((value) {
+                      message = value;
+                    }),
+                  ),
+                )),
+                TextButton(
+                    onPressed: () {},
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 5),
+                      child: Row(
+                        children: [
+                          Icon(Icons.search),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Icon(Icons.message)
+                        ],
+                      ),
+                    ))
+              ],
+            ));
   }
 }
 
