@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class PageTransitionsTesting extends StatelessWidget {
   Widget build(BuildContext context) {
-    return Scaffold(body: SlidingChat(), floatingActionButton: fade(context));
+    return Scaffold(body: Chat(), floatingActionButton: fade(context));
   }
 
   FloatingActionButton normal(BuildContext context) {

@@ -1,16 +1,17 @@
 // ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors
 
 import 'package:architectured/models/user_model.dart';
-import 'package:architectured/views/chat_view.dart';
 import 'package:flutter/material.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-class SlidingChat extends StatefulWidget {
+class Chat extends StatefulWidget {
   @override
-  State<SlidingChat> createState() => _SlidingChatState();
+  State<Chat> createState() => _ChatState();
 }
 
-class _SlidingChatState extends State<SlidingChat> {
+class _ChatState extends State<Chat> {
   UserModel friend = UserModel(email: 'INIT', uid: null);
+  String message = '';
   @override
   Widget build(BuildContext context) {
     return friend.uid == null
@@ -36,29 +37,43 @@ class _SlidingChatState extends State<SlidingChat> {
             ),
           )
         : Scaffold(
-            appBar: AppBar(
-              title: Text(friend.email!),
-              leading: ElevatedButton(
-                child: Icon(Icons.arrow_back),
-                onPressed: () async {
-                  final result = await Navigator.pushNamed(context, '/friends');
-                  setState(() {
-                    friend = result as UserModel;
-                  });
-                },
-              ),
-              bottom: AppBar(
-                title: Text('BubbleTea'),
-                actions: [
-                  IconButton(onPressed: () {}, icon: Icon(Icons.location_on)),
-                  IconButton(onPressed: () {}, icon: Icon(Icons.check)),
-                  IconButton(onPressed: () {}, icon: Icon(Icons.close)),
-                ],
-              ),
-            ),
-            body: ChatView(
-              friend: friend,
-            ),
+            body: SlidingUpPanel(
+                body: Center(child: Text('Maps')),
+                panel: Column(
+                  children: [
+                    Text('chats'),
+                    Container(
+                      child: Expanded(child: TextField(
+                        onChanged: ((value) {
+                          message = value;
+                        }),
+                      )),
+                    )
+                  ],
+                )),
+            // appBar: AppBar(
+            //   title: Text(friend.email!),
+            //   leading: ElevatedButton(
+            //     child: Icon(Icons.arrow_back),
+            //     onPressed: () async {
+            //       final result = await Navigator.pushNamed(context, '/friends');
+            //       setState(() {
+            //         friend = result as UserModel;
+            //       });
+            //     },
+            //   ),
+            //   bottom: AppBar(
+            //     title: Text('BubbleTea'),
+            //     actions: [
+            //       IconButton(onPressed: () {}, icon: Icon(Icons.location_on)),
+            //       IconButton(onPressed: () {}, icon: Icon(Icons.check)),
+            //       IconButton(onPressed: () {}, icon: Icon(Icons.close)),
+            //     ],
+            //   ),
+            // ),
+            // body: ChatView(
+            //   friend: friend,
+            // ),
           );
   }
 }

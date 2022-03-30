@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
       routes: {
         // '/': (context) => debug(), // TODO: make a debugWidget
         '/auth': (context) => AuthView(),
-        '/chat': (context) => SlidingChat(),
+        '/chat': (context) => Chat(),
       },
       onGenerateRoute: (settings) {
         switch (settings.name) {
