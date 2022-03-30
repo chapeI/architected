@@ -2,7 +2,7 @@ import 'package:architectured/models/chat_model.dart';
 import 'package:architectured/models/user_model.dart';
 import 'package:architectured/services/auth_service.dart';
 import 'package:architectured/services/firestore_service.dart';
-import 'package:architectured/views/experimental/map/g_map.dart';
+import 'package:architectured/views/google_maps.dart';
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -24,7 +24,7 @@ class _ChatViewState extends State<ChatView> {
       // collapsed: Center(child: Text('event summary ?')),
       // header: Text('header we could perhaps use'),
       maxHeight: MediaQuery.of(context).size.height - 50,
-      body: gMap(),
+      body: GoogleMaps(),
       panel: Column(
         children: [
           Container(

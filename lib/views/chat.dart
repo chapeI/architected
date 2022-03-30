@@ -1,11 +1,8 @@
 // ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors
 
-import 'package:architectured/main.dart';
 import 'package:architectured/models/user_model.dart';
-import 'package:architectured/views/experimental/chat_view.dart';
-import 'package:architectured/views/experimental/map/g_map.dart';
+import 'package:architectured/views/chat_view.dart';
 import 'package:flutter/material.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class SlidingChat extends StatefulWidget {
   @override

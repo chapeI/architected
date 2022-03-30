@@ -1,4 +1,4 @@
-import 'package:architectured/views/experimental/sliding_chat.dart';
+import 'package:architectured/views/chat.dart';
 import 'package:flutter/material.dart';
 
 class PageTransitionsTesting extends StatelessWidget {

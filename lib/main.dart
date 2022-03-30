@@ -1,7 +1,7 @@
 import 'package:architectured/services/singletons.dart';
 import 'package:architectured/views/auth_views/auth_view.dart';
-import 'package:architectured/views/experimental/friends_screen.dart';
-import 'package:architectured/views/experimental/sliding_chat.dart';
+import 'package:architectured/views/friends.dart';
+import 'package:architectured/views/chat.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
         switch (settings.name) {
           case '/friends':
             return PageTransition(
-                child: FriendsScreen(),
+                child: Friends(),
                 type: PageTransitionType.leftToRightWithFade,
                 settings: settings,
                 reverseDuration: Duration(milliseconds: 200));
