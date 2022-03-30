@@ -10,7 +10,7 @@ class Chat extends StatefulWidget {
 }
 
 class _ChatState extends State<Chat> {
-  UserModel friend = UserModel(email: 'INIT', uid: null);
+  UserModel friend = UserModel(email: 'INIT', uid: 'jskadjflk');
   String message = '';
   @override
   Widget build(BuildContext context) {
@@ -37,43 +37,66 @@ class _ChatState extends State<Chat> {
             ),
           )
         : Scaffold(
-            body: SlidingUpPanel(
-                body: Center(child: Text('Maps')),
-                panel: Column(
-                  children: [
-                    Text('chats'),
-                    Container(
-                      child: Expanded(child: TextField(
-                        onChanged: ((value) {
-                          message = value;
-                        }),
-                      )),
-                    )
-                  ],
-                )),
-            // appBar: AppBar(
-            //   title: Text(friend.email!),
-            //   leading: ElevatedButton(
-            //     child: Icon(Icons.arrow_back),
-            //     onPressed: () async {
-            //       final result = await Navigator.pushNamed(context, '/friends');
-            //       setState(() {
-            //         friend = result as UserModel;
-            //       });
-            //     },
-            //   ),
-            //   bottom: AppBar(
-            //     title: Text('BubbleTea'),
-            //     actions: [
-            //       IconButton(onPressed: () {}, icon: Icon(Icons.location_on)),
-            //       IconButton(onPressed: () {}, icon: Icon(Icons.check)),
-            //       IconButton(onPressed: () {}, icon: Icon(Icons.close)),
-            //     ],
-            //   ),
-            // ),
-            // body: ChatView(
-            //   friend: friend,
-            // ),
+            body: SafeArea(
+              child: SlidingUpPanel(
+                  // FOCUS HERE
+                  maxHeight: MediaQuery.of(context).size.height,
+                  body: Center(child: Text('Maps')),
+
+                  // HEADER (COLLAPSED AND PANEL)
+                  header: Text('jackob'),
+
+                  // Row(
+                  //   children: [
+                  //     Expanded(
+                  //       child: TextField(
+                  //         onChanged: ((value) {
+                  //           message = value;
+                  //         }),
+                  //       ),
+                  //     ),
+                  //     TextButton(onPressed: null, child: Text('search'))
+                  //   ],
+                  // ),
+                  // COLLAPSED (EVENT SUMMARY)
+                  collapsed: Column(
+                    children: [
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Divider(
+                        color: Colors.red,
+                      ),
+                    ],
+                  ),
+
+                  // PANEL (CHAT)
+                  panel: Column(
+                    children: [
+                      SizedBox(
+                        height: 100,
+                      ),
+                      Divider(
+                        color: Colors.blue,
+                      ),
+                      Text('top of panel INTERFERENCE'),
+                      Row(
+                        children: [
+                          Expanded(child: TextField(
+                            onChanged: ((value) {
+                              message = value;
+                            }),
+                          )),
+                          TextButton(onPressed: null, child: Text('send'))
+                        ],
+                      )
+                    ],
+                  )),
+            ),
           );
   }
+}
+
+BoxDecoration myBoxDecoration() {
+  return BoxDecoration(border: Border.all());
 }
