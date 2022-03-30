@@ -1,5 +1,4 @@
 // ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors
-
 import 'package:architectured/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -39,47 +38,52 @@ class _ChatState extends State<Chat> {
         : Scaffold(
             body: SafeArea(
               child: SlidingUpPanel(
-                  // FOCUS HERE
                   maxHeight: MediaQuery.of(context).size.height,
                   body: Center(child: Text('Maps')),
-
-                  // HEADER (COLLAPSED AND PANEL)
-                  header: Text('jackob'),
-
-                  // Row(
-                  //   children: [
-                  //     Expanded(
-                  //       child: TextField(
-                  //         onChanged: ((value) {
-                  //           message = value;
-                  //         }),
-                  //       ),
-                  //     ),
-                  //     TextButton(onPressed: null, child: Text('search'))
-                  //   ],
-                  // ),
-                  // COLLAPSED (EVENT SUMMARY)
-                  collapsed: Column(
-                    children: [
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Divider(
-                        color: Colors.red,
-                      ),
-                    ],
-                  ),
-
-                  // PANEL (CHAT)
                   panel: Column(
                     children: [
-                      SizedBox(
+                      Container(
                         height: 100,
+                        decoration: myBoxDecoration(),
+                        child: Column(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                decoration: myBoxDecoration(),
+                                child: Row(
+                                  children: [
+                                    IconButton(
+                                        onPressed: null,
+                                        icon: Icon(Icons.location_on)),
+                                    Text('basketball')
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  IconButton(
+                                      onPressed: null,
+                                      icon: Icon(Icons.arrow_back)),
+                                  CircleAvatar(),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text('Jos')
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
                       ),
-                      Divider(
-                        color: Colors.blue,
+                      Container(
+                        height: 200,
+                        decoration: myBoxDecoration(),
+                        child: Center(
+                          child: Text('chat messages'),
+                        ),
                       ),
-                      Text('top of panel INTERFERENCE'),
                       Row(
                         children: [
                           Expanded(child: TextField(
