@@ -47,6 +47,14 @@ class _SlidingChatState extends State<SlidingChat> {
                   });
                 },
               ),
+              bottom: AppBar(
+                title: Text('BubbleTea'),
+                actions: [
+                  IconButton(onPressed: () {}, icon: Icon(Icons.location_on)),
+                  IconButton(onPressed: () {}, icon: Icon(Icons.check)),
+                  IconButton(onPressed: () {}, icon: Icon(Icons.close)),
+                ],
+              ),
             ),
             body: ChatView(
               friend: friend,

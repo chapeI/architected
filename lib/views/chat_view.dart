@@ -51,10 +51,7 @@ class _ChatViewState extends State<ChatView> {
               stream: _firestore.getChats(widget.friend),
               builder: (((context, snapshot) {
                 if (snapshot.hasData) {
-                  print('what am i even entering');
                   var data = snapshot.data;
-                  print('data: $data');
-
                   return Expanded(
                     child: ListView.builder(
                         reverse: false,

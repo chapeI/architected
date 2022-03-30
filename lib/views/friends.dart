@@ -13,10 +13,7 @@ class Friends extends StatelessWidget {
             final friends = snapshot.data;
             return Scaffold(
               appBar: AppBar(
-                  leading: IconButton(
-                    icon: Icon(Icons.arrow_back),
-                    onPressed: null,
-                  ),
+                  automaticallyImplyLeading: false,
                   actions: [AddFriendButton(), SignOut()]),
               body: ListView.builder(
                   itemCount: friends!.length,
