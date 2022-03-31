@@ -49,15 +49,20 @@ class _GoogleMapsState extends State<GoogleMaps> {
           _controller.complete(controller);
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: null,
-        child: Text('add'),
-      ),
     );
   }
 
   Future<void> _goToTheLake() async {
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
+  }
+
+  Future<void> _goToPlace(Map<String, dynamic> place) async {
+    final double lat = place['geometry']['location']['lat'];
+    final double lng = place['geometry']['location']['lng'];
+
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(target: LatLng(lat, lng), zoom: 12)));
   }
 }
