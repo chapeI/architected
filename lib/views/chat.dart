@@ -1,5 +1,8 @@
 // ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors
+import 'package:architectured/models/chat_model.dart';
 import 'package:architectured/models/user_model.dart';
+import 'package:architectured/services/auth_service.dart';
+import 'package:architectured/services/firestore_service.dart';
 import 'package:architectured/views/google_maps.dart';
 import 'package:flutter/material.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -10,8 +13,12 @@ class Chat extends StatefulWidget {
 }
 
 class _ChatState extends State<Chat> {
-  UserModel friend = UserModel(email: 'INIT', uid: 'jskadjflk');
+  var friend = UserModel(email: 'INIT', uid: null);
+  final _firestore = FirestoreService();
+  final _auth = AuthService();
+  final _constroller = TextEditingController();
   String message = '';
+  var panelOpen = true;
   @override
   Widget build(BuildContext context) {
     return friend.uid == null
@@ -21,27 +28,39 @@ class _ChatState extends State<Chat> {
               // ignore: prefer_const_literals_to_create_immutables
               children: [
                 Text(
-                    'welcome to chatsdev, a chat application thats currently in development, actually will always be in development'),
-                Text('recent updates: '),
+                    'welcome to chatsdev, a chat app in development, will always be in development. we are always looking to roll out new features'),
+                Text('recent updates: chat works, sign up works, '),
+                SizedBox(
+                  height: 20,
+                ),
                 ElevatedButton(
                     onPressed: () async {
                       final result =
                           await Navigator.pushNamed(context, '/friends');
                       setState(() {
                         friend = result as UserModel;
-                        print('quar: ${friend.uid}');
                       });
                     },
-                    child: Text('go to friends'))
+                    child: Text('go to my chats'))
               ],
             ),
           )
         : Scaffold(
             body: SafeArea(
               child: SlidingUpPanel(
+                  onPanelClosed: () {
+                    setState(() {
+                      panelOpen = false;
+                    });
+                  },
+                  onPanelOpened: () {
+                    setState(() {
+                      panelOpen = true;
+                    });
+                  },
+                  defaultPanelState: PanelState.OPEN,
                   maxHeight: MediaQuery.of(context).size.height,
-                  minHeight: 100,
-                  body: Text('map'),
+                  body: GoogleMaps(),
                   panel: Column(
                     children: [
                       Container(
@@ -51,7 +70,6 @@ class _ChatState extends State<Chat> {
                           children: [
                             Expanded(
                               child: Container(
-                                decoration: myBoxDecoration(),
                                 child: Row(
                                   children: [
                                     SizedBox(
@@ -71,15 +89,14 @@ class _ChatState extends State<Chat> {
                                           Icons.check_circle_outline,
                                           color: Colors.green,
                                         )),
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.only(right: 10.0),
-                                      child: CircleAvatar(
-                                        backgroundImage:
-                                            AssetImage('assets/lowry.jpg'),
-                                        radius: 10,
-                                      ),
-                                    )
+                                    CircleAvatar(
+                                      backgroundImage:
+                                          AssetImage('assets/lowry.jpg'),
+                                      radius: 10,
+                                    ),
+                                    IconButton(
+                                        onPressed: () {},
+                                        icon: Icon(Icons.expand_more))
                                   ],
                                 ),
                               ),
@@ -88,35 +105,59 @@ class _ChatState extends State<Chat> {
                               child: Row(
                                 children: [
                                   IconButton(
-                                      onPressed: null,
+                                      onPressed: () async {
+                                        final result =
+                                            await Navigator.pushNamed(
+                                                context, '/friends');
+                                        setState(() {
+                                          friend = result as UserModel;
+                                        });
+                                      },
                                       icon: Icon(Icons.arrow_back)),
                                   CircleAvatar(
                                     radius: 18,
                                     backgroundImage:
-                                        AssetImage('assets/pp3.jpeg'),
+                                        NetworkImage(friend.avatarUrl!),
                                   ),
                                   SizedBox(
                                     width: 10,
                                   ),
-                                  Text('Jos'),
-                                  Spacer(),
-                                  IconButton(
-                                      onPressed: null, icon: Icon(Icons.phone)),
-                                  IconButton(
-                                      onPressed: null,
-                                      icon: Icon(Icons.more_vert))
+                                  Text(friend.email!),
                                 ],
                               ),
                             ),
                           ],
                         ),
                       ),
-                      Container(
-                        height: 200,
-                        decoration: myBoxDecoration(),
-                        child: Center(
-                          child: Text('chat messages'),
-                        ),
+                      StreamBuilder<List<ChatModel>>(
+                        stream: _firestore.getChats(friend),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            var data = snapshot.data;
+                            return Expanded(
+                              child: ListView.builder(
+                                  // reverse: true,
+                                  itemCount: data!.length,
+                                  itemBuilder: ((context, index) {
+                                    return Row(
+                                      mainAxisAlignment:
+                                          data[index].uid == _auth.me.uid
+                                              ? MainAxisAlignment.end
+                                              : MainAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          // color: Colors.blue[100],
+                                          child: Text(data[index].text),
+                                        )
+                                      ],
+                                    );
+                                  })),
+                            );
+                          }
+                          return Text('null snapshot, check shape');
+                        },
                       ),
                     ],
                   )),
@@ -127,6 +168,7 @@ class _ChatState extends State<Chat> {
                     child: Padding(
                   padding: const EdgeInsets.only(left: 5, bottom: 5.0),
                   child: TextField(
+                    controller: _constroller,
                     onChanged: ((value) {
                       message = value;
                     }),
@@ -134,23 +176,34 @@ class _ChatState extends State<Chat> {
                 )),
                 TextButton(
                     onPressed: () {},
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 5),
-                      child: Row(
-                        children: [
-                          Icon(Icons.search),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Icon(Icons.message)
-                        ],
-                      ),
-                    ))
+                    child: panelOpen
+                        ? IconButton(
+                            onPressed: () {
+                              _firestore.sendMessage(
+                                  message, friend.chatsID!.id);
+                              _constroller.clear();
+                            },
+                            icon: Icon(Icons.message))
+                        : IconButton(
+                            onPressed: null, icon: Icon(Icons.travel_explore)))
+                // child: Row(
+                //   children: [
+                //     IconButton(onPressed: null, icon: Icon(Icons.search)),
+                //     IconButton(
+                //         onPressed: () {
+                //         },
+                //         icon: Icon(Icons.message)),
+                //   ],
+                // ))
               ],
             ));
   }
 }
 
 BoxDecoration myBoxDecoration() {
-  return BoxDecoration(border: Border.all());
+  return BoxDecoration(
+      border: Border(
+    top: BorderSide(width: 1.0, color: Colors.lightBlue.shade600),
+    bottom: BorderSide(width: 1.0, color: Colors.lightBlue.shade600),
+  ));
 }
