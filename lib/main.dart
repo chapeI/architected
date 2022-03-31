@@ -1,4 +1,4 @@
-import 'package:architectured/models/user_model.dart';
+import 'package:architectured/experimental/sand_box.dart';
 import 'package:architectured/services/singletons.dart';
 import 'package:architectured/views/auth_views/auth_view.dart';
 import 'package:architectured/views/friends.dart';
@@ -23,11 +23,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/auth',
+      initialRoute: '/sandbox',
       routes: {
         // '/': (context) => debug(), // TODO: make a debugWidget
         '/auth': (context) => AuthView(),
         '/chat': (context) => Chat(),
+        '/sandbox': (context) => SandBox()
       },
       onGenerateRoute: (settings) {
         switch (settings.name) {

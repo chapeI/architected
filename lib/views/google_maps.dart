@@ -10,6 +10,8 @@ class GoogleMaps extends StatefulWidget {
 }
 
 class _GoogleMapsState extends State<GoogleMaps> {
+  final lat = '43.696021';
+  final lng = '-79.797692';
   final Completer<GoogleMapController> _controller = Completer();
 
   static final CameraPosition _kGooglePlex = CameraPosition(
@@ -17,17 +19,31 @@ class _GoogleMapsState extends State<GoogleMaps> {
     zoom: 14.4746,
   );
 
+  static var _marker = Marker(
+    markerId: MarkerId('anoops marker'),
+    infoWindow: InfoWindow(title: 'hello world'),
+    icon: BitmapDescriptor.defaultMarker,
+    position: LatLng(37.42796133580664, -122.085749655962),
+  );
   static final CameraPosition _kLake = CameraPosition(
       bearing: 192.8334901395799,
       target: LatLng(37.43296265331129, -122.08832357078792),
       tilt: 59.440717697143555,
       zoom: 19.151926040649414);
 
+  static var _marker2 = Marker(
+    markerId: MarkerId('lake marker'),
+    infoWindow: InfoWindow(title: 'hello lake'),
+    icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+    position: LatLng(37.43296265331129, -122.08832357078792),
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: GoogleMap(
         mapType: MapType.normal,
+        markers: {_marker, _marker2},
         initialCameraPosition: _kGooglePlex,
         onMapCreated: (GoogleMapController controller) {
           _controller.complete(controller);
