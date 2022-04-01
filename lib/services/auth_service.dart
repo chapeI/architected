@@ -38,3 +38,20 @@ class AuthService {
     _auth.currentUser!.updatePhotoURL(url);
   }
 }
+
+class Auth {
+  final _auth = FirebaseAuth.instance;
+
+  String? _getUid(User user) {
+    return user == null ? null : user.uid;
+  }
+
+  Stream<String> get stream {
+    return _auth.authStateChanges().map((User? u) => u!.uid);
+  }
+}
+
+class uidModel {
+  String uid;
+  uidModel({required this.uid});
+}

@@ -45,6 +45,7 @@ dependencies:
   page_transition: ^2.0.5
   http: ^0.13.4
   convert: ^3.0.1
+  provider: ^6.0.2
 
 dev_dependencies:
   flutter_test:
