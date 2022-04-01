@@ -31,15 +31,15 @@ class Friends extends StatelessWidget {
                   }),
             );
           }
-          return CircularProgressIndicator();
+          return LinearProgressIndicator();
         });
   }
 }
 
 class AddFriendButton extends StatelessWidget {
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      child: Text('add Friend'),
+    return IconButton(
+      icon: Icon(Icons.person_add),
       onPressed: () {
         Navigator.push(
             context,
@@ -84,7 +84,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                   }),
             );
           }
-          return CircularProgressIndicator();
+          return LinearProgressIndicator();
         });
   }
 }

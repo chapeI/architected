@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 class SignOut extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
+    return IconButton(
       onPressed: () async {
         await getIt.get<UserController>().signOut();
         Navigator.pushAndRemoveUntil(
@@ -15,7 +15,7 @@ class SignOut extends StatelessWidget {
             MaterialPageRoute(builder: (BuildContext context) => AuthView()),
             (route) => false);
       },
-      child: Text('signout2'),
+      icon: Icon(Icons.logout),
     );
   }
 }
