@@ -66,6 +66,7 @@ class _ChatState extends State<Chat> {
                       IconButton(
                           onPressed: () {
                             _firestore.sendMessage(message, friend.chatsID!.id);
+                            _controller.clear();
                           },
                           icon: Icon(Icons.message))
                     ],
@@ -165,8 +166,28 @@ class _ChatState extends State<Chat> {
                                             // color: Colors.blue[100],
                                             child: Material(
                                               color: Colors.blue,
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(5)),
+                                              borderRadius: data[index].uid ==
+                                                      _auth.me.uid
+                                                  ? BorderRadius.only(
+                                                      bottomLeft:
+                                                          Radius.circular(5),
+                                                      bottomRight:
+                                                          Radius.circular(1),
+                                                      topLeft:
+                                                          Radius.circular(5),
+                                                      topRight:
+                                                          Radius.circular(5),
+                                                    )
+                                                  : BorderRadius.only(
+                                                      bottomLeft:
+                                                          Radius.circular(1),
+                                                      bottomRight:
+                                                          Radius.circular(5),
+                                                      topLeft:
+                                                          Radius.circular(5),
+                                                      topRight:
+                                                          Radius.circular(5),
+                                                    ),
                                               child: Padding(
                                                 padding:
                                                     const EdgeInsets.all(8.0),
@@ -182,7 +203,7 @@ class _ChatState extends State<Chat> {
                                   })),
                             );
                           }
-                          return Text('null snapshot, check shape');
+                          return LinearProgressIndicator();
                         },
                       ),
                     ],

@@ -31,7 +31,7 @@ class Friends extends StatelessWidget {
                   }),
             );
           }
-          return Text('no data in snapshot');
+          return CircularProgressIndicator();
         });
   }
 }
@@ -84,7 +84,7 @@ class _AddFriendScreenState extends State<AddFriendScreen> {
                   }),
             );
           }
-          return const Text('null snapshot?');
+          return CircularProgressIndicator();
         });
   }
 }
