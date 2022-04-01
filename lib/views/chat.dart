@@ -5,6 +5,7 @@ import 'package:architectured/services/auth_service.dart';
 import 'package:architectured/services/firestore_service.dart';
 import 'package:architectured/views/google_maps.dart';
 import 'package:flutter/material.dart';
+import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class Chat extends StatefulWidget {
@@ -13,6 +14,59 @@ class Chat extends StatefulWidget {
 }
 
 class _ChatState extends State<Chat> {
+  // keyboard stuff
+  final _focusNode = FocusNode();
+
+  KeyboardActionsConfig _buildConfig(BuildContext context) {
+    return KeyboardActionsConfig(
+      // keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
+      // keyboardBarColor: Colors.red[200],
+      // nextFocus: true,
+      actions: [
+        KeyboardActionsItem(
+          focusNode: _focusNode,
+          toolbarButtons: [
+            //button 1
+            (node) {
+              return GestureDetector(
+                onTap: () {
+                  print('send whatever man');
+                  return node.unfocus();
+                },
+                child: Center(
+                  child: Container(
+                    color: Colors.white,
+                    padding: EdgeInsets.symmetric(horizontal: 50.0),
+                    child: Center(
+                      child: Text(
+                        "SEND",
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+            //button 2
+            // (node) {
+            //   return GestureDetector(
+            //     onTap: () => node.unfocus(),
+            //     child: Container(
+            //       color: Colors.black,
+            //       padding: EdgeInsets.all(8.0),
+            //       child: Text(
+            //         "DONE",
+            //         style: TextStyle(color: Colors.white),
+            //       ),
+            //     ),
+            //   );
+            // }
+          ],
+        ),
+      ],
+    );
+  }
+
   var friend = UserModel(email: 'INIT', uid: null);
   final _firestore = FirestoreService();
   final _auth = AuthService();
@@ -93,7 +147,8 @@ class _ChatState extends State<Chat> {
                           icon: Icon(Icons.search))
                     ],
                   ),
-            body: SafeArea(
+            body: KeyboardActions(
+              config: _buildConfig(context),
               child: SlidingUpPanel(
                   onPanelClosed: () {
                     setState(() {
@@ -111,6 +166,11 @@ class _ChatState extends State<Chat> {
                   body: GoogleMaps(),
                   panel: Column(
                     children: [
+                      Container(
+                        child: TextField(
+                          focusNode: _focusNode,
+                        ),
+                      ),
                       Container(
                         height: 50,
                         child: Column(
