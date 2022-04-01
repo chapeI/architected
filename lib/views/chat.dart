@@ -16,7 +16,7 @@ class _ChatState extends State<Chat> {
   var friend = UserModel(email: 'INIT', uid: null);
   final _firestore = FirestoreService();
   final _auth = AuthService();
-  final _constroller = TextEditingController();
+  final _controller = TextEditingController();
   String message = '';
   var panelOpen = true;
   @override
@@ -46,6 +46,52 @@ class _ChatState extends State<Chat> {
             ),
           )
         : Scaffold(
+            appBar: panelOpen
+                ? AppBar(
+                    elevation: 0,
+                    title: TextFormField(
+                      onChanged: (val) {
+                        message = val;
+                      },
+                      controller: _controller,
+                      cursorColor: Colors.white,
+                      cursorWidth: 5,
+                      style: TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        hintStyle: TextStyle(color: Colors.blue[200]),
+                        hintText: '  send messages from here',
+                      ),
+                    ),
+                    actions: [
+                      IconButton(
+                          onPressed: () {
+                            _firestore.sendMessage(message, friend.chatsID!.id);
+                          },
+                          icon: Icon(Icons.message))
+                    ],
+                  )
+                : AppBar(
+                    elevation: 0,
+                    title: TextFormField(
+                      onChanged: (val) {
+                        message = val;
+                      },
+                      style: TextStyle(color: Colors.red),
+                      controller: _controller,
+                      cursorColor: Colors.red,
+                      cursorWidth: 1,
+                      decoration: InputDecoration(
+                          hintStyle: TextStyle(color: Colors.blue[200]),
+                          hintText: ' map functionality coming soon'),
+                    ),
+                    actions: [
+                      IconButton(
+                          onPressed: () {
+                            _controller.clear();
+                          },
+                          icon: Icon(Icons.search))
+                    ],
+                  ),
             body: SafeArea(
               child: SlidingUpPanel(
                   onPanelClosed: () {
@@ -60,47 +106,14 @@ class _ChatState extends State<Chat> {
                   },
                   defaultPanelState: PanelState.OPEN,
                   maxHeight: MediaQuery.of(context).size.height,
+                  minHeight: 50,
                   body: GoogleMaps(),
                   panel: Column(
                     children: [
                       Container(
-                        height: 100,
-                        decoration: myBoxDecoration(),
+                        height: 50,
                         child: Column(
                           children: [
-                            Expanded(
-                              child: Container(
-                                child: Row(
-                                  children: [
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text('basketball '),
-                                    Text('6 PM @ '),
-                                    Icon(
-                                      Icons.location_on,
-                                      color: Colors.purple,
-                                    ),
-                                    Text('Dufferin School'),
-                                    Spacer(),
-                                    IconButton(
-                                        onPressed: () {},
-                                        icon: Icon(
-                                          Icons.check_circle_outline,
-                                          color: Colors.green,
-                                        )),
-                                    CircleAvatar(
-                                      backgroundImage:
-                                          AssetImage('assets/lowry.jpg'),
-                                      radius: 10,
-                                    ),
-                                    IconButton(
-                                        onPressed: () {},
-                                        icon: Icon(Icons.expand_more))
-                                  ],
-                                ),
-                              ),
-                            ),
                             Expanded(
                               child: Row(
                                 children: [
@@ -123,6 +136,7 @@ class _ChatState extends State<Chat> {
                                     width: 10,
                                   ),
                                   Text(friend.email!),
+                                  Spacer(),
                                 ],
                               ),
                             ),
@@ -146,11 +160,23 @@ class _ChatState extends State<Chat> {
                                               : MainAxisAlignment.start,
                                       children: [
                                         Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 10),
-                                          // color: Colors.blue[100],
-                                          child: Text(data[index].text),
-                                        )
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 2),
+                                            // color: Colors.blue[100],
+                                            child: Material(
+                                              color: Colors.blue,
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(5)),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Text(
+                                                  data[index].text,
+                                                  style: TextStyle(
+                                                      color: Colors.white),
+                                                ),
+                                              ),
+                                            ))
                                       ],
                                     );
                                   })),
@@ -162,41 +188,8 @@ class _ChatState extends State<Chat> {
                     ],
                   )),
             ),
-            bottomNavigationBar: Row(
-              children: [
-                Expanded(
-                    child: Padding(
-                  padding: const EdgeInsets.only(left: 5, bottom: 5.0),
-                  child: TextField(
-                    controller: _constroller,
-                    onChanged: ((value) {
-                      message = value;
-                    }),
-                  ),
-                )),
-                TextButton(
-                    onPressed: () {},
-                    child: panelOpen
-                        ? IconButton(
-                            onPressed: () {
-                              _firestore.sendMessage(
-                                  message, friend.chatsID!.id);
-                              _constroller.clear();
-                            },
-                            icon: Icon(Icons.message))
-                        : IconButton(
-                            onPressed: null, icon: Icon(Icons.travel_explore)))
-                // child: Row(
-                //   children: [
-                //     IconButton(onPressed: null, icon: Icon(Icons.search)),
-                //     IconButton(
-                //         onPressed: () {
-                //         },
-                //         icon: Icon(Icons.message)),
-                //   ],
-                // ))
-              ],
-            ));
+            // bottomNavigationBar:
+          );
   }
 }
 

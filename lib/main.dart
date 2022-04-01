@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/sandbox',
+      initialRoute: '/auth',
       routes: {
         // '/': (context) => debug(), // TODO: make a debugWidget
         '/auth': (context) => AuthView(),
