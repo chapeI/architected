@@ -14,7 +14,7 @@ class Chat extends StatefulWidget {
 }
 
 class _ChatState extends State<Chat> {
-  // keyboard stuff
+  // keyboard config
   final _focusNode = FocusNode();
 
   KeyboardActionsConfig _buildConfig(BuildContext context) {
@@ -29,38 +29,38 @@ class _ChatState extends State<Chat> {
             //button 1
             (node) {
               return GestureDetector(
-                onTap: () {
-                  print('send whatever man');
-                  return node.unfocus();
-                },
-                child: Center(
+                  onTap: () => node.unfocus(),
                   child: Container(
-                    color: Colors.white,
-                    padding: EdgeInsets.symmetric(horizontal: 50.0),
+                    color: Colors.black,
+                    padding: EdgeInsets.symmetric(horizontal: 20.0),
                     child: Center(
                       child: Text(
-                        "SEND",
-                        style: TextStyle(color: Colors.black),
+                        "CLOSE",
+                        style: TextStyle(color: Colors.white),
                       ),
+                    ),
+                  ));
+            },
+            //button 2
+            (node) {
+              return GestureDetector(
+                onTap: () {
+                  _firestore.sendMessage(message, friend.chatsID!.id);
+                  _controller.clear();
+                  return node.unfocus();
+                },
+                child: Container(
+                  color: Colors.green,
+                  padding: EdgeInsets.symmetric(horizontal: 50.0),
+                  child: Center(
+                    child: Text(
+                      "SEND",
+                      style: TextStyle(color: Colors.white),
                     ),
                   ),
                 ),
               );
             },
-            //button 2
-            // (node) {
-            //   return GestureDetector(
-            //     onTap: () => node.unfocus(),
-            //     child: Container(
-            //       color: Colors.black,
-            //       padding: EdgeInsets.all(8.0),
-            //       child: Text(
-            //         "DONE",
-            //         style: TextStyle(color: Colors.white),
-            //       ),
-            //     ),
-            //   );
-            // }
           ],
         ),
       ],
@@ -100,175 +100,151 @@ class _ChatState extends State<Chat> {
             ),
           )
         : Scaffold(
-            appBar: panelOpen
-                ? AppBar(
-                    elevation: 0,
-                    title: TextFormField(
-                      onChanged: (val) {
-                        message = val;
-                      },
-                      controller: _controller,
-                      cursorColor: Colors.white,
-                      cursorWidth: 5,
-                      style: TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        hintStyle: TextStyle(color: Colors.blue[200]),
-                        hintText: '  send messages from here',
+            appBar: AppBar(
+                elevation: 0,
+                flexibleSpace: SafeArea(
+                    child: KeyboardActions(
+                  config: _buildConfig(context),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 18.0),
+                          child: TextField(
+                            controller: _controller,
+                            onChanged: (val) {
+                              message = val;
+                              ;
+                            },
+                            focusNode: _focusNode,
+                            cursorColor: Colors.white,
+                            cursorWidth: 8,
+                            style: TextStyle(color: Colors.white),
+                            decoration: InputDecoration(
+                                enabledBorder: UnderlineInputBorder(
+                                    borderSide:
+                                        BorderSide(color: Colors.blueAccent)),
+                                hintStyle: TextStyle(color: Colors.blue[200]),
+                                hintText: panelOpen
+                                    ? '   click here to message'
+                                    : '   click here to search on map'),
+                          ),
+                        ),
                       ),
-                    ),
-                    actions: [
-                      IconButton(
-                          onPressed: () {
-                            _firestore.sendMessage(message, friend.chatsID!.id);
-                            _controller.clear();
-                          },
-                          icon: Icon(Icons.message))
-                    ],
-                  )
-                : AppBar(
-                    elevation: 0,
-                    title: TextFormField(
-                      onChanged: (val) {
-                        message = val;
-                      },
-                      style: TextStyle(color: Colors.red),
-                      controller: _controller,
-                      cursorColor: Colors.red,
-                      cursorWidth: 1,
-                      decoration: InputDecoration(
-                          hintStyle: TextStyle(color: Colors.blue[200]),
-                          hintText: ' map functionality coming soon'),
-                    ),
-                    actions: [
-                      IconButton(
-                          onPressed: () {
-                            _controller.clear();
-                          },
-                          icon: Icon(Icons.search))
                     ],
                   ),
-            body: KeyboardActions(
-              config: _buildConfig(context),
-              child: SlidingUpPanel(
-                  onPanelClosed: () {
-                    setState(() {
-                      panelOpen = false;
-                    });
-                  },
-                  onPanelOpened: () {
-                    setState(() {
-                      panelOpen = true;
-                    });
-                  },
-                  defaultPanelState: PanelState.OPEN,
-                  maxHeight: MediaQuery.of(context).size.height,
-                  minHeight: 50,
-                  body: GoogleMaps(),
-                  panel: Column(
-                    children: [
-                      Container(
-                        child: TextField(
-                          focusNode: _focusNode,
-                        ),
-                      ),
-                      Container(
-                        height: 50,
-                        child: Column(
-                          children: [
-                            Expanded(
-                              child: Row(
-                                children: [
-                                  IconButton(
-                                      onPressed: () async {
-                                        final result =
-                                            await Navigator.pushNamed(
-                                                context, '/friends');
-                                        setState(() {
-                                          friend = result as UserModel;
-                                        });
-                                      },
-                                      icon: Icon(Icons.arrow_back)),
-                                  CircleAvatar(
-                                    radius: 18,
-                                    backgroundImage:
-                                        NetworkImage(friend.avatarUrl!),
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Text(friend.email!),
-                                  Spacer(),
-                                ],
-                              ),
+                ))),
+            body: SlidingUpPanel(
+                onPanelClosed: () {
+                  setState(() {
+                    panelOpen = false;
+                  });
+                },
+                onPanelOpened: () {
+                  setState(() {
+                    panelOpen = true;
+                  });
+                },
+                defaultPanelState: PanelState.OPEN,
+                maxHeight: MediaQuery.of(context).size.height - 100,
+                minHeight: 50,
+                body: GoogleMaps(),
+                panel: Column(
+                  children: [
+                    Container(
+                      height: 50,
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: Row(
+                              children: [
+                                IconButton(
+                                    onPressed: () async {
+                                      final result = await Navigator.pushNamed(
+                                          context, '/friends');
+                                      setState(() {
+                                        friend = result as UserModel;
+                                      });
+                                    },
+                                    icon: Icon(Icons.arrow_back)),
+                                CircleAvatar(
+                                  radius: 18,
+                                  backgroundImage:
+                                      NetworkImage(friend.avatarUrl!),
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Text(friend.email!),
+                                Spacer(),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      StreamBuilder<List<ChatModel>>(
-                        stream: _firestore.getChats(friend),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            var data = snapshot.data;
-                            return Expanded(
-                              child: ListView.builder(
-                                  // reverse: true,
-                                  itemCount: data!.length,
-                                  itemBuilder: ((context, index) {
-                                    return Row(
-                                      mainAxisAlignment:
-                                          data[index].uid == _auth.me.uid
-                                              ? MainAxisAlignment.end
-                                              : MainAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 10, vertical: 2),
-                                            // color: Colors.blue[100],
-                                            child: Material(
-                                              color: Colors.blue,
-                                              borderRadius: data[index].uid ==
-                                                      _auth.me.uid
-                                                  ? BorderRadius.only(
-                                                      bottomLeft:
-                                                          Radius.circular(5),
-                                                      bottomRight:
-                                                          Radius.circular(1),
-                                                      topLeft:
-                                                          Radius.circular(5),
-                                                      topRight:
-                                                          Radius.circular(5),
-                                                    )
-                                                  : BorderRadius.only(
-                                                      bottomLeft:
-                                                          Radius.circular(1),
-                                                      bottomRight:
-                                                          Radius.circular(5),
-                                                      topLeft:
-                                                          Radius.circular(5),
-                                                      topRight:
-                                                          Radius.circular(5),
-                                                    ),
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Text(
-                                                  data[index].text,
-                                                  style: TextStyle(
-                                                      color: Colors.white),
-                                                ),
+                    ),
+                    StreamBuilder<List<ChatModel>>(
+                      stream: _firestore.getChats(friend),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          var data = snapshot.data;
+                          return Expanded(
+                            child: ListView.builder(
+                                // reverse: true,
+                                itemCount: data!.length,
+                                itemBuilder: ((context, index) {
+                                  return Row(
+                                    mainAxisAlignment:
+                                        data[index].uid == _auth.me.uid
+                                            ? MainAxisAlignment.end
+                                            : MainAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 2),
+                                          // color: Colors.blue[100],
+                                          child: Material(
+                                            color: Colors.blue,
+                                            borderRadius: data[index].uid ==
+                                                    _auth.me.uid
+                                                ? BorderRadius.only(
+                                                    bottomLeft:
+                                                        Radius.circular(5),
+                                                    bottomRight:
+                                                        Radius.circular(1),
+                                                    topLeft: Radius.circular(5),
+                                                    topRight:
+                                                        Radius.circular(5),
+                                                  )
+                                                : BorderRadius.only(
+                                                    bottomLeft:
+                                                        Radius.circular(1),
+                                                    bottomRight:
+                                                        Radius.circular(5),
+                                                    topLeft: Radius.circular(5),
+                                                    topRight:
+                                                        Radius.circular(5),
+                                                  ),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Text(
+                                                data[index].text,
+                                                style: TextStyle(
+                                                    color: Colors.white),
                                               ),
-                                            ))
-                                      ],
-                                    );
-                                  })),
-                            );
-                          }
-                          return LinearProgressIndicator();
-                        },
-                      ),
-                    ],
-                  )),
-            ),
+                                            ),
+                                          ))
+                                    ],
+                                  );
+                                })),
+                          );
+                        }
+                        return LinearProgressIndicator();
+                      },
+                    ),
+                  ],
+                )),
             // bottomNavigationBar:
           );
   }
