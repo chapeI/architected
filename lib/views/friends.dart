@@ -1,25 +1,32 @@
 import 'package:architectured/models/user_model.dart';
+import 'package:architectured/services/auth_service.dart';
 import 'package:architectured/services/firestore_service.dart';
 import 'package:architectured/views/auth_views/sign_out.dart';
 import 'package:flutter/material.dart';
+import 'package:rxdart/rxdart.dart';
 
 class Friends extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<UserModel>>(
+    return StreamBuilder(
+        // stream: CombineLatestStream.list([
+        //   FirestoreService().friends,
+        // ]),
         stream: FirestoreService().friends,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            final friends = snapshot.data;
+            final List<UserModel>? friends = snapshot.data as List<UserModel>;
             return Scaffold(
               appBar: AppBar(
+                  title: Text(AuthService().me.uid!),
                   automaticallyImplyLeading: false,
                   actions: [AddFriendButton(), SignOut()]),
               body: ListView.builder(
                   itemCount: friends!.length,
                   itemBuilder: (context, index) {
                     return ListTile(
-                      title: Text(friends[index].email!),
+                      title: Text(friends[index].uid!),
+                      subtitle: Text(friends[index].chatsID.toString()),
                       leading: CircleAvatar(
                           backgroundImage:
                               NetworkImage(friends[index].avatarUrl!)),

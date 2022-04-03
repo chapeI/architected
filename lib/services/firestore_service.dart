@@ -8,14 +8,14 @@ class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final _authService = getIt.get<AuthService>();
   final _usersCollection = FirebaseFirestore.instance.collection('users');
-  CollectionReference get friendsCollection {
-    final me = _authService.me;
-    return _usersCollection.doc(me.uid).collection('friends');
-  }
 
-  // eventChatService.dart
+  // turn this into eventChatService.dart at some point
   CollectionReference chatCollection(String docid) {
     return _firestore.collection('chats').doc(docid).collection('chat');
+  }
+
+  CollectionReference eventCollection(doc) {
+    return _firestore.collection('chats').doc(doc).collection('event');
   }
 
   Stream<List<ChatModel>> getChats(UserModel friend) {
@@ -43,7 +43,7 @@ class FirestoreService {
       'timestamp': FieldValue.serverTimestamp()
     });
   }
-  // chat_service.dart
+  // eventchat_service.dart end
 
   void addNewlyRegisteredToUsersCollection(UserModel user) async {
     _firestore.collection('users').doc(user.uid).set({
@@ -79,12 +79,6 @@ class FirestoreService {
           'avatarUrl': me.avatarUrl
         });
       });
-    });
-  }
-
-  Stream<List<UserModel>> get friends {
-    return friendsCollection.snapshots().map((snapshot) {
-      return friendsList(snapshot);
     });
   }
 
@@ -129,14 +123,24 @@ class FirestoreService {
         .toList();
   }
 
+  CollectionReference get friendsCollection {
+    final me = _authService.me;
+    return _usersCollection.doc(me.uid).collection('friends');
+  }
+
+  Stream<List<UserModel>> get friends {
+    return friendsCollection.snapshots().map((snapshot) {
+      return friendsList(snapshot);
+    });
+  }
+
   List<UserModel> friendsList(QuerySnapshot snapshot) {
-    DocumentReference debugDoc = _usersCollection.doc('debug doc');
     return snapshot.docs
         .map(
           (doc) => UserModel(
               email: doc['email'],
               uid: doc.id,
-              chatsID: doc['chatsID'] ?? doc,
+              chatsID: doc['chatsID'] ?? 'badChatsid',
               avatarUrl: doc['avatarUrl'] ?? 'bad avatarUrl'),
         )
         .toList();
