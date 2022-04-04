@@ -14,7 +14,6 @@ class Chat extends StatefulWidget {
 }
 
 class _ChatState extends State<Chat> {
-  // keyboard config
   final _focusNode = FocusNode();
 
   KeyboardActionsConfig _buildConfig(BuildContext context) {
@@ -71,7 +70,9 @@ class _ChatState extends State<Chat> {
   final _firestore = FirestoreService();
   final _auth = AuthService();
   final _controller = TextEditingController();
+  final _eventController = TextEditingController();
   String message = '';
+  String eventName = '';
   var panelOpen = true;
   var event = false;
   @override
@@ -159,143 +160,179 @@ class _ChatState extends State<Chat> {
                 maxHeight: MediaQuery.of(context).size.height,
                 minHeight: 50,
                 body: GoogleMaps(),
-                panel: Column(
-                  children: [
-                    Container(
-                      color: event ? Colors.blue[50] : null,
-                      height: 50,
-                      child: Column(
+                panel: StreamBuilder<String>(
+                    stream: _firestore.events(friend.chatsID!),
+                    builder: (context, snapshot) {
+                      var data = snapshot.data;
+                      return Column(
                         children: [
-                          Expanded(
-                            child: Row(
+                          Container(
+                            color: event ? Colors.blue[50] : null,
+                            height: 50,
+                            child: Column(
                               children: [
-                                event
-                                    ? IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            event = !event;
-                                          });
-                                        },
-                                        icon: Icon(
-                                          Icons.highlight_off,
-                                        ))
-                                    : IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            event = !event;
-                                          });
-                                        },
-                                        icon: Icon(
-                                          Icons.control_point,
-                                        )),
-                                event
-                                    ? Expanded(child: TextField())
-                                    : Container(),
-                                // SizedBox(
-                                //   width: 15,
-                                // ),
-                                // CircleAvatar(
-                                //   radius: 18,
-                                //   backgroundImage:
-                                //       NetworkImage(friend.avatarUrl!),
-                                // ),
-                                // SizedBox(
-                                //   width: 10,
-                                // ),
-                                // event
-                                //     ? Text(
-                                //         '${friend.email!} @ AB7DS',
-                                //       )
-                                //     : Text(friend.email!),
-                                // Spacer(),
-                                // event
-                                //     ? IconButton(
-                                //         onPressed: null,
-                                //         icon: Icon(Icons.more_time))
-                                //     : Container(),
-                                // event
-                                //     ? IconButton(
-                                //         onPressed: null,
-                                //         icon: Icon(Icons.add_location_alt))
-                                //     : Container(),
-                                // event
-                                //     ? PopupMenuButton(
-                                //         itemBuilder: (context) => [
-                                //               PopupMenuItem(
-                                //                   child: Text('add friend')),
-                                //               PopupMenuItem(
-                                //                   child:
-                                //                       Text('go full screen')),
-                                //             ])
-                                //     : Container(),
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      event
+                                          ? IconButton(
+                                              onPressed: () {
+                                                setState(() {
+                                                  event = !event;
+                                                });
+                                              },
+                                              icon: Icon(
+                                                Icons.highlight_off,
+                                              ))
+                                          : IconButton(
+                                              onPressed: () {
+                                                setState(() {
+                                                  event = !event;
+                                                });
+                                              },
+                                              icon: Icon(
+                                                Icons.control_point,
+                                              )),
+                                      event
+                                          ? IconButton(
+                                              onPressed: () {
+                                                _firestore.addEvent(
+                                                    friend.chatsID!, eventName);
+                                                _eventController.clear();
+                                              },
+                                              icon: Icon(Icons.sync))
+                                          : Container(),
+                                      event
+                                          ? Expanded(
+                                              child: TextField(
+                                              controller: _eventController,
+                                              onChanged: (val) {
+                                                eventName = val;
+                                              },
+                                              decoration:
+                                                  InputDecoration.collapsed(
+                                                      hintText: data),
+                                            ))
+                                          : Container(),
+                                      // SizedBox(
+                                      //   width: 15,
+                                      // ),
+                                      // CircleAvatar(
+                                      //   radius: 18,
+                                      //   backgroundImage:
+                                      //       NetworkImage(friend.avatarUrl!),
+                                      // ),
+                                      // SizedBox(
+                                      //   width: 10,
+                                      // ),
+                                      // event
+                                      //     ? Text(
+                                      //         '${friend.email!} @ AB7DS',
+                                      //       )
+                                      //     : Text(friend.email!),
+                                      // Spacer(),
+                                      // event
+                                      //     ? IconButton(
+                                      //         onPressed: null,
+                                      //         icon: Icon(Icons.more_time))
+                                      //     : Container(),
+                                      // event
+                                      //     ? IconButton(
+                                      //         onPressed: null,
+                                      //         icon: Icon(Icons.add_location_alt))
+                                      //     : Container(),
+                                      // event
+                                      //     ? PopupMenuButton(
+                                      //         itemBuilder: (context) => [
+                                      //               PopupMenuItem(
+                                      //                   child: Text('add friend')),
+                                      //               PopupMenuItem(
+                                      //                   child:
+                                      //                       Text('go full screen')),
+                                      //             ])
+                                      //     : Container(),
+                                    ],
+                                  ),
+                                ),
                               ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                    StreamBuilder<List<ChatModel>>(
-                      stream: _firestore.getChats(friend),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          var data = snapshot.data;
-                          return Expanded(
-                            child: ListView.builder(
-                                // reverse: true,
-                                itemCount: data!.length,
-                                itemBuilder: ((context, index) {
-                                  return Row(
-                                    mainAxisAlignment:
-                                        data[index].uid == _auth.me.uid
-                                            ? MainAxisAlignment.end
-                                            : MainAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 10, vertical: 2),
-                                          // color: Colors.blue[100],
-                                          child: Material(
-                                            color: Colors.blue,
-                                            borderRadius: data[index].uid ==
-                                                    _auth.me.uid
-                                                ? BorderRadius.only(
-                                                    bottomLeft:
-                                                        Radius.circular(5),
-                                                    bottomRight:
-                                                        Radius.circular(1),
-                                                    topLeft: Radius.circular(5),
-                                                    topRight:
-                                                        Radius.circular(5),
-                                                  )
-                                                : BorderRadius.only(
-                                                    bottomLeft:
-                                                        Radius.circular(1),
-                                                    bottomRight:
-                                                        Radius.circular(5),
-                                                    topLeft: Radius.circular(5),
-                                                    topRight:
-                                                        Radius.circular(5),
+                          StreamBuilder<List<ChatModel>>(
+                            stream: _firestore.getChats(friend),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                var data = snapshot.data;
+                                return Expanded(
+                                  child: ListView.builder(
+                                      // reverse: true,
+                                      itemCount: data!.length,
+                                      itemBuilder: ((context, index) {
+                                        return Row(
+                                          mainAxisAlignment:
+                                              data[index].uid == _auth.me.uid
+                                                  ? MainAxisAlignment.end
+                                                  : MainAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 10,
+                                                    vertical: 2),
+                                                // color: Colors.blue[100],
+                                                child: Material(
+                                                  color: Colors.blue,
+                                                  borderRadius: data[index]
+                                                              .uid ==
+                                                          _auth.me.uid
+                                                      ? BorderRadius.only(
+                                                          bottomLeft:
+                                                              Radius.circular(
+                                                                  5),
+                                                          bottomRight:
+                                                              Radius.circular(
+                                                                  1),
+                                                          topLeft:
+                                                              Radius.circular(
+                                                                  5),
+                                                          topRight:
+                                                              Radius.circular(
+                                                                  5),
+                                                        )
+                                                      : BorderRadius.only(
+                                                          bottomLeft:
+                                                              Radius.circular(
+                                                                  1),
+                                                          bottomRight:
+                                                              Radius.circular(
+                                                                  5),
+                                                          topLeft:
+                                                              Radius.circular(
+                                                                  5),
+                                                          topRight:
+                                                              Radius.circular(
+                                                                  5),
+                                                        ),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Text(
+                                                      data[index].text,
+                                                      style: TextStyle(
+                                                          color: Colors.white),
+                                                    ),
                                                   ),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Text(
-                                                data[index].text,
-                                                style: TextStyle(
-                                                    color: Colors.white),
-                                              ),
-                                            ),
-                                          ))
-                                    ],
-                                  );
-                                })),
-                          );
-                        }
-                        return LinearProgressIndicator();
-                      },
-                    ),
-                  ],
-                )),
+                                                ))
+                                          ],
+                                        );
+                                      })),
+                                );
+                              }
+                              return LinearProgressIndicator();
+                            },
+                          ),
+                        ],
+                      );
+                    })),
             // bottomNavigationBar:
           );
   }

@@ -14,10 +14,6 @@ class FirestoreService {
     return _firestore.collection('chats').doc(docid).collection('chat');
   }
 
-  CollectionReference eventCollection() {
-    return _firestore.collection('chats'); // yup poor naming
-  }
-
   Stream<List<ChatModel>> getChats(UserModel friend) {
     return chatCollection(friend.chatsID!.id)
         .orderBy('timestamp', descending: true)
@@ -148,6 +144,21 @@ class FirestoreService {
 
   // anoops way, time to do it properly
   Future<void> addEvent(DocumentReference docRef, eventName) async {
-    return eventCollection().doc(docRef.id).update({'event': eventName});
+    return await eventCollection().doc(docRef.id).update({'event': eventName});
+  }
+
+  CollectionReference eventCollection() {
+    return _firestore.collection('chats'); // yup poor naming
+  }
+
+// returning Stream<EventModel>
+  Stream<String> events(DocumentReference doc) {
+    return eventCollection().doc(doc.id).snapshots().map((snapshot) {
+      return _events(snapshot);
+    });
+  }
+
+  String _events(DocumentSnapshot snapshot) {
+    return snapshot['event'] ?? 'NOEVENT';
   }
 }
