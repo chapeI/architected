@@ -14,8 +14,8 @@ class FirestoreService {
     return _firestore.collection('chats').doc(docid).collection('chat');
   }
 
-  CollectionReference eventCollection(doc) {
-    return _firestore.collection('chats').doc(doc).collection('event');
+  CollectionReference eventCollection() {
+    return _firestore.collection('chats'); // yup poor naming
   }
 
   Stream<List<ChatModel>> getChats(UserModel friend) {
@@ -144,5 +144,10 @@ class FirestoreService {
               avatarUrl: doc['avatarUrl'] ?? 'bad avatarUrl'),
         )
         .toList();
+  }
+
+  // anoops way, time to do it properly
+  Future<void> addEvent(DocumentReference docRef, eventName) async {
+    return eventCollection().doc(docRef.id).update({'event': eventName});
   }
 }

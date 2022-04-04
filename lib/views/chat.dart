@@ -169,43 +169,6 @@ class _ChatState extends State<Chat> {
                           Expanded(
                             child: Row(
                               children: [
-                                SizedBox(
-                                  width: 15,
-                                ),
-                                CircleAvatar(
-                                  radius: 18,
-                                  backgroundImage:
-                                      NetworkImage(friend.avatarUrl!),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                                event
-                                    ? Text(
-                                        '${friend.email!} @ AB7DS',
-                                      )
-                                    : Text(friend.email!),
-                                Spacer(),
-                                event
-                                    ? IconButton(
-                                        onPressed: null,
-                                        icon: Icon(Icons.more_time))
-                                    : Container(),
-                                event
-                                    ? IconButton(
-                                        onPressed: null,
-                                        icon: Icon(Icons.add_location_alt))
-                                    : Container(),
-                                event
-                                    ? PopupMenuButton(
-                                        itemBuilder: (context) => [
-                                              PopupMenuItem(
-                                                  child: Text('add friend')),
-                                              PopupMenuItem(
-                                                  child:
-                                                      Text('go full screen')),
-                                            ])
-                                    : Container(),
                                 event
                                     ? IconButton(
                                         onPressed: () {
@@ -225,6 +188,46 @@ class _ChatState extends State<Chat> {
                                         icon: Icon(
                                           Icons.control_point,
                                         )),
+                                event
+                                    ? Expanded(child: TextField())
+                                    : Container(),
+                                // SizedBox(
+                                //   width: 15,
+                                // ),
+                                // CircleAvatar(
+                                //   radius: 18,
+                                //   backgroundImage:
+                                //       NetworkImage(friend.avatarUrl!),
+                                // ),
+                                // SizedBox(
+                                //   width: 10,
+                                // ),
+                                // event
+                                //     ? Text(
+                                //         '${friend.email!} @ AB7DS',
+                                //       )
+                                //     : Text(friend.email!),
+                                // Spacer(),
+                                // event
+                                //     ? IconButton(
+                                //         onPressed: null,
+                                //         icon: Icon(Icons.more_time))
+                                //     : Container(),
+                                // event
+                                //     ? IconButton(
+                                //         onPressed: null,
+                                //         icon: Icon(Icons.add_location_alt))
+                                //     : Container(),
+                                // event
+                                //     ? PopupMenuButton(
+                                //         itemBuilder: (context) => [
+                                //               PopupMenuItem(
+                                //                   child: Text('add friend')),
+                                //               PopupMenuItem(
+                                //                   child:
+                                //                       Text('go full screen')),
+                                //             ])
+                                //     : Container(),
                               ],
                             ),
                           ),
