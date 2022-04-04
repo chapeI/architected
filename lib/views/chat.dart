@@ -73,6 +73,7 @@ class _ChatState extends State<Chat> {
   final _controller = TextEditingController();
   String message = '';
   var panelOpen = true;
+  var event = false;
   @override
   Widget build(BuildContext context) {
     return friend.uid == null
@@ -107,6 +108,18 @@ class _ChatState extends State<Chat> {
                   config: _buildConfig(context),
                   child: Row(
                     children: [
+                      IconButton(
+                          onPressed: () async {
+                            final result =
+                                await Navigator.pushNamed(context, '/friends');
+                            setState(() {
+                              friend = result as UserModel;
+                            });
+                          },
+                          icon: Icon(
+                            Icons.arrow_back,
+                            color: Colors.blue[100],
+                          )),
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.only(left: 18.0),
@@ -121,13 +134,10 @@ class _ChatState extends State<Chat> {
                             cursorWidth: 8,
                             style: TextStyle(color: Colors.white),
                             decoration: InputDecoration(
-                                enabledBorder: UnderlineInputBorder(
-                                    borderSide:
-                                        BorderSide(color: Colors.blueAccent)),
                                 hintStyle: TextStyle(color: Colors.blue[200]),
                                 hintText: panelOpen
-                                    ? '   click here to message'
-                                    : '   click here to search on map'),
+                                    ? '   tap here to message'
+                                    : '   tap here to search map (NEXT VERSION)'),
                           ),
                         ),
                       ),
@@ -146,27 +156,22 @@ class _ChatState extends State<Chat> {
                   });
                 },
                 defaultPanelState: PanelState.OPEN,
-                maxHeight: MediaQuery.of(context).size.height - 100,
+                maxHeight: MediaQuery.of(context).size.height,
                 minHeight: 50,
                 body: GoogleMaps(),
                 panel: Column(
                   children: [
                     Container(
+                      color: event ? Colors.blue[50] : null,
                       height: 50,
                       child: Column(
                         children: [
                           Expanded(
                             child: Row(
                               children: [
-                                IconButton(
-                                    onPressed: () async {
-                                      final result = await Navigator.pushNamed(
-                                          context, '/friends');
-                                      setState(() {
-                                        friend = result as UserModel;
-                                      });
-                                    },
-                                    icon: Icon(Icons.arrow_back)),
+                                SizedBox(
+                                  width: 15,
+                                ),
                                 CircleAvatar(
                                   radius: 18,
                                   backgroundImage:
@@ -175,8 +180,51 @@ class _ChatState extends State<Chat> {
                                 SizedBox(
                                   width: 10,
                                 ),
-                                Text(friend.email!),
+                                event
+                                    ? Text(
+                                        '${friend.email!} @ AB7DS',
+                                      )
+                                    : Text(friend.email!),
                                 Spacer(),
+                                event
+                                    ? IconButton(
+                                        onPressed: null,
+                                        icon: Icon(Icons.more_time))
+                                    : Container(),
+                                event
+                                    ? IconButton(
+                                        onPressed: null,
+                                        icon: Icon(Icons.add_location_alt))
+                                    : Container(),
+                                event
+                                    ? PopupMenuButton(
+                                        itemBuilder: (context) => [
+                                              PopupMenuItem(
+                                                  child: Text('add friend')),
+                                              PopupMenuItem(
+                                                  child:
+                                                      Text('go full screen')),
+                                            ])
+                                    : Container(),
+                                event
+                                    ? IconButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            event = !event;
+                                          });
+                                        },
+                                        icon: Icon(
+                                          Icons.highlight_off,
+                                        ))
+                                    : IconButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            event = !event;
+                                          });
+                                        },
+                                        icon: Icon(
+                                          Icons.control_point,
+                                        )),
                               ],
                             ),
                           ),

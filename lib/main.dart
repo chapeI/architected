@@ -1,4 +1,3 @@
-import 'package:architectured/experimental/add_event.dart';
 import 'package:architectured/experimental/sand_box.dart';
 import 'package:architectured/services/auth_service.dart';
 import 'package:architectured/services/singletons.dart';
@@ -32,7 +31,6 @@ class MyApp extends StatelessWidget {
           initialRoute: '/wrapper',
           routes: {
             // '/': (context) => debug(), // TODO: make a debugWidget
-            '/addEvent': (context) => AddEvent(), // EXPERIMENTAL DELETE AFTER
             '/wrapper': (context) => Wrapper(),
             '/chat': (context) => Chat(),
             '/sandbox': (context) => SandBox()
