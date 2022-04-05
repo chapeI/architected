@@ -131,26 +131,17 @@ class _ChatState extends State<Chat> {
   Widget build(BuildContext context) {
     return friend.uid == null
         ? Scaffold(
-            appBar: AppBar(title: Text('pick a chat')),
-            body: Column(
-              // ignore: prefer_const_literals_to_create_immutables
-              children: [
-                Text(
-                    'welcome to chatsdev, a chat app in development, will always be in development. we are always looking to roll out new features'),
-                Text('recent updates: chat works, sign up works, '),
-                SizedBox(
-                  height: 20,
-                ),
-                ElevatedButton(
-                    onPressed: () async {
-                      final result =
-                          await Navigator.pushNamed(context, '/friends');
-                      setState(() {
-                        friend = result as UserModel;
-                      });
-                    },
-                    child: Text('go to my chats'))
-              ],
+            appBar: AppBar(title: Text('chatsdev v1.0')),
+            body: Center(
+              child: OutlinedButton(
+                  onPressed: () async {
+                    final result =
+                        await Navigator.pushNamed(context, '/friends');
+                    setState(() {
+                      friend = result as UserModel;
+                    });
+                  },
+                  child: Text('chats')),
             ),
           )
         : Scaffold(
@@ -171,7 +162,7 @@ class _ChatState extends State<Chat> {
                           },
                           icon: Icon(
                             Icons.arrow_back,
-                            color: Colors.blue[100],
+                            color: Colors.white,
                           )),
                       Expanded(
                         child: Padding(
@@ -211,7 +202,7 @@ class _ChatState extends State<Chat> {
                   },
                   defaultPanelState: PanelState.OPEN,
                   maxHeight: MediaQuery.of(context).size.height,
-                  minHeight: 50,
+                  minHeight: 60,
                   body: GoogleMaps(),
                   panel: StreamBuilder<String>(
                       stream: _firestore.events(friend.chatsID!),
@@ -219,6 +210,68 @@ class _ChatState extends State<Chat> {
                         var data = snapshot.data;
                         return Column(
                           children: [
+                            AppBar(
+                              title: TextField(
+                                decoration:
+                                    InputDecoration(hintText: 'old event name'),
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              backgroundColor: Colors.blue[200],
+                              actions: [
+                                IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(Icons.more_time)),
+                                IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(Icons.add_location_alt)),
+                                IconButton(
+                                    onPressed: () {}, icon: Icon(Icons.delete)),
+                                IconButton(
+                                    onPressed: () {}, icon: Icon(Icons.check)),
+                              ],
+                            ),
+                            ListTile(
+                                dense: true,
+                                leading: CircleAvatar(
+                                  backgroundImage:
+                                      NetworkImage(friend.avatarUrl!),
+                                ),
+                                title: Row(
+                                  children: [
+                                    Text(
+                                        '${friend.uid!.substring(0, 8)} w Angelo'),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Icon(
+                                      Icons.edit,
+                                      color: Colors.grey,
+                                      size: 17,
+                                    ),
+                                  ],
+                                ),
+                                subtitle: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Icon(
+                                      Icons.location_on,
+                                      color: Colors.purple,
+                                      size: 17,
+                                    ),
+                                    Text('AC Center @ 6PM'),
+                                  ],
+                                ),
+                                trailing: IconButton(
+                                  onPressed: null,
+                                  icon: Icon(
+                                    Icons.check_outlined,
+                                    color: Colors.green,
+                                  ),
+                                )),
+                            SizedBox(
+                              height: 100,
+                              child: Text('sandbox'),
+                            ),
                             Container(
                               color: event ? Colors.blue[50] : null,
                               height: 50,
@@ -380,7 +433,6 @@ class _ChatState extends State<Chat> {
                         );
                       })),
             ),
-            // bottomNavigationBar:
           );
   }
 }
