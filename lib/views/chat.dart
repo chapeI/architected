@@ -198,10 +198,10 @@ class _ChatState extends State<Chat> {
                   maxHeight: MediaQuery.of(context).size.height,
                   minHeight: 60,
                   body: GoogleMaps(),
-                  panel: StreamBuilder<String>(
+                  panel: StreamBuilder<String?>(
                       stream: _firestore.events(friend.chatsID!),
                       builder: (context, snapshot) {
-                        var data = snapshot.data;
+                        var eventData = snapshot.data;
                         return Column(
                           children: [
                             AppBar(
@@ -235,7 +235,7 @@ class _ChatState extends State<Chat> {
                               title: Row(
                                 children: [
                                   Text(
-                                      '${friend.uid!.substring(0, 8)} w Angelo'),
+                                      '${friend.chatsID!.id.substring(0, 8)} w Angelo'),
                                   SizedBox(
                                     width: 3,
                                   ),
@@ -247,17 +247,20 @@ class _ChatState extends State<Chat> {
                                   ),
                                 ],
                               ),
-                              subtitle: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Icon(
-                                    Icons.location_on,
-                                    color: Colors.purple,
-                                    size: 17,
-                                  ),
-                                  Text('AC Center @ 6PM'),
-                                ],
-                              ),
+                              subtitle: eventData == null
+                                  ? null
+                                  : Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Icon(
+                                          Icons.location_on,
+                                          color: Colors.purple,
+                                          size: 17,
+                                        ),
+                                        Text(eventData),
+                                      ],
+                                    ),
                               // trailing: IconButton(
                               //   onPressed: null,
                               //   icon: Icon(
@@ -307,7 +310,7 @@ class _ChatState extends State<Chat> {
                                                 },
                                                 decoration:
                                                     InputDecoration.collapsed(
-                                                        hintText: data),
+                                                        hintText: eventData),
                                               ))
                                             : Container(),
                                         // SizedBox(

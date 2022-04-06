@@ -1,5 +1,4 @@
 import 'package:architectured/experimental/sand_box.dart';
-import 'package:architectured/experimental/streaming.dart';
 import 'package:architectured/services/auth_service.dart';
 import 'package:architectured/services/singletons.dart';
 import 'package:architectured/views/friends.dart';
@@ -29,10 +28,9 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          initialRoute: '/stream',
+          initialRoute: '/wrapper',
           routes: {
             // '/': (context) => debug(), // TODO: make a debugWidget
-            '/stream': (context) => Streaming(),
             '/wrapper': (context) => Wrapper(),
             '/chat': (context) => Chat(),
             '/sandbox': (context) => SandBox()

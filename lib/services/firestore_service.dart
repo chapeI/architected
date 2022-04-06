@@ -152,13 +152,13 @@ class FirestoreService {
   }
 
 // returning Stream<EventModel>
-  Stream<String> events(DocumentReference doc) {
+  Stream<String?> events(DocumentReference doc) {
     return eventCollection().doc(doc.id).snapshots().map((snapshot) {
       return _events(snapshot);
     });
   }
 
-  String _events(DocumentSnapshot snapshot) {
-    return snapshot['event'] ?? 'NOEVENT';
+  String? _events(DocumentSnapshot snapshot) {
+    return snapshot['event'];
   }
 }
