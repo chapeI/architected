@@ -152,18 +152,12 @@ class _ChatState extends State<Chat> {
                   config: _buildConfig(context),
                   child: Row(
                     children: [
-                      IconButton(
-                          onPressed: () async {
-                            final result =
-                                await Navigator.pushNamed(context, '/friends');
-                            setState(() {
-                              friend = result as UserModel;
-                            });
-                          },
-                          icon: Icon(
-                            Icons.arrow_back,
-                            color: Colors.white,
-                          )),
+                      // IconButton(
+                      //     onPressed: null,
+                      //     icon: Icon(
+                      //       Icons.arrow_back,
+                      //       color: Colors.white,
+                      //     )),
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.only(left: 18.0),
@@ -212,8 +206,10 @@ class _ChatState extends State<Chat> {
                           children: [
                             AppBar(
                               title: TextField(
-                                decoration:
-                                    InputDecoration(hintText: 'old event name'),
+                                decoration: InputDecoration(
+                                    hintStyle:
+                                        TextStyle(color: Colors.blue[50]),
+                                    hintText: '    old event name'),
                                 style: TextStyle(color: Colors.white),
                               ),
                               backgroundColor: Colors.blue[200],
@@ -231,43 +227,45 @@ class _ChatState extends State<Chat> {
                               ],
                             ),
                             ListTile(
-                                dense: true,
-                                leading: CircleAvatar(
-                                  backgroundImage:
-                                      NetworkImage(friend.avatarUrl!),
-                                ),
-                                title: Row(
-                                  children: [
-                                    Text(
-                                        '${friend.uid!.substring(0, 8)} w Angelo'),
-                                    SizedBox(
-                                      width: 5,
-                                    ),
-                                    Icon(
-                                      Icons.edit,
-                                      color: Colors.grey,
-                                      size: 17,
-                                    ),
-                                  ],
-                                ),
-                                subtitle: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Icon(
-                                      Icons.location_on,
-                                      color: Colors.purple,
-                                      size: 17,
-                                    ),
-                                    Text('AC Center @ 6PM'),
-                                  ],
-                                ),
-                                trailing: IconButton(
-                                  onPressed: null,
-                                  icon: Icon(
-                                    Icons.check_outlined,
-                                    color: Colors.green,
+                              dense: true,
+                              leading: CircleAvatar(
+                                backgroundImage:
+                                    NetworkImage(friend.avatarUrl!),
+                              ),
+                              title: Row(
+                                children: [
+                                  Text(
+                                      '${friend.uid!.substring(0, 8)} w Angelo'),
+                                  SizedBox(
+                                    width: 3,
                                   ),
-                                )),
+                                  Icon(
+                                    // should only see editButton if you're the one who created event
+                                    Icons.edit,
+                                    color: Colors.grey,
+                                    size: 13,
+                                  ),
+                                ],
+                              ),
+                              subtitle: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Icon(
+                                    Icons.location_on,
+                                    color: Colors.purple,
+                                    size: 17,
+                                  ),
+                                  Text('AC Center @ 6PM'),
+                                ],
+                              ),
+                              // trailing: IconButton(
+                              //   onPressed: null,
+                              //   icon: Icon(
+                              //     Icons.check_outlined,
+                              //     color: Colors.green,
+                              //   ),
+                              // )
+                            ),
                             SizedBox(
                               height: 100,
                               child: Text('sandbox'),
@@ -432,6 +430,15 @@ class _ChatState extends State<Chat> {
                           ],
                         );
                       })),
+            ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () async {
+                final result = await Navigator.pushNamed(context, '/friends');
+                setState(() {
+                  friend = result as UserModel;
+                });
+              },
+              child: Icon(Icons.message),
             ),
           );
   }
