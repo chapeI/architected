@@ -7,7 +7,7 @@ class Streaming extends StatelessWidget {
       appBar: AppBar(
         title: Text('streaming'),
       ),
-      body: Text('really'),
+      body: Text('test'),
     );
   }
 }
