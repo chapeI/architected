@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors
 import 'package:architectured/models/chat_model.dart';
+import 'package:architectured/models/event_model.dart';
 import 'package:architectured/models/user_model.dart';
 import 'package:architectured/services/auth_service.dart';
 import 'package:architectured/services/firestore_service.dart';
@@ -198,10 +199,10 @@ class _ChatState extends State<Chat> {
                   maxHeight: MediaQuery.of(context).size.height,
                   minHeight: 60,
                   body: GoogleMaps(),
-                  panel: StreamBuilder<String?>(
+                  panel: StreamBuilder<EventModel?>(
                       stream: _firestore.events(friend.chatsID!),
                       builder: (context, snapshot) {
-                        var eventData = snapshot.data;
+                        EventModel? eventData = snapshot.data;
                         return Column(
                           children: [
                             AppBar(
@@ -227,7 +228,6 @@ class _ChatState extends State<Chat> {
                               ],
                             ),
                             ListTile(
-                              dense: true,
                               leading: CircleAvatar(
                                 backgroundImage:
                                     NetworkImage(friend.avatarUrl!),
@@ -235,7 +235,7 @@ class _ChatState extends State<Chat> {
                               title: Row(
                                 children: [
                                   Text(
-                                      '${friend.chatsID!.id.substring(0, 8)} w Angelo'),
+                                      '${friend.chatsID!.id.substring(0, 8)} w ${friend.email!.substring(4)}'),
                                   SizedBox(
                                     width: 3,
                                   ),
@@ -253,12 +253,14 @@ class _ChatState extends State<Chat> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Icon(
-                                          Icons.location_on,
-                                          color: Colors.purple,
-                                          size: 17,
-                                        ),
-                                        Text(eventData),
+                                        // Icon(
+                                        //   Icons.location_on,
+                                        //   color: Colors.purple,
+                                        //   size: 17,
+                                        // ),
+                                        eventData.name == null
+                                            ? Container()
+                                            : Text(eventData.name!)
                                       ],
                                     ),
                               // trailing: IconButton(
@@ -268,6 +270,46 @@ class _ChatState extends State<Chat> {
                               //     color: Colors.green,
                               //   ),
                               // )
+                            ),
+                            Divider(),
+                            ListTile(
+                              title: Text(friend.email!.substring(4)),
+                              leading: CircleAvatar(
+                                backgroundImage:
+                                    NetworkImage(friend.avatarUrl!),
+                              ),
+                            ),
+                            ListTile(
+                              title: Row(
+                                children: [
+                                  Text('${eventData!.name} with '),
+                                  SizedBox(
+                                    width: 3,
+                                  ),
+                                  CircleAvatar(
+                                    radius: 8,
+                                    backgroundImage:
+                                        NetworkImage(friend.avatarUrl!),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            ListTile(
+                              subtitle: Text('AMC Center @ 4:00PM'),
+                              title: Row(
+                                children: [
+                                  Text('${eventData!.name} with '),
+                                  SizedBox(
+                                    width: 3,
+                                  ),
+                                  CircleAvatar(
+                                    radius: 7,
+                                    backgroundImage:
+                                        NetworkImage(friend.avatarUrl!),
+                                  ),
+                                  Text(' ${friend.email!.substring(4)}')
+                                ],
+                              ),
                             ),
                             SizedBox(
                               height: 100,
@@ -310,36 +352,10 @@ class _ChatState extends State<Chat> {
                                                 },
                                                 decoration:
                                                     InputDecoration.collapsed(
-                                                        hintText: eventData),
+                                                        hintText:
+                                                            eventData!.name),
                                               ))
                                             : Container(),
-                                        // SizedBox(
-                                        //   width: 15,
-                                        // ),
-                                        // CircleAvatar(
-                                        //   radius: 18,
-                                        //   backgroundImage:
-                                        //       NetworkImage(friend.avatarUrl!),
-                                        // ),
-                                        // SizedBox(
-                                        //   width: 10,
-                                        // ),
-                                        // event
-                                        //     ? Text(
-                                        //         '${friend.email!} @ AB7DS',
-                                        //       )
-                                        //     : Text(friend.email!),
-                                        // Spacer(),
-                                        // event
-                                        //     ? IconButton(
-                                        //         onPressed: null,
-                                        //         icon: Icon(Icons.more_time))
-                                        //     : Container(),
-                                        // event
-                                        //     ? IconButton(
-                                        //         onPressed: null,
-                                        //         icon: Icon(Icons.add_location_alt))
-                                        //     : Container(),
                                         // event
                                         //     ? PopupMenuButton(
                                         //         itemBuilder: (context) => [

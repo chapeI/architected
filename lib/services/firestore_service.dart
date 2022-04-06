@@ -1,4 +1,5 @@
 import 'package:architectured/models/chat_model.dart';
+import 'package:architectured/models/event_model.dart';
 import 'package:architectured/models/user_model.dart';
 import 'package:architectured/services/auth_service.dart';
 import 'package:architectured/services/singletons.dart';
@@ -152,13 +153,14 @@ class FirestoreService {
   }
 
 // returning Stream<EventModel>
-  Stream<String?> events(DocumentReference doc) {
+  Stream<EventModel?> events(DocumentReference doc) {
     return eventCollection().doc(doc.id).snapshots().map((snapshot) {
       return _events(snapshot);
     });
   }
 
-  String? _events(DocumentSnapshot snapshot) {
-    return snapshot['event'];
+  EventModel? _events(DocumentSnapshot snapshot) {
+    return EventModel(
+        name: snapshot['event.name'], location: snapshot['event.location']);
   }
 }
