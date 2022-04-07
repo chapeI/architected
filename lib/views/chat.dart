@@ -166,12 +166,12 @@ class _ChatState extends State<Chat> {
                 maxHeight: MediaQuery.of(context).size.height,
                 minHeight: 65,
                 body: GoogleMaps(),
-                panel: StreamBuilder<EventModel?>(
+                panel: StreamBuilder<String?>(
                     stream: _firestore.events(friend.chatsID!),
                     builder: (context, snapshot) {
-                      EventModel? event = snapshot.data;
+                      String? event = snapshot.data;
                       print('event');
-                      print(event ?? 'null event');
+                      print(event ?? 'actually caught');
                       // print(event!.name);
                       // print(event.time ?? 'actually receing null');
                       return Column(
@@ -179,7 +179,7 @@ class _ChatState extends State<Chat> {
                           ListTile(
                             title: event == null
                                 ? Text(friend.email!.substring(4))
-                                : Text('LETS ${event.name}'),
+                                : Text('LETS ${event}'),
 
                             subtitle: event == null
                                 ? null
