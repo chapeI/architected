@@ -166,13 +166,12 @@ class _ChatState extends State<Chat> {
                 maxHeight: MediaQuery.of(context).size.height,
                 minHeight: 65,
                 body: GoogleMaps(),
-                panel: StreamBuilder<String?>(
+                panel: StreamBuilder<EventModel>(
                     stream: _firestore.events(friend.chatsID!),
                     builder: (context, snapshot) {
-                      String? event = snapshot.data;
+                      EventModel? event = snapshot.data;
                       print('event');
-                      print(
-                          event ?? 'caught if firestore field not set to null');
+                      print(event ?? 'caught on field not existing');
                       // print(event!.name);
                       // print(event.time ?? 'actually receing null');
                       return Column(

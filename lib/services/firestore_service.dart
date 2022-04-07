@@ -161,15 +161,16 @@ class FirestoreService {
   }
 
 // returning Stream<EventModel>
-  Stream<String?> events(DocumentReference doc) {
+  Stream<EventModel> events(DocumentReference doc) {
     return eventCollection.doc(doc.id).snapshots().map((snapshot) {
       // return snapshot['event'];
       return _events(snapshot);
     });
   }
 
-  String? _events(DocumentSnapshot snapshot) {
-    return snapshot['event'] ?? 'this actually doesnt work';
+  EventModel _events(DocumentSnapshot snapshot) {
+    return EventModel(
+        name: snapshot['event'] ?? 'only if explicit doc.event = null');
   }
 
   void addEventTime(DocumentReference doc, String time) {
