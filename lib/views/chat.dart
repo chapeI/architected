@@ -1,4 +1,6 @@
 // ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors
+import 'dart:ffi';
+
 import 'package:architectured/models/chat_model.dart';
 import 'package:architectured/models/event_model.dart';
 import 'package:architectured/models/user_model.dart';
@@ -94,6 +96,31 @@ class _ChatState extends State<Chat> {
             ),
           )
         : Scaffold(
+            floatingActionButton: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                FloatingActionButton(
+                    heroTag: 'goBack',
+                    child: Icon(Icons.arrow_back),
+                    onPressed: () async {
+                      final result =
+                          await Navigator.pushNamed(context, '/friends');
+                      setState(() {
+                        friend = result as UserModel;
+                      });
+                    }),
+                SizedBox(
+                  width: 10,
+                ),
+                FloatingActionButton(
+                  heroTag: 'chat',
+                  onPressed: () {
+                    _focusNode.requestFocus();
+                  },
+                  child: Icon(Icons.message),
+                ),
+              ],
+            ),
             appBar: AppBar(
                 elevation: 0,
                 flexibleSpace: SafeArea(
@@ -116,7 +143,7 @@ class _ChatState extends State<Chat> {
                             decoration: InputDecoration(
                                 hintStyle: TextStyle(color: Colors.blue[200]),
                                 hintText: panelOpen
-                                    ? '   tap here to message'
+                                    ? '   happy chatting!'
                                     : '   map isnt not working yet'),
                           ),
                         ),
@@ -139,16 +166,17 @@ class _ChatState extends State<Chat> {
                 maxHeight: MediaQuery.of(context).size.height,
                 minHeight: 65,
                 body: GoogleMaps(),
-                panel: StreamBuilder<String?>(
+                panel: StreamBuilder<EventModel>(
                     stream: _firestore.events(friend.chatsID!),
                     builder: (context, snapshot) {
-                      String? event = snapshot.data;
-                      print(event);
+                      EventModel? event = snapshot.data;
+                      print('DEBUG');
                       return Column(
                         children: [
                           ListTile(
-                            dense: true,
-                            title: Text(event ?? friend.email!.substring(4)),
+                            title: event == null
+                                ? Text(friend.email!.substring(4))
+                                : Text('LETS ${event.name}'),
                             subtitle: event == null
                                 ? null
                                 : Text(friend.email!.substring(4)),
@@ -185,7 +213,11 @@ class _ChatState extends State<Chat> {
                                                           icon: Icon(Icons
                                                               .add_location_alt)),
                                                       IconButton(
-                                                          onPressed: null,
+                                                          onPressed: () {
+                                                            _firestore.addEventTime(
+                                                                friend.chatsID!,
+                                                                'literally anything');
+                                                          },
                                                           icon: Icon(
                                                               Icons.more_time)),
                                                       IconButton(
@@ -213,11 +245,11 @@ class _ChatState extends State<Chat> {
                                                             },
                                                             controller:
                                                                 _eventController,
-                                                            decoration:
-                                                                InputDecoration(
-                                                                    hintText:
-                                                                        event ??
-                                                                            'make an event name'),
+                                                            decoration: InputDecoration(
+                                                                hintText: event ==
+                                                                        null
+                                                                    ? 'make an event name'
+                                                                    : "edit event name: '${event.name}'"),
                                                           ),
                                                         ),
                                                         IconButton(
@@ -324,15 +356,6 @@ class _ChatState extends State<Chat> {
                         ],
                       );
                     })),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () async {
-                final result = await Navigator.pushNamed(context, '/friends');
-                setState(() {
-                  friend = result as UserModel;
-                });
-              },
-              child: Icon(Icons.message),
-            ),
           );
   }
 }

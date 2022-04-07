@@ -145,33 +145,34 @@ class FirestoreService {
 
   // anoops way, time to do it properly
   Future<void> addEvent(DocumentReference docRef, eventName) async {
-    return await eventCollection().doc(docRef.id).update({'event': eventName});
+    return await eventCollection.doc(docRef.id).update({'event': eventName});
   }
 
-  CollectionReference eventCollection() {
+  CollectionReference get eventCollection {
     return _firestore.collection('chats'); // yup poor naming
   }
 
 // returning Stream<EventModel>
-  Stream<String?> events(DocumentReference doc) {
-    return eventCollection().doc(doc.id).snapshots().map((snapshot) {
-      return snapshot['event'];
-      // _events(snapshot);
+  Stream<EventModel> events(DocumentReference doc) {
+    return eventCollection.doc(doc.id).snapshots().map((snapshot) {
+      // return snapshot['event'];
+      return _events(snapshot);
     });
   }
 
   void deleteEvent(DocumentReference doc) {
-    eventCollection()
+    eventCollection
         .doc(doc.id)
         .update({'event': FieldValue.delete()}).whenComplete(() {
       print('event Deleted');
     });
   }
 
-  // EventModel? _events(DocumentSnapshot snapshot) {
-  //   return EventModel(
-  //       active: snapshot['active'],
-  //       name: snapshot['event.name'],
-  //       location: snapshot['event.location']);
-  // }
+  EventModel _events(DocumentSnapshot snapshot) {
+    return EventModel(name: snapshot['event']);
+  }
+
+  void addEventTime(DocumentReference doc, String time) {
+    eventCollection.doc(doc.id).update({'time': '2:00PM'});
+  }
 }
