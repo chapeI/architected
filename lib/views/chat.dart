@@ -67,58 +67,6 @@ class _ChatState extends State<Chat> {
     );
   }
 
-  final _focusNode2 = FocusNode();
-
-  KeyboardActionsConfig _buildConfig2(BuildContext context) {
-    return KeyboardActionsConfig(
-      // keyboardActionsPlatform: KeyboardActionsPlatform.ALL,
-      // keyboardBarColor: Colors.red[200],
-      // nextFocus: true,
-      actions: [
-        KeyboardActionsItem(
-          focusNode: _focusNode2,
-          toolbarButtons: [
-            //button 1
-            (node) {
-              return GestureDetector(
-                  onTap: () => node.unfocus(),
-                  child: Container(
-                    color: Colors.black,
-                    padding: EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Center(
-                      child: Text(
-                        "CLOSE",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ));
-            },
-            //button 2
-            (node) {
-              return GestureDetector(
-                onTap: () {
-                  _firestore.addEvent(friend.chatsID!, eventName);
-                  _eventController.clear();
-                  return node.unfocus();
-                },
-                child: Container(
-                  color: Colors.purple,
-                  padding: EdgeInsets.symmetric(horizontal: 50.0),
-                  child: Center(
-                    child: Text(
-                      "UPDATE",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ],
-        ),
-      ],
-    );
-  }
-
   var friend = UserModel(email: 'INIT', uid: null);
   final _firestore = FirestoreService();
   final _auth = AuthService();
@@ -127,12 +75,12 @@ class _ChatState extends State<Chat> {
   String message = '';
   String eventName = '';
   var panelOpen = true;
-  var event = false;
+
   @override
   Widget build(BuildContext context) {
     return friend.uid == null
         ? Scaffold(
-            appBar: AppBar(title: Text('chatsdev v1.0')),
+            appBar: AppBar(title: Text('welcome to chatsdev v1.0')),
             body: Center(
               child: OutlinedButton(
                   onPressed: () async {
@@ -142,7 +90,7 @@ class _ChatState extends State<Chat> {
                       friend = result as UserModel;
                     });
                   },
-                  child: Text('chats')),
+                  child: Text('LAUNCH')),
             ),
           )
         : Scaffold(
@@ -153,12 +101,6 @@ class _ChatState extends State<Chat> {
                   config: _buildConfig(context),
                   child: Row(
                     children: [
-                      // IconButton(
-                      //     onPressed: null,
-                      //     icon: Icon(
-                      //       Icons.arrow_back,
-                      //       color: Colors.white,
-                      //     )),
                       Expanded(
                         child: Padding(
                           padding: const EdgeInsets.only(left: 18.0),
@@ -175,281 +117,213 @@ class _ChatState extends State<Chat> {
                                 hintStyle: TextStyle(color: Colors.blue[200]),
                                 hintText: panelOpen
                                     ? '   tap here to message'
-                                    : '   tap here to search map (NEXT VERSION)'),
+                                    : '   map isnt not working yet'),
                           ),
                         ),
                       ),
                     ],
                   ),
                 ))),
-            body: KeyboardActions(
-              config: _buildConfig2(context),
-              child: SlidingUpPanel(
-                  onPanelClosed: () {
-                    setState(() {
-                      panelOpen = false;
-                    });
-                  },
-                  onPanelOpened: () {
-                    setState(() {
-                      panelOpen = true;
-                    });
-                  },
-                  defaultPanelState: PanelState.OPEN,
-                  maxHeight: MediaQuery.of(context).size.height,
-                  minHeight: 60,
-                  body: GoogleMaps(),
-                  panel: StreamBuilder<EventModel?>(
-                      stream: _firestore.events(friend.chatsID!),
-                      builder: (context, snapshot) {
-                        EventModel? eventData = snapshot.data;
-                        return Column(
-                          children: [
-                            AppBar(
-                              title: TextField(
-                                decoration: InputDecoration(
-                                    hintStyle:
-                                        TextStyle(color: Colors.blue[50]),
-                                    hintText: '    old event name'),
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              backgroundColor: Colors.blue[200],
-                              actions: [
-                                IconButton(
-                                    onPressed: () {},
-                                    icon: Icon(Icons.more_time)),
-                                IconButton(
-                                    onPressed: () {},
-                                    icon: Icon(Icons.add_location_alt)),
-                                IconButton(
-                                    onPressed: () {}, icon: Icon(Icons.delete)),
-                                IconButton(
-                                    onPressed: () {}, icon: Icon(Icons.check)),
-                              ],
-                            ),
-                            ListTile(
-                              leading: CircleAvatar(
-                                backgroundImage:
-                                    NetworkImage(friend.avatarUrl!),
-                              ),
-                              title: Row(
-                                children: [
-                                  Text(
-                                      '${friend.chatsID!.id.substring(0, 8)} w ${friend.email!.substring(4)}'),
-                                  SizedBox(
-                                    width: 3,
-                                  ),
-                                  Icon(
-                                    // should only see editButton if you're the one who created event
-                                    Icons.edit,
-                                    color: Colors.grey,
-                                    size: 13,
-                                  ),
-                                ],
-                              ),
-                              subtitle: eventData == null
-                                  ? null
-                                  : Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        // Icon(
-                                        //   Icons.location_on,
-                                        //   color: Colors.purple,
-                                        //   size: 17,
-                                        // ),
-                                        eventData.name == null
-                                            ? Container()
-                                            : Text(eventData.name!)
-                                      ],
-                                    ),
-                              // trailing: IconButton(
-                              //   onPressed: null,
-                              //   icon: Icon(
-                              //     Icons.check_outlined,
-                              //     color: Colors.green,
-                              //   ),
-                              // )
-                            ),
-                            Divider(),
-                            ListTile(
-                              title: Text(friend.email!.substring(4)),
-                              leading: CircleAvatar(
-                                backgroundImage:
-                                    NetworkImage(friend.avatarUrl!),
-                              ),
-                            ),
-                            ListTile(
-                              title: Row(
-                                children: [
-                                  Text('${eventData!.name} with '),
-                                  SizedBox(
-                                    width: 3,
-                                  ),
-                                  CircleAvatar(
-                                    radius: 8,
-                                    backgroundImage:
-                                        NetworkImage(friend.avatarUrl!),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            ListTile(
-                              subtitle: Text('AMC Center @ 4:00PM'),
-                              title: Row(
-                                children: [
-                                  Text('${eventData!.name} with '),
-                                  SizedBox(
-                                    width: 3,
-                                  ),
-                                  CircleAvatar(
-                                    radius: 7,
-                                    backgroundImage:
-                                        NetworkImage(friend.avatarUrl!),
-                                  ),
-                                  Text(' ${friend.email!.substring(4)}')
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              height: 100,
-                              child: Text('sandbox'),
-                            ),
-                            Container(
-                              color: event ? Colors.blue[50] : null,
-                              height: 50,
-                              child: Column(
-                                children: [
-                                  Expanded(
-                                    child: Row(
-                                      children: [
-                                        event
-                                            ? IconButton(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    event = !event;
-                                                  });
-                                                },
-                                                icon: Icon(
-                                                  Icons.highlight_off,
-                                                ))
-                                            : IconButton(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    event = !event;
-                                                  });
-                                                },
-                                                icon: Icon(
-                                                  Icons.control_point,
-                                                )),
-                                        event
-                                            ? Expanded(
-                                                child: TextField(
-                                                focusNode: _focusNode2,
-                                                controller: _eventController,
-                                                onChanged: (val) {
-                                                  eventName = val;
-                                                },
-                                                decoration:
-                                                    InputDecoration.collapsed(
-                                                        hintText:
-                                                            eventData!.name),
-                                              ))
-                                            : Container(),
-                                        // event
-                                        //     ? PopupMenuButton(
-                                        //         itemBuilder: (context) => [
-                                        //               PopupMenuItem(
-                                        //                   child: Text('add friend')),
-                                        //               PopupMenuItem(
-                                        //                   child:
-                                        //                       Text('go full screen')),
-                                        //             ])
-                                        //     : Container(),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            StreamBuilder<List<ChatModel>>(
-                              stream: _firestore.getChats(friend),
-                              builder: (context, snapshot) {
-                                if (snapshot.hasData) {
-                                  var data = snapshot.data;
-                                  return Expanded(
-                                    child: ListView.builder(
-                                        // reverse: true,
-                                        itemCount: data!.length,
-                                        itemBuilder: ((context, index) {
-                                          return Row(
-                                            mainAxisAlignment:
-                                                data[index].uid == _auth.me.uid
-                                                    ? MainAxisAlignment.end
-                                                    : MainAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 10,
-                                                      vertical: 2),
-                                                  // color: Colors.blue[100],
-                                                  child: Material(
-                                                    color: Colors.blue,
-                                                    borderRadius: data[index]
-                                                                .uid ==
-                                                            _auth.me.uid
-                                                        ? BorderRadius.only(
-                                                            bottomLeft:
-                                                                Radius.circular(
-                                                                    5),
-                                                            bottomRight:
-                                                                Radius.circular(
-                                                                    1),
-                                                            topLeft:
-                                                                Radius.circular(
-                                                                    5),
-                                                            topRight:
-                                                                Radius.circular(
-                                                                    5),
-                                                          )
-                                                        : BorderRadius.only(
-                                                            bottomLeft:
-                                                                Radius.circular(
-                                                                    1),
-                                                            bottomRight:
-                                                                Radius.circular(
-                                                                    5),
-                                                            topLeft:
-                                                                Radius.circular(
-                                                                    5),
-                                                            topRight:
-                                                                Radius.circular(
-                                                                    5),
-                                                          ),
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              8.0),
-                                                      child: Text(
-                                                        data[index].text,
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.white),
-                                                      ),
+            body: SlidingUpPanel(
+                onPanelClosed: () {
+                  setState(() {
+                    panelOpen = false;
+                  });
+                },
+                onPanelOpened: () {
+                  setState(() {
+                    panelOpen = true;
+                  });
+                },
+                defaultPanelState: PanelState.OPEN,
+                maxHeight: MediaQuery.of(context).size.height,
+                minHeight: 65,
+                body: GoogleMaps(),
+                panel: StreamBuilder<String?>(
+                    stream: _firestore.events(friend.chatsID!),
+                    builder: (context, snapshot) {
+                      String? event = snapshot.data;
+                      print(event);
+                      return Column(
+                        children: [
+                          ListTile(
+                            dense: true,
+                            title: Text(event ?? friend.email!.substring(4)),
+                            subtitle: event == null
+                                ? null
+                                : Text(friend.email!.substring(4)),
+                            // title: Text(friend.email!.substring(4)),
+                            trailing: IconButton(
+                              icon: event == null
+                                  ? Icon(Icons.add)
+                                  : Icon(Icons.edit),
+                              onPressed: () {
+                                showModalBottomSheet(
+                                    isScrollControlled: true,
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return SingleChildScrollView(
+                                          child: Container(
+                                              padding: EdgeInsets.only(
+                                                  bottom: MediaQuery.of(context)
+                                                      .viewInsets
+                                                      .bottom),
+                                              child: Column(
+                                                children: [
+                                                  AppBar(
+                                                    automaticallyImplyLeading:
+                                                        false,
+                                                    leading: IconButton(
+                                                      icon: Icon(Icons
+                                                          .add_photo_alternate),
+                                                      onPressed: null,
                                                     ),
-                                                  ))
-                                            ],
-                                          );
-                                        })),
-                                  );
-                                }
-                                return LinearProgressIndicator();
+                                                    // title: Text('edit event'),
+                                                    actions: [
+                                                      IconButton(
+                                                          onPressed: null,
+                                                          icon: Icon(Icons
+                                                              .add_location_alt)),
+                                                      IconButton(
+                                                          onPressed: null,
+                                                          icon: Icon(
+                                                              Icons.more_time)),
+                                                      IconButton(
+                                                          onPressed: () {
+                                                            _firestore.deleteEvent(
+                                                                friend
+                                                                    .chatsID!);
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                          icon: Icon(
+                                                              Icons.delete))
+                                                    ],
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Row(
+                                                      children: [
+                                                        Expanded(
+                                                          child: TextField(
+                                                            onChanged: (val) {
+                                                              eventName = val;
+                                                            },
+                                                            controller:
+                                                                _eventController,
+                                                            decoration:
+                                                                InputDecoration(
+                                                                    hintText:
+                                                                        event ??
+                                                                            'make an event name'),
+                                                          ),
+                                                        ),
+                                                        IconButton(
+                                                            onPressed: () {
+                                                              _firestore.addEvent(
+                                                                  friend
+                                                                      .chatsID!,
+                                                                  eventName);
+                                                              _eventController
+                                                                  .clear();
+                                                              Navigator.pop(
+                                                                  context);
+                                                            },
+                                                            icon: Icon(
+                                                              Icons.check,
+                                                              color:
+                                                                  Colors.blue,
+                                                            ))
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              )));
+                                    });
                               },
                             ),
-                          ],
-                        );
-                      })),
-            ),
+                            leading: CircleAvatar(
+                              backgroundImage: NetworkImage(friend.avatarUrl!),
+                            ),
+                          ),
+                          StreamBuilder<List<ChatModel>>(
+                            stream: _firestore.getChats(friend),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                var data = snapshot.data;
+                                return Expanded(
+                                  child: ListView.builder(
+                                      // reverse: true,
+                                      itemCount: data!.length,
+                                      itemBuilder: ((context, index) {
+                                        return Row(
+                                          mainAxisAlignment:
+                                              data[index].uid == _auth.me.uid
+                                                  ? MainAxisAlignment.end
+                                                  : MainAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 10,
+                                                    vertical: 2),
+                                                // color: Colors.blue[100],
+                                                child: Material(
+                                                  color: Colors.blue,
+                                                  borderRadius: data[index]
+                                                              .uid ==
+                                                          _auth.me.uid
+                                                      ? BorderRadius.only(
+                                                          bottomLeft:
+                                                              Radius.circular(
+                                                                  5),
+                                                          bottomRight:
+                                                              Radius.circular(
+                                                                  1),
+                                                          topLeft:
+                                                              Radius.circular(
+                                                                  5),
+                                                          topRight:
+                                                              Radius.circular(
+                                                                  5),
+                                                        )
+                                                      : BorderRadius.only(
+                                                          bottomLeft:
+                                                              Radius.circular(
+                                                                  1),
+                                                          bottomRight:
+                                                              Radius.circular(
+                                                                  5),
+                                                          topLeft:
+                                                              Radius.circular(
+                                                                  5),
+                                                          topRight:
+                                                              Radius.circular(
+                                                                  5),
+                                                        ),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Text(
+                                                      data[index].text,
+                                                      style: TextStyle(
+                                                          color: Colors.white),
+                                                    ),
+                                                  ),
+                                                ))
+                                          ],
+                                        );
+                                      })),
+                                );
+                              }
+                              return LinearProgressIndicator();
+                            },
+                          ),
+                        ],
+                      );
+                    })),
             floatingActionButton: FloatingActionButton(
               onPressed: () async {
                 final result = await Navigator.pushNamed(context, '/friends');

@@ -153,14 +153,25 @@ class FirestoreService {
   }
 
 // returning Stream<EventModel>
-  Stream<EventModel?> events(DocumentReference doc) {
+  Stream<String?> events(DocumentReference doc) {
     return eventCollection().doc(doc.id).snapshots().map((snapshot) {
-      return _events(snapshot);
+      return snapshot['event'];
+      // _events(snapshot);
     });
   }
 
-  EventModel? _events(DocumentSnapshot snapshot) {
-    return EventModel(
-        name: snapshot['event.name'], location: snapshot['event.location']);
+  void deleteEvent(DocumentReference doc) {
+    eventCollection()
+        .doc(doc.id)
+        .update({'event': FieldValue.delete()}).whenComplete(() {
+      print('event Deleted');
+    });
   }
+
+  // EventModel? _events(DocumentSnapshot snapshot) {
+  //   return EventModel(
+  //       active: snapshot['active'],
+  //       name: snapshot['event.name'],
+  //       location: snapshot['event.location']);
+  // }
 }
