@@ -171,7 +171,8 @@ class _ChatState extends State<Chat> {
                     builder: (context, snapshot) {
                       String? event = snapshot.data;
                       print('event');
-                      print(event ?? 'actually caught');
+                      print(
+                          event ?? 'caught if firestore field not set to null');
                       // print(event!.name);
                       // print(event.time ?? 'actually receing null');
                       return Column(

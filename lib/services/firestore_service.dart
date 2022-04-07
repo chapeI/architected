@@ -148,6 +148,14 @@ class FirestoreService {
     return await eventCollection.doc(docRef.id).update({'event': eventName});
   }
 
+  void deleteEvent(DocumentReference doc) {
+    eventCollection
+        .doc(doc.id)
+        .update({'event': FieldValue.delete()}).whenComplete(() {
+      print('event Deleted');
+    });
+  }
+
   CollectionReference get eventCollection {
     return _firestore.collection('chats'); // yup poor naming
   }
@@ -160,16 +168,8 @@ class FirestoreService {
     });
   }
 
-  void deleteEvent(DocumentReference doc) {
-    eventCollection
-        .doc(doc.id)
-        .update({'event': FieldValue.delete()}).whenComplete(() {
-      print('event Deleted');
-    });
-  }
-
   String? _events(DocumentSnapshot snapshot) {
-    return snapshot['event'] ?? 'caught';
+    return snapshot['event'] ?? 'this actually doesnt work';
   }
 
   void addEventTime(DocumentReference doc, String time) {
