@@ -153,7 +153,7 @@ class FirestoreService {
   }
 
 // returning Stream<EventModel>
-  Stream<EventModel> events(DocumentReference doc) {
+  Stream<EventModel?> events(DocumentReference doc) {
     return eventCollection.doc(doc.id).snapshots().map((snapshot) {
       // return snapshot['event'];
       return _events(snapshot);
@@ -168,7 +168,7 @@ class FirestoreService {
     });
   }
 
-  EventModel _events(DocumentSnapshot snapshot) {
+  EventModel? _events(DocumentSnapshot snapshot) {
     return EventModel(name: snapshot['event']);
   }
 

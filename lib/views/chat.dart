@@ -166,17 +166,21 @@ class _ChatState extends State<Chat> {
                 maxHeight: MediaQuery.of(context).size.height,
                 minHeight: 65,
                 body: GoogleMaps(),
-                panel: StreamBuilder<EventModel>(
+                panel: StreamBuilder<EventModel?>(
                     stream: _firestore.events(friend.chatsID!),
                     builder: (context, snapshot) {
                       EventModel? event = snapshot.data;
-                      print('DEBUG');
+                      print('event');
+                      print(event ?? 'null event');
+                      // print(event!.name);
+                      // print(event.time ?? 'actually receing null');
                       return Column(
                         children: [
                           ListTile(
                             title: event == null
                                 ? Text(friend.email!.substring(4))
                                 : Text('LETS ${event.name}'),
+
                             subtitle: event == null
                                 ? null
                                 : Text(friend.email!.substring(4)),
@@ -249,7 +253,7 @@ class _ChatState extends State<Chat> {
                                                                 hintText: event ==
                                                                         null
                                                                     ? 'make an event name'
-                                                                    : "edit event name: '${event.name}'"),
+                                                                    : "edit event name: '${event}'"),
                                                           ),
                                                         ),
                                                         IconButton(
