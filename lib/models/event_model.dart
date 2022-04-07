@@ -1,7 +1,7 @@
 class EventModel {
-  String? name;
+  String event;
   String? time;
   String? location;
   String? picture;
-  EventModel({this.name, this.time, this.location, this.picture});
+  EventModel({required this.event, this.time, this.location, this.picture});
 }

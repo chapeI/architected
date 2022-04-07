@@ -143,7 +143,7 @@ class _ChatState extends State<Chat> {
                             decoration: InputDecoration(
                                 hintStyle: TextStyle(color: Colors.blue[200]),
                                 hintText: panelOpen
-                                    ? '   happy chatting!'
+                                    ? '   ${friend.chatsID!.id}'
                                     : '   map isnt not working yet'),
                           ),
                         ),
@@ -169,24 +169,19 @@ class _ChatState extends State<Chat> {
                 panel: StreamBuilder<EventModel>(
                     stream: _firestore.events(friend.chatsID!),
                     builder: (context, snapshot) {
-                      EventModel? event = snapshot.data;
-                      print('event');
-                      print(event ?? 'caught on field not existing');
-                      // print(event!.name);
-                      // print(event.time ?? 'actually receing null');
+                      EventModel? eventData = snapshot.data;
                       return Column(
                         children: [
                           ListTile(
-                            title: event == null
+                            title: eventData?.event == null
                                 ? Text(friend.email!.substring(4))
-                                : Text('LETS ${event}'),
-
-                            subtitle: event == null
+                                : Text(eventData!.event),
+                            subtitle: eventData?.time == null
                                 ? null
-                                : Text(friend.email!.substring(4)),
-                            // title: Text(friend.email!.substring(4)),
+                                : Text(eventData?.time ??
+                                    'i dont think this can be invoked'),
                             trailing: IconButton(
-                              icon: event == null
+                              icon: eventData == null
                                   ? Icon(Icons.add)
                                   : Icon(Icons.edit),
                               onPressed: () {
@@ -250,10 +245,10 @@ class _ChatState extends State<Chat> {
                                                             controller:
                                                                 _eventController,
                                                             decoration: InputDecoration(
-                                                                hintText: event ==
+                                                                hintText: eventData ==
                                                                         null
                                                                     ? 'make an event name'
-                                                                    : "edit event name: '${event}'"),
+                                                                    : "edit event name: '${eventData}'"),
                                                           ),
                                                         ),
                                                         IconButton(

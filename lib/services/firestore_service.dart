@@ -170,7 +170,10 @@ class FirestoreService {
 
   EventModel _events(DocumentSnapshot snapshot) {
     return EventModel(
-        name: snapshot['event'] ?? 'only if explicit doc.event = null');
+        event: snapshot['event'] ?? 'if explicit doc.event = null',
+        time: snapshot['time']
+        // time: snapshot['time']
+        );
   }
 
   void addEventTime(DocumentReference doc, String time) {
