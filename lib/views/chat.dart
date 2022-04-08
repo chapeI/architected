@@ -202,10 +202,6 @@ class _ChatState extends State<Chat> {
                                       )
                                     ],
                                   ),
-                            subtitle: eventData?.time == null
-                                ? null
-                                : Text(eventData?.time ??
-                                    'i dont think this can be invoked'),
                             trailing: eventData == null
                                 ? IconButton(
                                     icon: Icon(Icons.add),
