@@ -96,32 +96,38 @@ class _ChatState extends State<Chat> {
             ),
           )
         : Scaffold(
-            floatingActionButton: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                FloatingActionButton(
-                    heroTag: 'goBack',
-                    child: Icon(Icons.arrow_back),
-                    onPressed: () async {
-                      final result =
-                          await Navigator.pushNamed(context, '/friends');
-                      setState(() {
-                        friend = result as UserModel;
-                      });
-                    }),
-                SizedBox(
-                  width: 10,
-                ),
-                FloatingActionButton(
-                  heroTag: 'chat',
-                  onPressed: () {
-                    _focusNode.requestFocus();
-                  },
-                  child: Icon(Icons.message),
-                ),
-              ],
+            floatingActionButton: Padding(
+              padding: const EdgeInsets.only(bottom: 60.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  FloatingActionButton(
+                      backgroundColor: panelOpen ? null : Colors.green,
+                      heroTag: 'goBack',
+                      child: Icon(Icons.arrow_back),
+                      onPressed: () async {
+                        final result =
+                            await Navigator.pushNamed(context, '/friends');
+                        setState(() {
+                          friend = result as UserModel;
+                        });
+                      }),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  FloatingActionButton(
+                    heroTag: 'chat',
+                    backgroundColor: panelOpen ? null : Colors.green,
+                    onPressed: () {
+                      _focusNode.requestFocus();
+                    },
+                    child: panelOpen ? Icon(Icons.message) : Icon(Icons.search),
+                  ),
+                ],
+              ),
             ),
             appBar: AppBar(
+                backgroundColor: panelOpen ? null : Colors.green,
                 elevation: 0,
                 flexibleSpace: SafeArea(
                     child: KeyboardActions(
@@ -141,10 +147,13 @@ class _ChatState extends State<Chat> {
                             cursorWidth: 8,
                             style: TextStyle(color: Colors.white),
                             decoration: InputDecoration(
-                                hintStyle: TextStyle(color: Colors.blue[200]),
+                                hintStyle: TextStyle(
+                                    color: panelOpen
+                                        ? Colors.blue[200]
+                                        : Colors.green[200]),
                                 hintText: panelOpen
                                     ? '   ${friend.chatsID!.id}'
-                                    : '   map isnt not working yet'),
+                                    : '   map will be ready in V1.1'),
                           ),
                         ),
                       ),
@@ -175,109 +184,42 @@ class _ChatState extends State<Chat> {
                           ListTile(
                             title: eventData?.event == null
                                 ? Text(friend.email!.substring(4))
-                                : Text(eventData!.event),
+                                : Row(
+                                    children: [
+                                      Text(
+                                          '${eventData!.event} with ${friend.email!.substring(4)}'),
+                                      IconButton(
+                                        padding: EdgeInsets.zero,
+                                        constraints: BoxConstraints(),
+                                        onPressed: () {
+                                          showModal(context, eventData);
+                                        },
+                                        icon: Icon(
+                                          Icons.edit,
+                                          color: Colors.grey,
+                                          size: 15,
+                                        ),
+                                      )
+                                    ],
+                                  ),
                             subtitle: eventData?.time == null
                                 ? null
                                 : Text(eventData?.time ??
                                     'i dont think this can be invoked'),
-                            trailing: IconButton(
-                              icon: eventData == null
-                                  ? Icon(Icons.add)
-                                  : Icon(Icons.edit),
-                              onPressed: () {
-                                showModalBottomSheet(
-                                    isScrollControlled: true,
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return SingleChildScrollView(
-                                          child: Container(
-                                              padding: EdgeInsets.only(
-                                                  bottom: MediaQuery.of(context)
-                                                      .viewInsets
-                                                      .bottom),
-                                              child: Column(
-                                                children: [
-                                                  AppBar(
-                                                    automaticallyImplyLeading:
-                                                        false,
-                                                    leading: IconButton(
-                                                      icon: Icon(Icons
-                                                          .add_photo_alternate),
-                                                      onPressed: null,
-                                                    ),
-                                                    // title: Text('edit event'),
-                                                    actions: [
-                                                      IconButton(
-                                                          onPressed: null,
-                                                          icon: Icon(Icons
-                                                              .add_location_alt)),
-                                                      IconButton(
-                                                          onPressed: () {
-                                                            _firestore.addEventTime(
-                                                                friend.chatsID!,
-                                                                'literally anything');
-                                                          },
-                                                          icon: Icon(
-                                                              Icons.more_time)),
-                                                      IconButton(
-                                                          onPressed: () {
-                                                            _firestore.deleteEvent(
-                                                                friend
-                                                                    .chatsID!);
-                                                            Navigator.pop(
-                                                                context);
-                                                          },
-                                                          icon: Icon(
-                                                              Icons.delete))
-                                                    ],
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: Row(
-                                                      children: [
-                                                        Expanded(
-                                                          child: TextField(
-                                                            onChanged: (val) {
-                                                              eventName = val;
-                                                            },
-                                                            controller:
-                                                                _eventController,
-                                                            decoration: InputDecoration(
-                                                                hintText: eventData ==
-                                                                        null
-                                                                    ? 'make an event name'
-                                                                    : "edit event name: '${eventData}'"),
-                                                          ),
-                                                        ),
-                                                        IconButton(
-                                                            onPressed: () {
-                                                              _firestore.addEvent(
-                                                                  friend
-                                                                      .chatsID!,
-                                                                  eventName);
-                                                              _eventController
-                                                                  .clear();
-                                                              Navigator.pop(
-                                                                  context);
-                                                            },
-                                                            icon: Icon(
-                                                              Icons.check,
-                                                              color:
-                                                                  Colors.blue,
-                                                            ))
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ],
-                                              )));
-                                    });
-                              },
-                            ),
+                            trailing: eventData == null
+                                ? IconButton(
+                                    icon: Icon(Icons.add),
+                                    onPressed: () {
+                                      showModal(context, eventData);
+                                    },
+                                  )
+                                : null,
                             leading: CircleAvatar(
                               backgroundImage: NetworkImage(friend.avatarUrl!),
                             ),
+                          ),
+                          SizedBox(
+                            height: 20,
                           ),
                           StreamBuilder<List<ChatModel>>(
                             stream: _firestore.getChats(friend),
@@ -356,6 +298,74 @@ class _ChatState extends State<Chat> {
                       );
                     })),
           );
+  }
+
+  Future<dynamic> showModal(BuildContext context, EventModel? eventData) {
+    return showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (BuildContext context) {
+          return SingleChildScrollView(
+              child: Container(
+                  padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom),
+                  child: Column(
+                    children: [
+                      AppBar(
+                        automaticallyImplyLeading: false,
+                        leading: IconButton(
+                          icon: Icon(Icons.add_photo_alternate),
+                          onPressed: null,
+                        ),
+                        // title: Text('edit event'),
+                        actions: [
+                          IconButton(
+                              onPressed: null,
+                              icon: Icon(Icons.add_location_alt)),
+                          IconButton(
+                              onPressed: () {
+                                _firestore.addEventTime(
+                                    friend.chatsID!, 'literally anything');
+                              },
+                              icon: Icon(Icons.more_time)),
+                          IconButton(
+                              onPressed: () {
+                                _firestore.deleteEvent(friend.chatsID!);
+                                Navigator.pop(context);
+                              },
+                              icon: Icon(Icons.delete))
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                onChanged: (val) {
+                                  eventName = val;
+                                },
+                                controller: _eventController,
+                                decoration: InputDecoration(
+                                    hintText: eventData == null
+                                        ? 'write an event name'
+                                        : "edit event name: '${eventData.event}'"),
+                              ),
+                            ),
+                            ElevatedButton(
+                                onPressed: () {
+                                  _firestore.addEvent(
+                                      friend.chatsID!, eventName);
+                                  _eventController.clear();
+                                  Navigator.pop(context);
+                                },
+                                child: Text('publish event'))
+                          ],
+                        ),
+                      ),
+                    ],
+                  )));
+        });
   }
 }
 
