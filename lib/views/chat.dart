@@ -83,47 +83,32 @@ class _ChatState extends State<Chat> {
     return friend.uid == null
         ? Scaffold(
             appBar: AppBar(title: Text('welcome to chatsdev v1.0')),
-            body: Center(
-              child: OutlinedButton(
-                  onPressed: () async {
-                    final result =
-                        await Navigator.pushNamed(context, '/friends');
-                    setState(() {
-                      friend = result as UserModel;
-                    });
-                  },
-                  child: Text('LAUNCH')),
+            body: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Center(child: Text('this launch screen will be removed soon')),
+                OutlinedButton(
+                    onPressed: () async {
+                      final result =
+                          await Navigator.pushNamed(context, '/friends');
+                      setState(() {
+                        friend = result as UserModel;
+                      });
+                    },
+                    child: Text('LAUNCH')),
+              ],
             ),
           )
         : Scaffold(
             floatingActionButton: Padding(
-              padding: const EdgeInsets.only(bottom: 60.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  FloatingActionButton(
-                      backgroundColor: panelOpen ? null : Colors.green,
-                      heroTag: 'goBack',
-                      child: Icon(Icons.arrow_back),
-                      onPressed: () async {
-                        final result =
-                            await Navigator.pushNamed(context, '/friends');
-                        setState(() {
-                          friend = result as UserModel;
-                        });
-                      }),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  FloatingActionButton(
-                    heroTag: 'chat',
-                    backgroundColor: panelOpen ? null : Colors.green,
-                    onPressed: () {
-                      _focusNode.requestFocus();
-                    },
-                    child: panelOpen ? Icon(Icons.message) : Icon(Icons.search),
-                  ),
-                ],
+              padding: const EdgeInsets.only(right: 10, bottom: 70),
+              child: FloatingActionButton(
+                heroTag: 'chat',
+                backgroundColor: panelOpen ? null : Colors.green,
+                onPressed: () {
+                  _focusNode.requestFocus();
+                },
+                child: panelOpen ? Icon(Icons.message) : Icon(Icons.search),
               ),
             ),
             appBar: AppBar(
@@ -210,8 +195,25 @@ class _ChatState extends State<Chat> {
                                     },
                                   )
                                 : null,
-                            leading: CircleAvatar(
-                              backgroundImage: NetworkImage(friend.avatarUrl!),
+                            leading: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                    padding: EdgeInsets.zero,
+                                    constraints: BoxConstraints(),
+                                    onPressed: () async {
+                                      final result = await Navigator.pushNamed(
+                                          context, '/friends');
+                                      setState(() {
+                                        friend = result as UserModel;
+                                      });
+                                    },
+                                    icon: Icon(Icons.chevron_left)),
+                                CircleAvatar(
+                                  backgroundImage:
+                                      NetworkImage(friend.avatarUrl!),
+                                ),
+                              ],
                             ),
                           ),
                           SizedBox(
@@ -319,11 +321,7 @@ class _ChatState extends State<Chat> {
                               onPressed: null,
                               icon: Icon(Icons.add_location_alt)),
                           IconButton(
-                              onPressed: () {
-                                _firestore.addEventTime(
-                                    friend.chatsID!, 'literally anything');
-                              },
-                              icon: Icon(Icons.more_time)),
+                              onPressed: null, icon: Icon(Icons.more_time)),
                           IconButton(
                               onPressed: () {
                                 _firestore.deleteEvent(friend.chatsID!);
@@ -344,8 +342,8 @@ class _ChatState extends State<Chat> {
                                 controller: _eventController,
                                 decoration: InputDecoration(
                                     hintText: eventData == null
-                                        ? 'write an event name'
-                                        : "edit event name: '${eventData.event}'"),
+                                        ? 'whats your events name'
+                                        : "edit: '${eventData.event}'"),
                               ),
                             ),
                             ElevatedButton(
@@ -355,7 +353,7 @@ class _ChatState extends State<Chat> {
                                   _eventController.clear();
                                   Navigator.pop(context);
                                 },
-                                child: Text('publish event'))
+                                child: Text('Go!'))
                           ],
                         ),
                       ),
