@@ -10,6 +10,32 @@ class GoogleMaps extends StatefulWidget {
 }
 
 class _GoogleMapsState extends State<GoogleMaps> {
+  late BitmapDescriptor customIcon;
+  // LatLng position = LatLng(43.69602, -79.797692);
+
+  static var _marker = Marker(
+    markerId: MarkerId('anoops marker'),
+    icon: BitmapDescriptor.defaultMarker,
+    position: LatLng(43.69602, -79.797692),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    BitmapDescriptor.fromAssetImage(ImageConfiguration(), 'assets/karoake.jpg')
+        .then((value) => customIcon = value);
+  }
+
+  // createMarkers() {
+  //   _markers.add(
+  //     Marker(
+  //       markerId: MarkerId('test'),
+  //       position: position,
+  //       icon: BitmapDescriptor.defaultMarker,
+  //     ),
+  //   );
+  // }
+
   final Completer<GoogleMapController> _controller = Completer();
 
   static final CameraPosition _brampton = CameraPosition(
@@ -22,7 +48,7 @@ class _GoogleMapsState extends State<GoogleMaps> {
     return Scaffold(
       body: GoogleMap(
         mapType: MapType.normal,
-        // markers: {_marker, _marker2},
+        markers: {_marker},
         initialCameraPosition: _brampton,
         onMapCreated: (GoogleMapController controller) {
           _controller.complete(controller);
