@@ -38,7 +38,14 @@ class FirestoreService {
       'uid': _authService.me.uid,
       'sender': _authService.me.displayName,
       'timestamp': FieldValue.serverTimestamp()
-    });
+    }).then(
+      (value) {
+        _firestore
+            .collection('chats')
+            .doc(chatId)
+            .update({'lastMessage': message});
+      },
+    );
   }
   // eventchat_service.dart end
 
@@ -53,8 +60,11 @@ class FirestoreService {
 
   Future<void> addFriend(UserModel friend) async {
     final me = _authService.me;
-    _firestore.collection('chats').add(
-        {'user1': me.uid, 'user2': friend.uid}).then((documentReference) async {
+    _firestore.collection('chats').add({
+      'user1': me.uid,
+      'user2': friend.uid,
+      'lastMessage': 'no messages yet!'
+    }).then((documentReference) async {
       // print('testing addfriend');
       // print(friend.displayName);
       // print(friend.email);
@@ -149,11 +159,7 @@ class FirestoreService {
   }
 
   void deleteEvent(DocumentReference doc) {
-    eventCollection
-        .doc(doc.id)
-        .update({'event': FieldValue.delete()}).whenComplete(() {
-      print('event Deleted');
-    });
+    eventCollection.doc(doc.id).update({'event': null}).whenComplete(() {});
   }
 
   CollectionReference get eventCollection {
@@ -170,7 +176,8 @@ class FirestoreService {
 
   EventModel _events(DocumentSnapshot snapshot) {
     return EventModel(
-      event: snapshot['event'] ?? 'only if doc[event]=null',
+      event: snapshot['event'],
+      lastMessage: snapshot['lastMessage'] ?? 'lastmessageDebug',
       // time: snapshot['time']
     );
   }

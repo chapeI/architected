@@ -1,3 +1,4 @@
+import 'package:architectured/models/event_model.dart';
 import 'package:architectured/models/user_model.dart';
 import 'package:architectured/services/auth_service.dart';
 import 'package:architectured/services/firestore_service.dart';
@@ -16,6 +17,7 @@ class Friends extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final List<UserModel>? friends = snapshot.data as List<UserModel>;
+
             return Scaffold(
               floatingActionButton: FloatingActionButton(
                 onPressed: () {},
@@ -52,17 +54,38 @@ class Friends extends StatelessWidget {
               body: ListView.builder(
                   itemCount: friends!.length,
                   itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(friends[index].email!),
-                      // subtitle: Text(friends[index].chatsID.toString()),
-                      leading: CircleAvatar(
-                          backgroundImage:
-                              NetworkImage(friends[index].avatarUrl!)),
-                      onTap: () {
-                        // print(friends[index].displayName); // displayName not working
-                        Navigator.pop(context, friends[index]);
-                      },
-                    );
+                    return StreamBuilder<EventModel>(
+                        stream:
+                            FirestoreService().events(friends[index].chatsID!),
+                        builder: (context, snapshot2) {
+                          if (snapshot2.hasData) {
+                            var eventData = snapshot2.data;
+                            return ListTile(
+                              title: Text(friends[index].email!),
+                              // subtitle: Text(friends[index].chatsID.toString()),
+                              leading: CircleAvatar(
+                                  backgroundImage:
+                                      NetworkImage(friends[index].avatarUrl!)),
+                              subtitle: Text(
+                                  eventData?.lastMessage ?? 'no last message'),
+                              onTap: () {
+                                // print(friends[index].displayName); // displayName not working
+                                Navigator.pop(context, friends[index]);
+                              },
+                            );
+                          }
+                          return ListTile(
+                            title: Text(friends[index].email!),
+                            // subtitle: Text(friends[index].chatsID.toString()),
+                            leading: CircleAvatar(
+                                backgroundImage:
+                                    NetworkImage(friends[index].avatarUrl!)),
+                            onTap: () {
+                              // print(friends[index].displayName); // displayName not working
+                              Navigator.pop(context, friends[index]);
+                            },
+                          );
+                        });
                   }),
             );
           }
