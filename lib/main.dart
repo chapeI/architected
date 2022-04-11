@@ -29,9 +29,10 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          initialRoute: '/wrapper',
+          initialRoute: '/maps',
           routes: {
             // '/': (context) => debug(), // TODO: make a debugWidget
+            '/maps': (context) => GoogleMaps(),
             '/wrapper': (context) => Wrapper(),
             '/chat': (context) => Chat(),
             '/sandbox': (context) => SandBox()
