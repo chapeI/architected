@@ -1,6 +1,7 @@
 import 'package:architectured/models/user_model.dart';
 import 'package:architectured/services/auth_service.dart';
 import 'package:architectured/services/firestore_service.dart';
+import 'package:architectured/services/user_controller.dart';
 import 'package:architectured/views/auth_views/sign_out.dart';
 import 'package:flutter/material.dart';
 
@@ -16,10 +17,38 @@ class Friends extends StatelessWidget {
           if (snapshot.hasData) {
             final List<UserModel>? friends = snapshot.data as List<UserModel>;
             return Scaffold(
+              floatingActionButton: FloatingActionButton(
+                onPressed: () {},
+                child: Icon(Icons.add),
+              ),
               appBar: AppBar(
+                  elevation: 0,
+                  leading: Padding(
+                    padding: const EdgeInsets.only(left: 15.0),
+                    child: CircleAvatar(
+                      radius: 20,
+                      backgroundColor: Colors.green,
+                      child: CircleAvatar(
+                          radius: 16,
+                          backgroundImage: NetworkImage(
+                              UserController().currentUser.avatarUrl!)),
+                    ),
+                  ),
                   title: Text(AuthService().me.email!),
                   automaticallyImplyLeading: false,
-                  actions: [AddFriendButton(), SignOut()]),
+                  actions: [
+                    PopupMenuButton(itemBuilder: (context) {
+                      return [
+                        PopupMenuItem(
+                            child: TextButton(
+                          onPressed: () {},
+                          child: Text('create a group'),
+                        )),
+                        PopupMenuItem(child: AddFriendButton()),
+                        PopupMenuItem(child: SignOut()),
+                      ];
+                    })
+                  ]),
               body: ListView.builder(
                   itemCount: friends!.length,
                   itemBuilder: (context, index) {
@@ -44,8 +73,8 @@ class Friends extends StatelessWidget {
 
 class AddFriendButton extends StatelessWidget {
   Widget build(BuildContext context) {
-    return IconButton(
-      icon: Icon(Icons.person_add),
+    return TextButton(
+      child: Text('add friends'),
       onPressed: () {
         Navigator.push(
             context,

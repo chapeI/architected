@@ -1,7 +1,3 @@
-// ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors
-import 'dart:ffi';
-import 'dart:ui';
-
 import 'package:architectured/models/chat_model.dart';
 import 'package:architectured/models/event_model.dart';
 import 'package:architectured/models/user_model.dart';
@@ -25,6 +21,7 @@ class _ChatState extends State<Chat> {
   String message = '';
   String eventName = '';
   var panelOpen = true;
+  final _panelController = PanelController();
 
   @override
   Widget build(BuildContext context) {
@@ -59,8 +56,9 @@ class _ChatState extends State<Chat> {
               body: SafeArea(
                 child: Stack(children: [
                   SlidingUpPanel(
+                      controller: _panelController,
                       maxHeight: MediaQuery.of(context).size.height,
-                      minHeight: 120,
+                      minHeight: 140,
                       onPanelClosed: () {
                         setState(() {
                           panelOpen = false;
@@ -81,45 +79,61 @@ class _ChatState extends State<Chat> {
                             EventModel? eventData = snapshot.data;
                             return Column(
                               children: [
-                                ListTile(
-                                  title: eventData?.event == null
-                                      ? Text(friend.email!.substring(4))
-                                      : Row(
-                                          children: [
-                                            Text(
-                                                '${eventData!.event} with ${friend.email!.substring(4)}'),
-                                            IconButton(
-                                              padding: EdgeInsets.zero,
-                                              constraints: BoxConstraints(),
-                                              onPressed: () {
-                                                showModal(context, eventData);
-                                              },
-                                              icon: Icon(
-                                                Icons.edit,
-                                                color: Colors.grey,
-                                                size: 15,
-                                              ),
-                                            )
-                                          ],
+                                eventData == null
+                                    ? ListTile(
+                                        title: Text(friend.email!),
+                                        leading: CircleAvatar(
+                                          backgroundImage:
+                                              NetworkImage(friend.avatarUrl!),
                                         ),
-                                  trailing: eventData == null
-                                      ? IconButton(
-                                          icon: Icon(Icons.add),
+                                        trailing: IconButton(
+                                          icon: Icon(
+                                            Icons.add,
+                                          ),
                                           onPressed: () {
                                             showModal(context, eventData);
                                           },
-                                        )
-                                      : null,
-                                  leading: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      CircleAvatar(
-                                        backgroundImage:
-                                            NetworkImage(friend.avatarUrl!),
+                                        ),
+                                      )
+                                    : ListTile(
+                                        onTap: () {
+                                          showModal(context, eventData);
+                                        },
+                                        trailing: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            IconButton(
+                                              icon: Icon(
+                                                Icons
+                                                    .check_circle_outline_outlined,
+                                                color: Colors.green,
+                                              ),
+                                              onPressed: () {},
+                                            ),
+                                            IconButton(
+                                              icon: Icon(
+                                                Icons.location_on,
+                                                color: Colors.red,
+                                              ),
+                                              onPressed: () {
+                                                _panelController.close();
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                        subtitle: Text('5PM at Graden Gordon'),
+                                        title: Row(
+                                          children: [
+                                            Text('${eventData.event} w '),
+                                            CircleAvatar(
+                                              radius: 8,
+                                              backgroundImage: NetworkImage(
+                                                  friend.avatarUrl!),
+                                            ),
+                                            Text(' ${friend.email!}')
+                                          ],
+                                        ),
                                       ),
-                                    ],
-                                  ),
-                                ),
                                 SizedBox(
                                   height: panelOpen ? 20 : 90,
                                 ),
@@ -150,8 +164,9 @@ class _ChatState extends State<Chat> {
                                                         color: data[index]
                                                                     .uid ==
                                                                 _auth.me.uid
-                                                            ? Colors.blue[800]
-                                                            : Colors.blue[500],
+                                                            ? Colors
+                                                                .lightBlue[50]
+                                                            : Colors.blue,
                                                         borderRadius:
                                                             data[index].uid ==
                                                                     _auth.me.uid
@@ -192,8 +207,13 @@ class _ChatState extends State<Chat> {
                                                           child: Text(
                                                             data[index].text,
                                                             style: TextStyle(
-                                                                color: Colors
-                                                                    .white),
+                                                                color: data[index]
+                                                                            .uid ==
+                                                                        _auth.me
+                                                                            .uid
+                                                                    ? null
+                                                                    : Colors
+                                                                        .white),
                                                           ),
                                                         ),
                                                       ))
