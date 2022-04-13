@@ -1,6 +1,9 @@
 // ignore_for_file: prefer_const_constructors
 import 'dart:async';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -22,11 +25,16 @@ class _GoogleMapsState extends State<GoogleMaps> {
             CameraPosition(
                 target: LatLng(position.latitude, position.longitude),
                 zoom: 14)));
+
+        final Uint8List markerIcon =
+            await getBytesFromAsset('assets/pp1.jpeg', 100);
+
         _markers.add(Marker(
+            icon: BitmapDescriptor.fromBytes(markerIcon),
             markerId: MarkerId('some id'),
             position: LatLng(position.latitude, position.longitude)));
         setState(() {
-          print('really? theres no otherway to reload state?');
+          print('is there another way to reload state?');
         });
       }),
       body: GoogleMap(
@@ -39,6 +47,16 @@ class _GoogleMapsState extends State<GoogleMaps> {
         },
       ),
     );
+  }
+
+  Future<Uint8List> getBytesFromAsset(path, int width) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+        targetWidth: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+        .buffer
+        .asUint8List();
   }
 
   Future<Position> _determinePosition() async {
