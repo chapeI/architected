@@ -12,7 +12,7 @@ class GoogleMaps extends StatefulWidget {
 }
 
 class _GoogleMapsState extends State<GoogleMaps> {
-  final Completer<GoogleMapController> _controller = Completer();
+  late GoogleMapController googleMapController;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class _GoogleMapsState extends State<GoogleMaps> {
         initialCameraPosition:
             CameraPosition(target: LatLng(43, -79), zoom: 15),
         onMapCreated: (GoogleMapController controller) {
-          _controller.complete(controller);
+          googleMapController = controller;
         },
       ),
     );
