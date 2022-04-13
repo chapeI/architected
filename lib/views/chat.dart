@@ -120,39 +120,51 @@ class _ChatState extends State<Chat> {
                                           onTap: () {
                                             showModal(context, eventData);
                                           },
-                                          trailing: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              IconButton(
-                                                icon: Icon(
-                                                  Icons
-                                                      .check_circle_outline_outlined,
-                                                  color: Colors.green,
-                                                ),
-                                                onPressed: () {},
-                                              ),
-                                              IconButton(
-                                                icon: Icon(
-                                                  Icons.location_on,
-                                                  color: Colors.red,
-                                                ),
-                                                onPressed: () {
-                                                  _panelController.close();
-                                                },
-                                              ),
-                                            ],
+                                          trailing: IconButton(
+                                            icon: Icon(
+                                              Icons.location_on,
+                                              color: Colors.red,
+                                            ),
+                                            onPressed: () {
+                                              _panelController.close();
+                                            },
                                           ),
-                                          subtitle:
-                                              Text('5PM at Graden Gordon'),
-                                          title: Row(
+                                          title: Text(eventData!.event ??
+                                              'shouldnt see a null event'),
+                                          isThreeLine: true,
+                                          subtitle: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
-                                              Text('${eventData!.event} w '),
-                                              CircleAvatar(
-                                                radius: 8,
-                                                backgroundImage: NetworkImage(
-                                                    friend.avatarUrl!),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 3.0),
+                                                child: Text(
+                                                    '5PM at Graden Gordon'),
                                               ),
-                                              Text(' ${friend.email!}')
+                                              Row(
+                                                children: [
+                                                  CircleAvatar(
+                                                    radius: 8,
+                                                    backgroundImage:
+                                                        NetworkImage(
+                                                            friend.avatarUrl!),
+                                                  ),
+                                                  Text(' ${friend.email!}'),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 2.0),
+                                                    child: Icon(
+                                                      Icons
+                                                          .check_circle_outline,
+                                                      color: Colors.green,
+                                                      size: 15,
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
                                             ],
                                           ),
                                         ),
@@ -166,7 +178,7 @@ class _ChatState extends State<Chat> {
                                         var data = snapshot.data;
                                         return Expanded(
                                           child: ListView.builder(
-                                              reverse: true,
+                                              reverse: false,
                                               itemCount: data!.length,
                                               itemBuilder: ((context, index) {
                                                 return Row(

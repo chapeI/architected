@@ -63,7 +63,8 @@ class FirestoreService {
     _firestore.collection('chats').add({
       'user1': me.uid,
       'user2': friend.uid,
-      'lastMessage': 'no messages yet!'
+      'lastMessage': 'no messages yet!',
+      'event': null
     }).then((documentReference) async {
       // print('testing addfriend');
       // print(friend.displayName);

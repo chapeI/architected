@@ -10,9 +10,6 @@ class Friends extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-        // stream: CombineLatestStream.list([
-        //   FirestoreService().friends,
-        // ]),
         stream: FirestoreService().friends,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
@@ -31,7 +28,7 @@ class Friends extends StatelessWidget {
                       radius: 20,
                       backgroundColor: Colors.green,
                       child: CircleAvatar(
-                          radius: 16,
+                          radius: 18,
                           backgroundImage: NetworkImage(
                               UserController().currentUser.avatarUrl!)),
                     ),
@@ -62,29 +59,24 @@ class Friends extends StatelessWidget {
                             var eventData = snapshot2.data;
                             return ListTile(
                               title: Text(friends[index].email!),
-                              // subtitle: Text(friends[index].chatsID.toString()),
                               leading: CircleAvatar(
                                   backgroundImage:
                                       NetworkImage(friends[index].avatarUrl!)),
-                              subtitle: Text(
-                                  eventData?.lastMessage ?? 'no last message'),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  eventData!.event == null
+                                      ? Container()
+                                      : Text('Event: ${eventData.event}'),
+                                  Text(eventData.lastMessage),
+                                ],
+                              ),
                               onTap: () {
-                                // print(friends[index].displayName); // displayName not working
                                 Navigator.pop(context, friends[index]);
                               },
                             );
                           }
-                          return ListTile(
-                            title: Text(friends[index].email!),
-                            // subtitle: Text(friends[index].chatsID.toString()),
-                            leading: CircleAvatar(
-                                backgroundImage:
-                                    NetworkImage(friends[index].avatarUrl!)),
-                            onTap: () {
-                              // print(friends[index].displayName); // displayName not working
-                              Navigator.pop(context, friends[index]);
-                            },
-                          );
+                          return Text('why would I see this?');
                         });
                   }),
             );
