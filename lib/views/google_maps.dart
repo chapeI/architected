@@ -11,6 +11,7 @@ class GoogleMaps extends StatefulWidget {
 
 class _GoogleMapsState extends State<GoogleMaps> {
   late GoogleMapController googleMapController;
+  Set<Marker> _markers = {};
 
   @override
   Widget build(BuildContext context) {
@@ -21,12 +22,16 @@ class _GoogleMapsState extends State<GoogleMaps> {
             CameraPosition(
                 target: LatLng(position.latitude, position.longitude),
                 zoom: 14)));
+        _markers.add(Marker(
+            markerId: MarkerId('some id'),
+            position: LatLng(position.latitude, position.longitude)));
+        setState(() {
+          print('really? theres no otherway to reload state?');
+        });
       }),
       body: GoogleMap(
         mapType: MapType.normal,
-        markers: {
-          Marker(markerId: MarkerId('marker1'), position: LatLng(43, -79))
-        },
+        markers: _markers,
         initialCameraPosition:
             CameraPosition(target: LatLng(43, -79), zoom: 15),
         onMapCreated: (GoogleMapController controller) {
