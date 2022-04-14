@@ -1,10 +1,14 @@
+import 'dart:async';
+
 import 'package:architectured/models/chat_model.dart';
 import 'package:architectured/models/event_model.dart';
 import 'package:architectured/models/user_model.dart';
 import 'package:architectured/services/auth_service.dart';
 import 'package:architectured/services/firestore_service.dart';
+import 'package:architectured/services/location_service.dart';
 import 'package:architectured/views/google_maps.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class Chat extends StatefulWidget {
@@ -22,6 +26,19 @@ class _ChatState extends State<Chat> {
   String eventName = '';
   var panelOpen = true;
   final _panelController = PanelController();
+
+  // MAP STUFF
+  final Completer<GoogleMapController> _mapController = Completer();
+  final _searchController = TextEditingController();
+
+  Future<void> _goToPlace(Map<String, dynamic> place) async {
+    final double lat = place['geometry']['location']['lat'];
+    final double lng = place['geometry']['location']['lng'];
+
+    final GoogleMapController controller = await _mapController.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(target: LatLng(lat, lng), zoom: 12)));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,32 +89,18 @@ class _ChatState extends State<Chat> {
                       defaultPanelState: PanelState.OPEN,
                       // maxHeight: MediaQuery.of(context).size.height,
                       // minHeight: 65,
-                      body: GoogleMaps(),
+                      body: GoogleMap(
+                        initialCameraPosition:
+                            CameraPosition(target: LatLng(43, -79)),
+                        onMapCreated: (GoogleMapController controller) {
+                          _mapController.complete(controller);
+                        },
+                      ),
                       panel: StreamBuilder<EventModel>(
                           stream: _firestore.events(friend.chatsID!),
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               EventModel? eventData = snapshot.data;
-                              // return eventData!.event == null
-                              //     ? Column(
-                              //         children: [
-                              //           ListTile(
-                              //             title: Text(friend.email!),
-                              //             leading: CircleAvatar(
-                              //               backgroundImage:
-                              //                   NetworkImage(friend.avatarUrl!),
-                              //             ),
-                              //             trailing: IconButton(
-                              //               icon: Icon(
-                              //                 Icons.add,
-                              //               ),
-                              //               onPressed: () {
-                              //                 showModal(context, eventData);
-                              //               },
-                              //             ),
-                              //           ),
-                              //         ],
-                              //       )
                               return Column(
                                 children: [
                                   eventData!.event == null
@@ -298,7 +301,8 @@ class _ChatState extends State<Chat> {
                                     hintText: panelOpen
                                         ? '    send a message'
                                         : '    search map'),
-                                controller: _controller,
+                                controller:
+                                    panelOpen ? _controller : _searchController,
                               ),
                             ),
                             panelOpen
@@ -316,7 +320,11 @@ class _ChatState extends State<Chat> {
                                 : Padding(
                                     padding: const EdgeInsets.only(left: 8.0),
                                     child: ElevatedButton(
-                                        onPressed: () {},
+                                        onPressed: () async {
+                                          var place = await LocationService()
+                                              .getPlace(_searchController.text);
+                                          await _goToPlace(place);
+                                        },
                                         child: Icon(Icons.search)),
                                   )
                           ],
