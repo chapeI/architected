@@ -33,7 +33,7 @@ class Friends extends StatelessWidget {
                               UserController().currentUser.avatarUrl!)),
                     ),
                   ),
-                  title: Text(AuthService().me.email!),
+                  title: Text(AuthService().me.displayName!),
                   automaticallyImplyLeading: false,
                   actions: [
                     PopupMenuButton(itemBuilder: (context) {
@@ -58,7 +58,7 @@ class Friends extends StatelessWidget {
                           if (snapshot2.hasData) {
                             var eventData = snapshot2.data;
                             return ListTile(
-                              title: Text(friends[index].email!),
+                              title: Text(friends[index].displayName!),
                               leading: CircleAvatar(
                                   backgroundImage:
                                       NetworkImage(friends[index].avatarUrl!)),

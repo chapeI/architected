@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          initialRoute: '/maps',
+          initialRoute: '/wrapper',
           routes: {
             // '/': (context) => debug(), // TODO: make a debugWidget
             '/maps': (context) => GoogleMaps(),

@@ -148,6 +148,7 @@ class FirestoreService {
           (doc) => UserModel(
               email: doc['email'],
               uid: doc.id,
+              displayName: doc['displayName'],
               chatsID: doc['chatsID'] ?? 'badChatsid',
               avatarUrl: doc['avatarUrl'] ?? 'bad avatarUrl'),
         )

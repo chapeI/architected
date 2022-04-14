@@ -107,7 +107,8 @@ class _ChatState extends State<Chat> {
                                                   friend.avatarUrl!)),
                                           title: Row(
                                             children: [
-                                              Text(' ${friend.email!}')
+                                              Text(
+                                                  ' ${friend.displayName ?? 'null error'}')
                                             ],
                                           ),
                                           trailing: IconButton(
@@ -129,7 +130,7 @@ class _ChatState extends State<Chat> {
                                               _panelController.close();
                                             },
                                           ),
-                                          title: Text(eventData!.event ??
+                                          title: Text(eventData.event ??
                                               'shouldnt see a null event'),
                                           isThreeLine: true,
                                           subtitle: Column(

@@ -10,7 +10,7 @@ class StorageService {
     Reference storageRef =
         _storage.ref().child('users/profilePictures/$uid.jpg');
     UploadTask uploadTask = storageRef.putFile(imagePath);
-    var url = 'wtfman';
+    var url = 'click fix broken profile picture button';
     uploadTask.whenComplete(() async {
       url = await storageRef.getDownloadURL();
       print('await url: $url');
