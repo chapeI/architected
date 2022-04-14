@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
+import 'package:architectured/services/location_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
@@ -16,42 +17,65 @@ class _GoogleMapsState extends State<GoogleMaps> {
   late GoogleMapController googleMapController;
   Set<Marker> _markers = {};
 
+  final Completer<GoogleMapController> _controller = Completer();
+
+  Future<void> _goToPlace(Map<String, dynamic> place) async {
+    final double lat = place['geometry']['location']['lat'];
+    final double lng = place['geometry']['location']['lng'];
+
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(target: LatLng(lat, lng), zoom: 12)));
+  }
+
+  final _searchController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
+      appBar: AppBar(
+          title: TextFormField(
+        decoration: InputDecoration(hintText: 'search'),
+        controller: _searchController,
+        onChanged: (val) {},
+      )),
       floatingActionButton: FloatingActionButton(onPressed: () async {
-        Position position = await _determinePosition();
-        googleMapController.animateCamera(CameraUpdate.newCameraPosition(
-            CameraPosition(
-                target: LatLng(position.latitude, position.longitude),
-                zoom: 14)));
-
-        var myBitmap = await userImageMarker('assets/pp1.jpeg', title: 'me');
-        var myBitmap2 =
-            await userImageMarker('assets/pp2.jpeg', title: 'godson');
-
-        _markers.add(Marker(
-            icon: myBitmap,
-            markerId: MarkerId('some id'),
-            position: LatLng(position.latitude, position.longitude)));
-
-        _markers.add(Marker(
-            icon: myBitmap2,
-            markerId: MarkerId('anotehr id'),
-            position:
-                LatLng(position.latitude - 0.01, position.longitude - 0.01)));
-        setState(() {
-          print('is there another way to reload state?');
-        });
+        var place = await LocationService().getPlace(_searchController.text);
+        await _goToPlace(place);
       }),
+      // floatingActionButton: FloatingActionButton(onPressed: () async {
+      //   Position position = await _determineMyPosition();
+      //   googleMapController.animateCamera(CameraUpdate.newCameraPosition(
+      //       CameraPosition(
+      //           target: LatLng(position.latitude, position.longitude),
+      //           zoom: 14)));
+
+      //   var myBitmap = await userImageMarker('assets/pp1.jpeg', title: 'me');
+      //   var myBitmap2 =
+      //       await userImageMarker('assets/pp2.jpeg', title: 'godson');
+
+      //   _markers.add(Marker(
+      //       icon: myBitmap,
+      //       markerId: MarkerId('some id'),
+      //       position: LatLng(position.latitude, position.longitude)));
+
+      //   _markers.add(Marker(
+      //       icon: myBitmap2,
+      //       markerId: MarkerId('anotehr id'),
+      //       position:
+      //           LatLng(position.latitude - 0.01, position.longitude - 0.01)));
+      //   setState(() {
+      //     print('is there another way to reload state?');
+      //   });
+      // }),
       body: GoogleMap(
         mapType: MapType.normal,
         markers: _markers,
         initialCameraPosition:
             CameraPosition(target: LatLng(43, -79), zoom: 15),
         onMapCreated: (GoogleMapController controller) {
-          googleMapController = controller;
+          // googleMapController = controller;
+          _controller.complete(controller);
         },
       ),
     );
@@ -142,7 +166,7 @@ class _GoogleMapsState extends State<GoogleMaps> {
     return BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
   }
 
-  Future<Position> _determinePosition() async {
+  Future<Position> _determineMyPosition() async {
     bool serviceEnabled;
     LocationPermission permission;
 
