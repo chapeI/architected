@@ -19,6 +19,7 @@ class _GoogleMapsState extends State<GoogleMaps> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
       floatingActionButton: FloatingActionButton(onPressed: () async {
         Position position = await _determinePosition();
         googleMapController.animateCamera(CameraUpdate.newCameraPosition(
@@ -26,12 +27,20 @@ class _GoogleMapsState extends State<GoogleMaps> {
                 target: LatLng(position.latitude, position.longitude),
                 zoom: 14)));
 
-        var myBitmap = await userImageMarkers('assets/pp1.jpeg');
+        var myBitmap = await userImageMarker('assets/pp1.jpeg', title: 'me');
+        var myBitmap2 =
+            await userImageMarker('assets/pp2.jpeg', title: 'godson');
 
         _markers.add(Marker(
             icon: myBitmap,
             markerId: MarkerId('some id'),
             position: LatLng(position.latitude, position.longitude)));
+
+        _markers.add(Marker(
+            icon: myBitmap2,
+            markerId: MarkerId('anotehr id'),
+            position:
+                LatLng(position.latitude - 0.01, position.longitude - 0.01)));
         setState(() {
           print('is there another way to reload state?');
         });
@@ -58,9 +67,10 @@ class _GoogleMapsState extends State<GoogleMaps> {
         .asUint8List();
   }
 
-  Future<BitmapDescriptor> userImageMarkers(
+  Future<BitmapDescriptor> userImageMarker(
     imageFile, {
     int size = 150,
+    required title,
     // bool addBorder = false,
     Color borderColor = Colors.lightGreen,
     double borderSize = 15,
@@ -100,8 +110,6 @@ class _GoogleMapsState extends State<GoogleMaps> {
     paint.style = PaintingStyle.stroke;
     paint.strokeWidth = borderSize;
     canvas.drawCircle(Offset(radius, radius), radius, paint);
-
-    String title = 'godwin';
 
     paint.color = titleBackgroundColor;
     paint.style = PaintingStyle.fill;
