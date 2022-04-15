@@ -6,7 +6,6 @@ import 'package:architectured/models/user_model.dart';
 import 'package:architectured/services/auth_service.dart';
 import 'package:architectured/services/firestore_service.dart';
 import 'package:architectured/services/location_service.dart';
-import 'package:architectured/views/google_maps.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -48,7 +47,9 @@ class _ChatState extends State<Chat> {
             body: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Center(child: Text('this launch screen will be removed soon')),
+                Center(
+                    child: Text(
+                        'data structure might have to change, so your convos might be wiped when the next version rolls around. click this button to fix profile picture, message me directly here, post issues among testers here')),
                 OutlinedButton(
                     onPressed: () async {
                       final result =
@@ -338,6 +339,20 @@ class _ChatState extends State<Chat> {
           );
   }
 
+  TimeOfDay _time = TimeOfDay(hour: 7, minute: 15);
+
+  void _selectTime() async {
+    final TimeOfDay? newTime = await showTimePicker(
+        context: context,
+        initialTime: _time,
+        initialEntryMode: TimePickerEntryMode.input);
+    if (newTime != null) {
+      setState(() {
+        _time = newTime;
+      });
+    }
+  }
+
   Future<dynamic> showModal(BuildContext context, EventModel? eventData) {
     return showModalBottomSheet(
         isScrollControlled: true,
@@ -350,18 +365,20 @@ class _ChatState extends State<Chat> {
                   child: Column(
                     children: [
                       AppBar(
+                        elevation: 0,
                         automaticallyImplyLeading: false,
                         leading: IconButton(
                           icon: Icon(Icons.add_photo_alternate),
                           onPressed: null,
                         ),
-                        // title: Text('edit event'),
+                        backgroundColor: Colors.blue[200],
                         actions: [
+                          TextButton(
+                              onPressed: _selectTime,
+                              child: Text('${_time.format(context)}')),
                           IconButton(
                               onPressed: null,
                               icon: Icon(Icons.add_location_alt)),
-                          IconButton(
-                              onPressed: null, icon: Icon(Icons.more_time)),
                           IconButton(
                               onPressed: () {
                                 _firestore.deleteEvent(friend.chatsID!);
@@ -381,8 +398,8 @@ class _ChatState extends State<Chat> {
                                 },
                                 controller: _eventController,
                                 decoration: InputDecoration(
-                                    hintText: eventData == null
-                                        ? 'whats your events name'
+                                    hintText: eventData!.event == null
+                                        ? 'make an event name'
                                         : "edit: '${eventData.event}'"),
                               ),
                             ),
