@@ -102,6 +102,14 @@ class _ChatState extends State<Chat> {
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               EventModel? eventData = snapshot.data;
+
+                              if (eventData!.hour == null) {
+                                _time = null;
+                              } else {
+                                _time = TimeOfDay(
+                                    hour: eventData.hour!,
+                                    minute: eventData.minute!);
+                              }
                               return Column(
                                 children: [
                                   eventData!.event == null
@@ -134,44 +142,29 @@ class _ChatState extends State<Chat> {
                                               _panelController.close();
                                             },
                                           ),
-                                          title: Text(eventData.event ??
-                                              'shouldnt see a null event'),
-                                          isThreeLine: true,
-                                          subtitle: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                          title: Row(
+                                            mainAxisSize: MainAxisSize.min,
                                             children: [
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 3.0),
-                                                child: Text(
-                                                    '5PM at Graden Gordon'),
+                                              Text(friend.displayName!),
+                                              SizedBox(
+                                                width: 5,
                                               ),
-                                              Row(
-                                                children: [
-                                                  CircleAvatar(
-                                                    radius: 8,
-                                                    backgroundImage:
-                                                        NetworkImage(
-                                                            friend.avatarUrl!),
-                                                  ),
-                                                  Text(' ${friend.email!}'),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 2.0),
-                                                    child: Icon(
-                                                      Icons
-                                                          .check_circle_outline,
-                                                      color: Colors.green,
-                                                      size: 15,
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
+                                              Icon(
+                                                Icons
+                                                    .check_circle_outline_rounded,
+                                                size: 15,
+                                                color: Colors.green,
+                                              )
                                             ],
                                           ),
+                                          leading: CircleAvatar(
+                                              backgroundImage: NetworkImage(
+                                                  friend.avatarUrl!)),
+                                          subtitle: eventData.hour == null
+                                              ? Text(
+                                                  'Coming up: ${eventData.event}')
+                                              : Text(
+                                                  '${eventData.event} @${_time!.format(context)}'),
                                         ),
                                   SizedBox(
                                     height: panelOpen ? 20 : 90,
@@ -273,7 +266,7 @@ class _ChatState extends State<Chat> {
                               );
                             }
                             return Text(
-                                'if you see this, tell anoop event field was deleted, create it again and set it to null');
+                                'event field may have been deleted, create it again and set it to null');
                           })),
                   Positioned(
                     bottom: 0,
@@ -344,17 +337,23 @@ class _ChatState extends State<Chat> {
   void _selectTime() async {
     final TimeOfDay? newTime = await showTimePicker(
         context: context,
-        initialTime: _time ?? TimeOfDay(hour: 8, minute: 00),
+        initialTime: _time ?? const TimeOfDay(hour: 8, minute: 00),
         initialEntryMode: TimePickerEntryMode.input);
 
     if (newTime != null) {
       setState(() {
         _time = newTime;
       });
+      FirestoreService().addEventTime(friend.chatsID!, newTime);
     }
   }
 
   Future<dynamic> showModal(BuildContext context, EventModel? eventData) {
+    if (eventData!.hour == null) {
+      _time = null;
+    } else {
+      _time = TimeOfDay(hour: eventData.hour!, minute: eventData.minute!);
+    }
     return showModalBottomSheet(
         isScrollControlled: true,
         context: context,
@@ -372,7 +371,6 @@ class _ChatState extends State<Chat> {
                           icon: Icon(Icons.add_photo_alternate),
                           onPressed: null,
                         ),
-                        backgroundColor: Colors.blue[200],
                         actions: [
                           _time == null
                               ? IconButton(
@@ -381,7 +379,10 @@ class _ChatState extends State<Chat> {
                                 )
                               : TextButton(
                                   onPressed: _selectTime,
-                                  child: Text('${_time!.format(context)}')),
+                                  child: Text(
+                                    '${_time!.format(context)}',
+                                    style: TextStyle(color: Colors.white),
+                                  )),
                           IconButton(
                               onPressed: null,
                               icon: Icon(Icons.add_location_alt)),

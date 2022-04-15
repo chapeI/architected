@@ -4,6 +4,7 @@ import 'package:architectured/models/user_model.dart';
 import 'package:architectured/services/auth_service.dart';
 import 'package:architectured/services/singletons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -64,12 +65,10 @@ class FirestoreService {
       'user1': me.uid,
       'user2': friend.uid,
       'lastMessage': 'no messages yet!',
-      'event': null
+      'event': null,
+      'hour': null,
+      'minute': null,
     }).then((documentReference) async {
-      // print('testing addfriend');
-      // print(friend.displayName);
-      // print(friend.email);
-      // print(friend.toString());
       await _usersCollection
           .doc(me.uid)
           .collection('friends')
@@ -161,7 +160,8 @@ class FirestoreService {
   }
 
   void deleteEvent(DocumentReference doc) {
-    eventCollection.doc(doc.id).update({'event': null}).whenComplete(() {});
+    eventCollection.doc(doc.id).update(
+        {'event': null, 'minute': null, 'hour': null}).whenComplete(() {});
   }
 
   CollectionReference get eventCollection {
@@ -179,12 +179,17 @@ class FirestoreService {
   EventModel _events(DocumentSnapshot snapshot) {
     return EventModel(
       event: snapshot['event'],
+      hour: snapshot['hour'],
+      minute: snapshot['minute'],
       lastMessage: snapshot['lastMessage'] ?? 'lastmessageDebug',
       // time: snapshot['time']
     );
   }
 
-  void addEventTime(DocumentReference doc, String time) {
-    eventCollection.doc(doc.id).update({'time': '2:00PM'});
+  void addEventTime(DocumentReference doc, TimeOfDay time) {
+    print('entered');
+    eventCollection
+        .doc(doc.id)
+        .update({'hour': time.hour, 'minute': time.minute});
   }
 }

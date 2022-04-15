@@ -1,13 +1,15 @@
 class EventModel {
   String? event;
-  String? time;
+  int? hour;
+  int? minute;
   String? location;
   String? picture;
   String lastMessage;
   EventModel(
       {this.event,
       required this.lastMessage,
-      this.time,
+      this.minute,
+      this.hour,
       this.location,
       this.picture});
 }
