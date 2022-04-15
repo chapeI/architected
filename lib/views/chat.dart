@@ -339,13 +339,14 @@ class _ChatState extends State<Chat> {
           );
   }
 
-  TimeOfDay _time = TimeOfDay(hour: 7, minute: 15);
+  TimeOfDay? _time;
 
   void _selectTime() async {
     final TimeOfDay? newTime = await showTimePicker(
         context: context,
-        initialTime: _time,
+        initialTime: _time ?? TimeOfDay(hour: 8, minute: 00),
         initialEntryMode: TimePickerEntryMode.input);
+
     if (newTime != null) {
       setState(() {
         _time = newTime;
@@ -373,9 +374,14 @@ class _ChatState extends State<Chat> {
                         ),
                         backgroundColor: Colors.blue[200],
                         actions: [
-                          TextButton(
-                              onPressed: _selectTime,
-                              child: Text('${_time.format(context)}')),
+                          _time == null
+                              ? IconButton(
+                                  icon: Icon(Icons.more_time),
+                                  onPressed: _selectTime,
+                                )
+                              : TextButton(
+                                  onPressed: _selectTime,
+                                  child: Text('${_time!.format(context)}')),
                           IconButton(
                               onPressed: null,
                               icon: Icon(Icons.add_location_alt)),
