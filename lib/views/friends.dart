@@ -83,7 +83,15 @@ class Friends extends StatelessWidget {
                                               '${_time!.format(context)}: ${eventData.event}'),
                                 ],
                               ),
-                              trailing: eventData.event == null ? Container() : IconButton(onPressed: () {}, icon: Icon(Icons.)),
+                              trailing: eventData.event == null
+                                  ? Icon(
+                                      Icons.delete,
+                                      color: Colors.white,
+                                    )
+                                  : Icon(
+                                      Icons.check,
+                                      color: Colors.green,
+                                    ),
                               onTap: () {
                                 Navigator.pop(context, friends[index]);
                               },
