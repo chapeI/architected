@@ -130,17 +130,25 @@ class _ChatState extends State<Chat> {
                                             },
                                           ))
                                       : ListTile(
-                                          onTap: () {
-                                            showModal(context, eventData);
-                                          },
-                                          trailing: IconButton(
-                                            icon: Icon(
-                                              Icons.location_on,
-                                              color: Colors.red,
-                                            ),
-                                            onPressed: () {
-                                              _panelController.close();
-                                            },
+                                          trailing: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              IconButton(
+                                                  onPressed: () {
+                                                    showModal(
+                                                        context, eventData);
+                                                  },
+                                                  icon: Icon(Icons.edit)),
+                                              IconButton(
+                                                icon: Icon(
+                                                  Icons.location_on,
+                                                  color: Colors.red,
+                                                ),
+                                                onPressed: () {
+                                                  _panelController.close();
+                                                },
+                                              ),
+                                            ],
                                           ),
                                           title: Row(
                                             mainAxisSize: MainAxisSize.min,
@@ -367,11 +375,10 @@ class _ChatState extends State<Chat> {
                       AppBar(
                         elevation: 0,
                         automaticallyImplyLeading: false,
-                        leading: IconButton(
-                          icon: Icon(Icons.add_photo_alternate),
-                          onPressed: null,
-                        ),
                         actions: [
+                          IconButton(
+                              onPressed: null,
+                              icon: Icon(Icons.add_location_alt)),
                           _time == null
                               ? IconButton(
                                   icon: Icon(Icons.more_time),
@@ -383,9 +390,6 @@ class _ChatState extends State<Chat> {
                                     '${_time!.format(context)}',
                                     style: TextStyle(color: Colors.white),
                                   )),
-                          IconButton(
-                              onPressed: null,
-                              icon: Icon(Icons.add_location_alt)),
                           IconButton(
                               onPressed: () {
                                 _firestore.deleteEvent(friend.chatsID!);
@@ -410,14 +414,17 @@ class _ChatState extends State<Chat> {
                                         : "edit: '${eventData.event}'"),
                               ),
                             ),
-                            ElevatedButton(
-                                onPressed: () {
-                                  _firestore.addEvent(
-                                      friend.chatsID!, eventName);
-                                  _eventController.clear();
-                                  Navigator.pop(context);
-                                },
-                                child: Text('Go!'))
+                            Padding(
+                              padding: const EdgeInsets.only(left: 18.0),
+                              child: ElevatedButton(
+                                  onPressed: () {
+                                    _firestore.addEvent(
+                                        friend.chatsID!, eventName);
+                                    _eventController.clear();
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text('Create Event')),
+                            )
                           ],
                         ),
                       ),
