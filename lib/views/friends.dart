@@ -7,6 +7,7 @@ import 'package:architectured/views/auth_views/sign_out.dart';
 import 'package:flutter/material.dart';
 
 class Friends extends StatelessWidget {
+  TimeOfDay? _time;
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
@@ -57,6 +58,13 @@ class Friends extends StatelessWidget {
                         builder: (context, snapshot2) {
                           if (snapshot2.hasData) {
                             var eventData = snapshot2.data;
+                            if (eventData!.hour == null) {
+                              _time = null;
+                            } else {
+                              _time = TimeOfDay(
+                                  hour: eventData.hour!,
+                                  minute: eventData.minute!);
+                            }
                             return ListTile(
                               title: Text(friends[index].displayName!),
                               leading: CircleAvatar(
@@ -65,12 +73,17 @@ class Friends extends StatelessWidget {
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  Text(eventData!.lastMessage),
                                   eventData!.event == null
                                       ? Container()
-                                      : Text('Event: ${eventData.event}'),
-                                  Text(eventData.lastMessage),
+                                      : _time == null
+                                          ? Text(
+                                              'Coming up: ${eventData.event}')
+                                          : Text(
+                                              '${_time!.format(context)}: ${eventData.event}'),
                                 ],
                               ),
+                              trailing: eventData.event == null ? Container() : IconButton(onPressed: () {}, icon: Icon(Icons.)),
                               onTap: () {
                                 Navigator.pop(context, friends[index]);
                               },

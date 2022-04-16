@@ -64,7 +64,7 @@ class FirestoreService {
     _firestore.collection('chats').add({
       'user1': me.uid,
       'user2': friend.uid,
-      'lastMessage': 'no messages yet!',
+      'lastMessage': 'Start chatting with ${friend.displayName}!',
       'event': null,
       'hour': null,
       'minute': null,
