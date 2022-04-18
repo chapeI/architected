@@ -20,11 +20,12 @@ class _ChatState extends State<Chat> {
   final _firestore = FirestoreService();
   final _auth = AuthService();
   final _controller = TextEditingController();
-  final _eventController = TextEditingController();
+  final _nameEventController = TextEditingController();
   String message = '';
   String eventName = '';
   var panelOpen = true;
   final _panelController = PanelController();
+  bool planning = false;
 
   // MAP STUFF
   final Completer<GoogleMapController> _mapController = Completer();
@@ -113,70 +114,153 @@ class _ChatState extends State<Chat> {
                               return Column(
                                 children: [
                                   eventData!.event == null
-                                      ? ListTile(
-                                          leading: CircleAvatar(
-                                              backgroundImage: NetworkImage(
-                                                  friend.avatarUrl!)),
-                                          title: Row(
-                                            children: [
-                                              Text(
-                                                  ' ${friend.displayName ?? 'null error'}')
-                                            ],
-                                          ),
-                                          trailing: IconButton(
-                                            icon: Icon(Icons.add),
-                                            onPressed: () {
-                                              showModal(context, eventData);
-                                            },
-                                          ))
-                                      : ListTile(
-                                          trailing: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              IconButton(
-                                                  onPressed: () {
-                                                    showModal(
-                                                        context, eventData);
-                                                  },
-                                                  icon: Icon(Icons.edit)),
-                                              IconButton(
-                                                icon: Icon(
-                                                  Icons.location_on,
-                                                  color: Colors.red,
+                                      ? Container(
+                                          decoration: BoxDecoration(
+                                              color: Colors.blue[50]),
+                                          child: ListTile(
+                                              leading: CircleAvatar(
+                                                  backgroundImage: NetworkImage(
+                                                      friend.avatarUrl!)),
+                                              title: Row(
+                                                children: [
+                                                  Text(
+                                                      ' ${friend.displayName ?? 'null error'}')
+                                                ],
+                                              ),
+                                              trailing: planning
+                                                  ? IconButton(
+                                                      icon: Icon(Icons.add),
+                                                      onPressed: togglePlanning,
+                                                    )
+                                                  : Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        IconButton(
+                                                            icon: Icon(
+                                                                Icons.check),
+                                                            onPressed: () {
+                                                              _firestore.addEvent(
+                                                                  friend
+                                                                      .chatsID!,
+                                                                  eventName);
+                                                              _nameEventController
+                                                                  .clear();
+                                                              togglePlanning();
+                                                            }),
+                                                        IconButton(
+                                                          icon: Icon(Icons
+                                                              .highlight_off),
+                                                          onPressed:
+                                                              togglePlanning,
+                                                        ),
+                                                      ],
+                                                    )),
+                                        )
+                                      : Container(
+                                          decoration: BoxDecoration(
+                                              color: Colors.blue[50]),
+                                          child: ListTile(
+                                            onTap: togglePlanning,
+                                            trailing: planning
+                                                ? Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      IconButton(
+                                                          onPressed: () {
+                                                            showModal(context,
+                                                                eventData);
+                                                          },
+                                                          icon: Icon(Icons
+                                                              .bug_report)),
+                                                      IconButton(
+                                                        icon: Icon(
+                                                          Icons.location_on,
+                                                          color: Colors.red,
+                                                        ),
+                                                        onPressed: () {
+                                                          _panelController
+                                                              .close();
+                                                        },
+                                                      ),
+                                                    ],
+                                                  )
+                                                : Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      IconButton(
+                                                          icon:
+                                                              Icon(Icons.check),
+                                                          onPressed: () {
+                                                            _firestore.addEvent(
+                                                                friend.chatsID!,
+                                                                eventName);
+                                                            _nameEventController
+                                                                .clear();
+                                                            togglePlanning();
+                                                          }),
+                                                      IconButton(
+                                                        icon:
+                                                            Icon(Icons.delete),
+                                                        onPressed: () {
+                                                          _firestore.deleteEvent(
+                                                              friend.chatsID!);
+                                                        },
+                                                      ),
+                                                      IconButton(
+                                                        icon: Icon(
+                                                            Icons.expand_less),
+                                                        onPressed:
+                                                            togglePlanning,
+                                                      ),
+                                                    ],
+                                                  ),
+                                            title: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(friend.displayName!),
+                                                SizedBox(
+                                                  width: 5,
                                                 ),
-                                                onPressed: () {
-                                                  _panelController.close();
-                                                },
-                                              ),
-                                            ],
+                                                Icon(
+                                                  Icons
+                                                      .check_circle_outline_rounded,
+                                                  size: 15,
+                                                  color: Colors.green,
+                                                )
+                                              ],
+                                            ),
+                                            leading: CircleAvatar(
+                                                backgroundImage: NetworkImage(
+                                                    friend.avatarUrl!)),
+                                            subtitle: eventData.hour == null
+                                                ? Text(
+                                                    'Coming up: ${eventData.event}')
+                                                : Text(
+                                                    '${eventData.event} @${_time!.format(context)}'),
                                           ),
-                                          title: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Text(friend.displayName!),
-                                              SizedBox(
-                                                width: 5,
-                                              ),
-                                              Icon(
-                                                Icons
-                                                    .check_circle_outline_rounded,
-                                                size: 15,
-                                                color: Colors.green,
-                                              )
-                                            ],
-                                          ),
-                                          leading: CircleAvatar(
-                                              backgroundImage: NetworkImage(
-                                                  friend.avatarUrl!)),
-                                          subtitle: eventData.hour == null
-                                              ? Text(
-                                                  'Coming up: ${eventData.event}')
-                                              : Text(
-                                                  '${eventData.event} @${_time!.format(context)}'),
                                         ),
-                                  SizedBox(
-                                    height: panelOpen ? 20 : 90,
-                                  ),
+                                  AnimatedSwitcher(
+                                      duration: Duration(milliseconds: 150),
+                                      child: planning
+                                          ? Container(
+                                              key: Key('1'),
+                                            )
+                                          : Container(
+                                              key: Key('2'),
+                                              decoration: BoxDecoration(
+                                                color: Colors.blue[50],
+                                                borderRadius: BorderRadius.only(
+                                                  bottomLeft:
+                                                      Radius.circular(13),
+                                                  bottomRight:
+                                                      Radius.circular(13),
+                                                ),
+                                              ),
+                                              child: altModal(eventData),
+                                            )),
                                   StreamBuilder<List<ChatModel>>(
                                     stream: _firestore.getChats(friend),
                                     builder: (context, snapshot) {
@@ -340,6 +424,38 @@ class _ChatState extends State<Chat> {
           );
   }
 
+  ListTile altModal(EventModel? eventData) {
+    return ListTile(
+      title: TextField(
+        decoration: InputDecoration(
+            hintText: eventData!.event == null
+                ? 'write here!'
+                : 'edit ${eventData.event}'),
+        controller: _nameEventController,
+        onChanged: (val) {
+          eventName = val;
+        },
+      ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          eventData.hour == null
+              ? IconButton(onPressed: _selectTime, icon: Icon(Icons.more_time))
+              : IconButton(
+                  onPressed: null,
+                  icon: Icon(
+                    Icons.schedule,
+                    color: Colors.green,
+                  )),
+          IconButton(onPressed: null, icon: Icon(Icons.add_task_outlined)),
+          IconButton(
+              onPressed: null, icon: Icon(Icons.person_add_alt_1_outlined)),
+          IconButton(onPressed: null, icon: Icon(Icons.add_location_alt)),
+        ],
+      ),
+    );
+  }
+
   TimeOfDay? _time;
 
   void _selectTime() async {
@@ -354,6 +470,12 @@ class _ChatState extends State<Chat> {
       });
       FirestoreService().addEventTime(friend.chatsID!, newTime);
     }
+  }
+
+  togglePlanning() {
+    setState(() {
+      planning = !planning;
+    });
   }
 
   Future<dynamic> showModal(BuildContext context, EventModel? eventData) {
@@ -407,7 +529,7 @@ class _ChatState extends State<Chat> {
                                 onChanged: (val) {
                                   eventName = val;
                                 },
-                                controller: _eventController,
+                                controller: _nameEventController,
                                 decoration: InputDecoration(
                                     hintText: eventData!.event == null
                                         ? 'make an event name'
@@ -420,7 +542,7 @@ class _ChatState extends State<Chat> {
                                   onPressed: () {
                                     _firestore.addEvent(
                                         friend.chatsID!, eventName);
-                                    _eventController.clear();
+                                    _nameEventController.clear();
                                     Navigator.pop(context);
                                   },
                                   child: Text('Create Event')),
@@ -432,12 +554,4 @@ class _ChatState extends State<Chat> {
                   )));
         });
   }
-}
-
-BoxDecoration myBoxDecoration() {
-  return BoxDecoration(
-      border: Border(
-    top: BorderSide(width: 1.0, color: Colors.lightBlue.shade600),
-    bottom: BorderSide(width: 1.0, color: Colors.lightBlue.shade600),
-  ));
 }
