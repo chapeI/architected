@@ -66,6 +66,7 @@ class FirestoreService {
       'user2': friend.uid,
       'lastMessage': 'Start chatting with ${friend.displayName}!',
       'event': null,
+      'location': null,
       'hour': null,
       'minute': null,
     }).then((documentReference) async {
@@ -171,7 +172,6 @@ class FirestoreService {
 // returning Stream<EventModel>
   Stream<EventModel> events(DocumentReference doc) {
     return eventCollection.doc(doc.id).snapshots().map((snapshot) {
-      // return snapshot['event'];
       return _events(snapshot);
     });
   }
@@ -181,8 +181,8 @@ class FirestoreService {
       event: snapshot['event'],
       hour: snapshot['hour'],
       minute: snapshot['minute'],
+      location: snapshot['location'],
       lastMessage: snapshot['lastMessage'] ?? 'lastmessageDebug',
-      // time: snapshot['time']
     );
   }
 

@@ -115,7 +115,7 @@ class Friends extends StatelessWidget {
                             );
                           }
                           return Text(
-                              'since we are displaying all friends here, you are missing a field (ie. hour) in one of chat/event documents ');
+                              'DEBUG: missing a field (ie. hour) in this chatroom document');
                         });
                   }),
             );

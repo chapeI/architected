@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class EventModel {
   String? event;
   int? hour;
   int? minute;
-  String? location;
+  GeoPoint? location;
   String? picture;
   String lastMessage;
   EventModel(

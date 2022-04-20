@@ -6,6 +6,7 @@ import 'package:architectured/models/user_model.dart';
 import 'package:architectured/services/auth_service.dart';
 import 'package:architectured/services/firestore_service.dart';
 import 'package:architectured/services/location_service.dart';
+import 'package:architectured/views/google_maps.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -26,6 +27,8 @@ class _ChatState extends State<Chat> {
   var panelOpen = true;
   final _panelController = PanelController();
   bool planning = false;
+  bool expandedTile = false;
+  LatLng? latLng;
 
   // MAP STUFF
   final Completer<GoogleMapController> _mapController = Completer();
@@ -49,8 +52,11 @@ class _ChatState extends State<Chat> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Center(
-                    child: Text(
-                        'data structure might have to change, so your convos might be wiped when the next version rolls around. click this button to fix profile picture, message me directly here, post issues among testers here')),
+                    child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                      'firestore document structure may change in the future. were still in alpha. That means convos may be deleted. click here if profile picture doesnt show up. get in touch w me directly here, post issues or desired features here '),
+                )),
                 OutlinedButton(
                     onPressed: () async {
                       final result =
@@ -77,7 +83,7 @@ class _ChatState extends State<Chat> {
                   SlidingUpPanel(
                       controller: _panelController,
                       maxHeight: MediaQuery.of(context).size.height,
-                      minHeight: 140,
+                      minHeight: expandedTile ? 210 : 140,
                       onPanelClosed: () {
                         setState(() {
                           panelOpen = false;
@@ -89,8 +95,6 @@ class _ChatState extends State<Chat> {
                         });
                       },
                       defaultPanelState: PanelState.OPEN,
-                      // maxHeight: MediaQuery.of(context).size.height,
-                      // minHeight: 65,
                       body: GoogleMap(
                         initialCameraPosition:
                             CameraPosition(target: LatLng(43, -79)),
@@ -103,7 +107,6 @@ class _ChatState extends State<Chat> {
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               EventModel? eventData = snapshot.data;
-
                               if (eventData!.hour == null) {
                                 _time = null;
                               } else {
@@ -111,156 +114,159 @@ class _ChatState extends State<Chat> {
                                     hour: eventData.hour!,
                                     minute: eventData.minute!);
                               }
+                              eventData.location == null
+                                  ? latLng = null
+                                  : latLng = LatLng(
+                                      eventData.location!.latitude,
+                                      eventData.location!.longitude);
                               return Column(
                                 children: [
                                   eventData!.event == null
-                                      ? Container(
-                                          decoration: BoxDecoration(
-                                              color: Colors.blue[50]),
-                                          child: ListTile(
-                                              leading: CircleAvatar(
+                                      ? ListTile(
+                                          leading: CircleAvatar(
+                                              backgroundImage: NetworkImage(
+                                                  friend.avatarUrl!)),
+                                          title: Row(
+                                            children: [
+                                              Text(
+                                                  ' ${friend.displayName ?? 'null error'}')
+                                            ],
+                                          ),
+                                          trailing: IconButton(
+                                            icon:
+                                                Icon(Icons.add_circle_outline),
+                                            onPressed: () {
+                                              showModal(context, eventData);
+                                            },
+                                          ))
+                                      : ExpansionTile(
+                                          collapsedIconColor: Colors.white,
+                                          title: Row(
+                                            children: [
+                                              Text(
+                                                'next: ',
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              Text('${eventName}'),
+                                            ],
+                                          ),
+                                          leading: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              eventData.location == null
+                                                  ? Container()
+                                                  : IconButton(
+                                                      padding: EdgeInsets.zero,
+                                                      icon: Icon(
+                                                        Icons.location_on,
+                                                        color: Colors.purple,
+                                                      ),
+                                                      onPressed: () async {
+                                                        _panelController
+                                                            .close();
+                                                        final GoogleMapController
+                                                            _googleMapController =
+                                                            await _mapController
+                                                                .future;
+                                                        _googleMapController.animateCamera(
+                                                            CameraUpdate.newCameraPosition(
+                                                                CameraPosition(
+                                                                    target: LatLng(
+                                                                        latLng!
+                                                                            .latitude,
+                                                                        latLng!
+                                                                            .longitude),
+                                                                    zoom: 12)));
+                                                      }),
+                                              SizedBox(
+                                                width: 8,
+                                              ),
+                                              CircleAvatar(
+                                                  radius: 15,
                                                   backgroundImage: NetworkImage(
                                                       friend.avatarUrl!)),
-                                              title: Row(
-                                                children: [
-                                                  Text(
-                                                      ' ${friend.displayName ?? 'null error'}')
-                                                ],
+                                            ],
+                                          ),
+                                          subtitle: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(friend.displayName!),
+                                              SizedBox(
+                                                width: 4,
                                               ),
-                                              trailing: planning
-                                                  ? IconButton(
-                                                      icon: Icon(Icons.add),
-                                                      onPressed: togglePlanning,
-                                                    )
-                                                  : Row(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: [
-                                                        IconButton(
-                                                            icon: Icon(
-                                                                Icons.check),
-                                                            onPressed: () {
-                                                              _firestore.addEvent(
-                                                                  friend
-                                                                      .chatsID!,
-                                                                  eventName);
-                                                              _nameEventController
-                                                                  .clear();
-                                                              togglePlanning();
-                                                            }),
-                                                        IconButton(
-                                                          icon: Icon(Icons
-                                                              .highlight_off),
-                                                          onPressed:
-                                                              togglePlanning,
-                                                        ),
-                                                      ],
-                                                    )),
-                                        )
-                                      : Container(
-                                          decoration: BoxDecoration(
-                                              color: Colors.blue[50]),
-                                          child: ListTile(
-                                            onTap: togglePlanning,
-                                            trailing: planning
-                                                ? Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      IconButton(
-                                                          onPressed: () {
-                                                            showModal(context,
-                                                                eventData);
-                                                          },
-                                                          icon: Icon(Icons
-                                                              .bug_report)),
-                                                      IconButton(
-                                                        icon: Icon(
-                                                          Icons.location_on,
-                                                          color: Colors.red,
-                                                        ),
-                                                        onPressed: () {
-                                                          _panelController
-                                                              .close();
-                                                        },
-                                                      ),
-                                                    ],
-                                                  )
-                                                : Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      IconButton(
-                                                          icon:
-                                                              Icon(Icons.check),
-                                                          onPressed: () {
-                                                            _firestore.addEvent(
-                                                                friend.chatsID!,
-                                                                eventName);
-                                                            _nameEventController
-                                                                .clear();
-                                                            togglePlanning();
-                                                          }),
-                                                      IconButton(
-                                                        icon:
-                                                            Icon(Icons.delete),
-                                                        onPressed: () {
-                                                          _firestore.deleteEvent(
-                                                              friend.chatsID!);
-                                                        },
-                                                      ),
-                                                      IconButton(
-                                                        icon: Icon(
-                                                            Icons.expand_less),
-                                                        onPressed:
-                                                            togglePlanning,
-                                                      ),
-                                                    ],
+                                              Icon(
+                                                Icons.check,
+                                                color: Colors.green,
+                                                size: 10,
+                                              )
+                                            ],
+                                          ),
+                                          onExpansionChanged: (val) {
+                                            setState(() {
+                                              expandedTile = val;
+                                            });
+                                          },
+                                          children: [
+                                            AppBar(
+                                              backgroundColor: Colors.white,
+                                              elevation: 0,
+                                              actions: [
+                                                IconButton(
+                                                    onPressed: () {},
+                                                    icon: Icon(Icons
+                                                        .add_location_alt)),
+                                                IconButton(
+                                                    onPressed: _selectTime,
+                                                    icon:
+                                                        Icon(Icons.more_time)),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          right: 8.0),
+                                                  child: ElevatedButton.icon(
+                                                    label: Text(
+                                                        "${eventData.event}"),
+                                                    icon: Icon(Icons.settings),
+                                                    onPressed: () {
+                                                      showModal(
+                                                          context, eventData);
+                                                    },
                                                   ),
-                                            title: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Text(friend.displayName!),
-                                                SizedBox(
-                                                  width: 5,
                                                 ),
-                                                Icon(
-                                                  Icons
-                                                      .check_circle_outline_rounded,
-                                                  size: 15,
-                                                  color: Colors.green,
-                                                )
                                               ],
                                             ),
-                                            leading: CircleAvatar(
-                                                backgroundImage: NetworkImage(
-                                                    friend.avatarUrl!)),
-                                            subtitle: eventData.hour == null
-                                                ? Text(
-                                                    'Coming up: ${eventData.event}')
-                                                : Text(
-                                                    '${eventData.event} @${_time!.format(context)}'),
-                                          ),
-                                        ),
-                                  AnimatedSwitcher(
-                                      duration: Duration(milliseconds: 150),
-                                      child: planning
-                                          ? Container(
-                                              key: Key('1'),
-                                            )
-                                          : Container(
-                                              key: Key('2'),
-                                              decoration: BoxDecoration(
-                                                color: Colors.blue[50],
-                                                borderRadius: BorderRadius.only(
-                                                  bottomLeft:
-                                                      Radius.circular(13),
-                                                  bottomRight:
-                                                      Radius.circular(13),
-                                                ),
+                                            Divider(),
+                                            SizedBox(
+                                              height: 10,
+                                            ),
+                                            ListTile(
+                                              title: Text(
+                                                  'TicketMaster reserved 3 tickets'),
+                                              subtitle: Text('ACC Center'),
+                                              trailing: Icon(Icons.pending),
+                                            ),
+                                            ListTile(
+                                              leading: CircleAvatar(
+                                                  backgroundImage: AssetImage(
+                                                      'assets/pp2.jpeg')),
+                                              title: Text(
+                                                  'Caroline purchased her ticket'),
+                                              subtitle: Text(
+                                                  '\$10 paid to TicketMaster'),
+                                              trailing: Icon(
+                                                Icons.check,
+                                                color: Colors.green,
                                               ),
-                                              child: altModal(eventData),
-                                            )),
+                                            )
+                                            // Text(
+                                            //     'event details, purchased, confirms, '),
+                                          ],
+                                        ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
                                   StreamBuilder<List<ChatModel>>(
                                     stream: _firestore.getChats(friend),
                                     builder: (context, snapshot) {
@@ -285,46 +291,20 @@ class _ChatState extends State<Chat> {
                                                                 vertical: 2),
                                                         // color: Colors.blue[100],
                                                         child: Material(
+                                                          shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          5),
+                                                              side: BorderSide(
+                                                                  color: Colors
+                                                                      .lightBlueAccent)),
                                                           color: data[index]
                                                                       .uid ==
                                                                   _auth.me.uid
-                                                              ? Colors
-                                                                  .lightBlue[50]
-                                                              : Colors.blue,
-                                                          borderRadius:
-                                                              data[index].uid ==
-                                                                      _auth.me
-                                                                          .uid
-                                                                  ? BorderRadius
-                                                                      .only(
-                                                                      bottomLeft:
-                                                                          Radius.circular(
-                                                                              5),
-                                                                      bottomRight:
-                                                                          Radius.circular(
-                                                                              1),
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              5),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              5),
-                                                                    )
-                                                                  : BorderRadius
-                                                                      .only(
-                                                                      bottomLeft:
-                                                                          Radius.circular(
-                                                                              1),
-                                                                      bottomRight:
-                                                                          Radius.circular(
-                                                                              5),
-                                                                      topLeft: Radius
-                                                                          .circular(
-                                                                              5),
-                                                                      topRight:
-                                                                          Radius.circular(
-                                                                              5),
-                                                                    ),
+                                                              ? null
+                                                              : Colors
+                                                                  .lightBlueAccent,
                                                           child: Padding(
                                                             padding:
                                                                 const EdgeInsets
@@ -334,10 +314,10 @@ class _ChatState extends State<Chat> {
                                                               style: TextStyle(
                                                                   color: data[index]
                                                                               .uid ==
-                                                                          _auth
-                                                                              .me
+                                                                          _auth.me
                                                                               .uid
-                                                                      ? null
+                                                                      ? Colors
+                                                                          .lightBlueAccent
                                                                       : Colors
                                                                           .white),
                                                             ),
@@ -424,38 +404,6 @@ class _ChatState extends State<Chat> {
           );
   }
 
-  ListTile altModal(EventModel? eventData) {
-    return ListTile(
-      title: TextField(
-        decoration: InputDecoration(
-            hintText: eventData!.event == null
-                ? 'write here!'
-                : 'edit ${eventData.event}'),
-        controller: _nameEventController,
-        onChanged: (val) {
-          eventName = val;
-        },
-      ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          eventData.hour == null
-              ? IconButton(onPressed: _selectTime, icon: Icon(Icons.more_time))
-              : IconButton(
-                  onPressed: null,
-                  icon: Icon(
-                    Icons.schedule,
-                    color: Colors.green,
-                  )),
-          IconButton(onPressed: null, icon: Icon(Icons.add_task_outlined)),
-          IconButton(
-              onPressed: null, icon: Icon(Icons.person_add_alt_1_outlined)),
-          IconButton(onPressed: null, icon: Icon(Icons.add_location_alt)),
-        ],
-      ),
-    );
-  }
-
   TimeOfDay? _time;
 
   void _selectTime() async {
@@ -484,6 +432,7 @@ class _ChatState extends State<Chat> {
     } else {
       _time = TimeOfDay(hour: eventData.hour!, minute: eventData.minute!);
     }
+
     return showModalBottomSheet(
         isScrollControlled: true,
         context: context,
@@ -499,25 +448,25 @@ class _ChatState extends State<Chat> {
                         automaticallyImplyLeading: false,
                         actions: [
                           IconButton(
+                            onPressed: null,
+                            icon: Icon(Icons.more_time),
+                          ),
+                          IconButton(onPressed: () {}, icon: Icon(Icons.event)),
+                          IconButton(
                               onPressed: null,
                               icon: Icon(Icons.add_location_alt)),
-                          _time == null
-                              ? IconButton(
-                                  icon: Icon(Icons.more_time),
-                                  onPressed: _selectTime,
-                                )
-                              : TextButton(
-                                  onPressed: _selectTime,
-                                  child: Text(
-                                    '${_time!.format(context)}',
-                                    style: TextStyle(color: Colors.white),
-                                  )),
                           IconButton(
-                              onPressed: () {
-                                _firestore.deleteEvent(friend.chatsID!);
-                                Navigator.pop(context);
-                              },
-                              icon: Icon(Icons.delete))
+                            icon: Icon(
+                              Icons.delete,
+                              color: Colors.red,
+                            ),
+                            onPressed: () {
+                              _firestore.deleteEvent(friend.chatsID!);
+                              setState(() {
+                                expandedTile = false;
+                              });
+                            },
+                          ),
                         ],
                       ),
                       Padding(
@@ -526,13 +475,14 @@ class _ChatState extends State<Chat> {
                           children: [
                             Expanded(
                               child: TextField(
+                                autofocus: true,
                                 onChanged: (val) {
                                   eventName = val;
                                 },
                                 controller: _nameEventController,
                                 decoration: InputDecoration(
                                     hintText: eventData!.event == null
-                                        ? 'make an event name'
+                                        ? 'for ie. Raptors Game'
                                         : "edit: '${eventData.event}'"),
                               ),
                             ),
@@ -545,7 +495,7 @@ class _ChatState extends State<Chat> {
                                     _nameEventController.clear();
                                     Navigator.pop(context);
                                   },
-                                  child: Text('Create Event')),
+                                  child: Icon(Icons.check)),
                             )
                           ],
                         ),
