@@ -16,69 +16,125 @@ class GoogleMaps extends StatefulWidget {
 class _GoogleMapsState extends State<GoogleMaps> {
   late GoogleMapController googleMapController;
   Set<Marker> _markers = {};
-
-  final Completer<GoogleMapController> _controller = Completer();
-
-  Future<void> _goToPlace(Map<String, dynamic> place) async {
-    final double lat = place['geometry']['location']['lat'];
-    final double lng = place['geometry']['location']['lng'];
-
-    final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(target: LatLng(lat, lng), zoom: 12)));
-  }
-
   final _searchController = TextEditingController();
+  var _searchValue;
+  bool added = false;
+  var results = "nothing yet";
+  Map<String, dynamic> result = {};
+  var test = 'bad';
+  late Iterable keys;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: TextFormField(
-        decoration: InputDecoration(hintText: 'search'),
-        controller: _searchController,
-        onChanged: (val) {},
-      )),
-      floatingActionButton: FloatingActionButton(onPressed: () async {
-        var place = await LocationService().getPlace(_searchController.text);
-        await _goToPlace(place);
-      }),
-      // floatingActionButton: FloatingActionButton(onPressed: () async {
-      //   Position position = await _determineMyPosition();
-      //   googleMapController.animateCamera(CameraUpdate.newCameraPosition(
-      //       CameraPosition(
-      //           target: LatLng(position.latitude, position.longitude),
-      //           zoom: 14)));
+        title: TextField(
+            onChanged: (val) {
+              _searchValue = val;
+            },
+            decoration: InputDecoration(hintText: 'search')),
+        actions: [
+          IconButton(
+              onPressed: () async {
+                _searchController.clear();
+                result = await LocationService().getPlace(_searchValue);
+                keys = result.keys;
+                setState(() {
+                  test = result.entries.last.key;
+                });
+                keys.forEach((element) {
+                  print(element);
+                });
+              },
+              icon: Icon(Icons.search))
+        ],
+      ),
+      body: Stack(children: [
+        GoogleMap(
+          mapType: MapType.hybrid,
+          markers: _markers,
+          initialCameraPosition:
+              CameraPosition(target: LatLng(43.723598, -79.598046), zoom: 15),
+          onMapCreated: (GoogleMapController controller) {
+            googleMapController = controller;
+          },
+        ),
+        Card(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            margin: EdgeInsets.all(25),
+            child: added
+                ? null
+                : ListTile(
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        VerticalDivider(thickness: 2),
+                        IconButton(
+                            icon: Icon(
+                              Icons.add,
+                            ),
+                            onPressed: toggleAdded),
+                      ],
+                    ),
+                    title: Text('CN Tower'),
+                    subtitle: Text(test),
+                  )),
+      ]),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 180),
+        child: FloatingActionButton(
+            child: Icon(Icons.my_location),
+            onPressed: () async {
+              Position position = await _determineMyPosition();
 
-      //   var myBitmap = await userImageMarker('assets/pp1.jpeg', title: 'me');
-      //   var myBitmap2 =
-      //       await userImageMarker('assets/pp2.jpeg', title: 'godson');
+              googleMapController.animateCamera(CameraUpdate.newCameraPosition(
+                  CameraPosition(
+                      target: LatLng(position.latitude, position.longitude),
+                      zoom: 14)));
 
-      //   _markers.add(Marker(
-      //       icon: myBitmap,
-      //       markerId: MarkerId('some id'),
-      //       position: LatLng(position.latitude, position.longitude)));
+              var myBitmap =
+                  await userImageMarker('assets/pp1.jpeg', title: 'me');
+              var myBitmap2 =
+                  await userImageMarker('assets/pp2.jpeg', title: 'godson');
 
-      //   _markers.add(Marker(
-      //       icon: myBitmap2,
-      //       markerId: MarkerId('anotehr id'),
-      //       position:
-      //           LatLng(position.latitude - 0.01, position.longitude - 0.01)));
-      //   setState(() {
-      //     print('is there another way to reload state?');
-      //   });
-      // }),
-      body: GoogleMap(
-        mapType: MapType.normal,
-        markers: _markers,
-        initialCameraPosition:
-            CameraPosition(target: LatLng(43, -79), zoom: 15),
-        onMapCreated: (GoogleMapController controller) {
-          // googleMapController = controller;
-          _controller.complete(controller);
-        },
+              _markers.add(Marker(
+                  icon: myBitmap,
+                  markerId: MarkerId('some id'),
+                  position: LatLng(position.latitude, position.longitude)));
+
+              _markers.add(Marker(
+                  icon: myBitmap2,
+                  markerId: MarkerId('anotehr id'),
+                  position: LatLng(
+                      position.latitude - 0.01, position.longitude - 0.01)));
+
+              _markers.add(Marker(
+                  icon: BitmapDescriptor.defaultMarkerWithHue(270),
+                  markerId: MarkerId('another id'),
+                  position: LatLng(43.723598, -79.598046)));
+
+              setState(() {
+                print('is there another way to reload state?');
+              });
+            }),
       ),
     );
+  }
+
+  Future<void> _goToPlace(Map<String, dynamic> place) async {
+    final double lat = place['geometry']['location']['lat'];
+    final double lng = place['geometry']['location']['lng'];
+
+    // final GoogleMapController controller = await googleMapController.future;
+    // controller.animateCamera(CameraUpdate.newCameraPosition(
+    //     CameraPosition(target: LatLng(lat, lng), zoom: 12)));
+  }
+
+  toggleAdded() {
+    setState(() {
+      added = !added;
+    });
   }
 
   Future<Uint8List> getBytesFromAsset(path, int width) async {
@@ -96,10 +152,10 @@ class _GoogleMapsState extends State<GoogleMaps> {
     int size = 150,
     required title,
     // bool addBorder = false,
-    Color borderColor = Colors.lightGreen,
+    Color borderColor = Colors.blue,
     double borderSize = 15,
     Color titleColor = Colors.white,
-    Color titleBackgroundColor = Colors.green,
+    Color titleBackgroundColor = Colors.blue,
   }) async {
     final pictureRecorder = ui.PictureRecorder();
     final canvas = Canvas(pictureRecorder);

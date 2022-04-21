@@ -5,6 +5,7 @@ import 'package:architectured/services/auth_service.dart';
 import 'package:architectured/services/singletons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -161,8 +162,12 @@ class FirestoreService {
   }
 
   void deleteEvent(DocumentReference doc) {
-    eventCollection.doc(doc.id).update(
-        {'event': null, 'minute': null, 'hour': null}).whenComplete(() {});
+    eventCollection.doc(doc.id).update({
+      'event': null,
+      'minute': null,
+      'hour': null,
+      'location': null
+    }).whenComplete(() {});
   }
 
   CollectionReference get eventCollection {
@@ -187,9 +192,14 @@ class FirestoreService {
   }
 
   void addEventTime(DocumentReference doc, TimeOfDay time) {
-    print('entered');
     eventCollection
         .doc(doc.id)
         .update({'hour': time.hour, 'minute': time.minute});
+  }
+
+  void addLocation(DocumentReference doc, LatLng latLng) {
+    eventCollection
+        .doc(doc.id)
+        .update({'location': GeoPoint(latLng.latitude, latLng.longitude)});
   }
 }

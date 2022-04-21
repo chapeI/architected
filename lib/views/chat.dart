@@ -1,4 +1,10 @@
 import 'dart:async';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+import 'package:architectured/views/google_maps.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:architectured/models/chat_model.dart';
 import 'package:architectured/models/event_model.dart';
@@ -6,9 +12,6 @@ import 'package:architectured/models/user_model.dart';
 import 'package:architectured/services/auth_service.dart';
 import 'package:architectured/services/firestore_service.dart';
 import 'package:architectured/services/location_service.dart';
-import 'package:architectured/views/google_maps.dart';
-import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class Chat extends StatefulWidget {
@@ -29,19 +32,7 @@ class _ChatState extends State<Chat> {
   bool planning = false;
   bool expandedTile = false;
   LatLng? latLng;
-
-  // MAP STUFF
-  final Completer<GoogleMapController> _mapController = Completer();
   final _searchController = TextEditingController();
-
-  Future<void> _goToPlace(Map<String, dynamic> place) async {
-    final double lat = place['geometry']['location']['lat'];
-    final double lng = place['geometry']['location']['lng'];
-
-    final GoogleMapController controller = await _mapController.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(target: LatLng(lat, lng), zoom: 12)));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,13 +86,7 @@ class _ChatState extends State<Chat> {
                         });
                       },
                       defaultPanelState: PanelState.OPEN,
-                      body: GoogleMap(
-                        initialCameraPosition:
-                            CameraPosition(target: LatLng(43, -79)),
-                        onMapCreated: (GoogleMapController controller) {
-                          _mapController.complete(controller);
-                        },
-                      ),
+                      body: GoogleMaps(),
                       panel: StreamBuilder<EventModel>(
                           stream: _firestore.events(friend.chatsID!),
                           builder: (context, snapshot) {
@@ -123,86 +108,57 @@ class _ChatState extends State<Chat> {
                                 children: [
                                   eventData!.event == null
                                       ? ListTile(
-                                          leading: CircleAvatar(
-                                              backgroundImage: NetworkImage(
-                                                  friend.avatarUrl!)),
-                                          title: Row(
+                                          leading: Row(
+                                            mainAxisSize: MainAxisSize.min,
                                             children: [
-                                              Text(
-                                                  ' ${friend.displayName ?? 'null error'}')
+                                              CircleAvatar(
+                                                  backgroundImage: NetworkImage(
+                                                      friend.avatarUrl!)),
+                                              SizedBox(
+                                                width: 5,
+                                              ),
+                                              CircleAvatar(
+                                                  child:
+                                                      Icon(Icons.location_on)),
                                             ],
                                           ),
+                                          title: Text(
+                                              '${friend.displayName ?? 'null error'}'),
+                                          subtitle:
+                                              Text('25 Benoth Ave, Brampton'),
                                           trailing: IconButton(
-                                            icon:
-                                                Icon(Icons.add_circle_outline),
-                                            onPressed: () {
-                                              showModal(context, eventData);
-                                            },
-                                          ))
+                                            icon: Icon(Icons.more_vert),
+                                            onPressed: null,
+                                          ),
+                                        )
                                       : ExpansionTile(
                                           collapsedIconColor: Colors.white,
-                                          title: Row(
+                                          subtitle: Row(
                                             children: [
                                               Text(
-                                                'next: ',
+                                                'Added: ',
+                                              ),
+                                              Text(
+                                                '${eventName}',
                                                 style: TextStyle(
                                                     fontWeight:
                                                         FontWeight.bold),
                                               ),
-                                              Text('${eventName}'),
                                             ],
                                           ),
-                                          leading: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              eventData.location == null
-                                                  ? Container()
-                                                  : IconButton(
-                                                      padding: EdgeInsets.zero,
-                                                      icon: Icon(
-                                                        Icons.location_on,
-                                                        color: Colors.purple,
-                                                      ),
-                                                      onPressed: () async {
-                                                        _panelController
-                                                            .close();
-                                                        final GoogleMapController
-                                                            _googleMapController =
-                                                            await _mapController
-                                                                .future;
-                                                        _googleMapController.animateCamera(
-                                                            CameraUpdate.newCameraPosition(
-                                                                CameraPosition(
-                                                                    target: LatLng(
-                                                                        latLng!
-                                                                            .latitude,
-                                                                        latLng!
-                                                                            .longitude),
-                                                                    zoom: 12)));
-                                                      }),
-                                              SizedBox(
-                                                width: 8,
+                                          leading: CircleAvatar(
+                                              backgroundImage: NetworkImage(
+                                                  friend.avatarUrl!)),
+                                          trailing: IconButton(
+                                              padding: EdgeInsets.zero,
+                                              icon: Icon(
+                                                Icons.location_on,
+                                                color: Colors.purple,
                                               ),
-                                              CircleAvatar(
-                                                  radius: 15,
-                                                  backgroundImage: NetworkImage(
-                                                      friend.avatarUrl!)),
-                                            ],
-                                          ),
-                                          subtitle: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Text(friend.displayName!),
-                                              SizedBox(
-                                                width: 4,
-                                              ),
-                                              Icon(
-                                                Icons.check,
-                                                color: Colors.green,
-                                                size: 10,
-                                              )
-                                            ],
-                                          ),
+                                              onPressed: () async {
+                                                _panelController.close();
+                                              }),
+                                          title: Text(friend.displayName!),
                                           onExpansionChanged: (val) {
                                             setState(() {
                                               expandedTile = val;
@@ -389,7 +345,7 @@ class _ChatState extends State<Chat> {
                                         onPressed: () async {
                                           var place = await LocationService()
                                               .getPlace(_searchController.text);
-                                          await _goToPlace(place);
+                                          // await _goToPlace(place);
                                         },
                                         child: Icon(Icons.search)),
                                   )
@@ -453,7 +409,10 @@ class _ChatState extends State<Chat> {
                           ),
                           IconButton(onPressed: () {}, icon: Icon(Icons.event)),
                           IconButton(
-                              onPressed: null,
+                              onPressed: () {
+                                _firestore.addLocation(friend.chatsID!,
+                                    LatLng(43.723598, -79.598046));
+                              },
                               icon: Icon(Icons.add_location_alt)),
                           IconButton(
                             icon: Icon(
@@ -503,5 +462,15 @@ class _ChatState extends State<Chat> {
                     ],
                   )));
         });
+  }
+
+  Future<Uint8List> getBytesFromAsset(path, int width) async {
+    ByteData data = await rootBundle.load(path);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+        targetWidth: width);
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+        .buffer
+        .asUint8List();
   }
 }
