@@ -104,34 +104,37 @@ class _ChatState extends State<Chat> {
                                                   friend.avatarUrl!)),
                                         )
                                       : ListTile(
-                                          leading: Row(
+                                          leading: CircleAvatar(
+                                              backgroundImage: AssetImage(
+                                                  'assets/pp1.jpeg')),
+                                          title: Text('John Smith'
+                                              // '${friend.displayName ?? 'null error'}'
+                                              ),
+                                          isThreeLine: true,
+                                          subtitle: Text(
+                                              '${eventData.placeName} @ ${eventData.address!.substring(0, 34)}'),
+                                          trailing: Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
-                                              CircleAvatar(
-                                                  backgroundImage: NetworkImage(
-                                                      friend.avatarUrl!)),
-                                              SizedBox(
-                                                width: 5,
+                                              OutlinedButton(
+                                                  onPressed: null,
+                                                  child: Icon(
+                                                    Icons.location_on,
+                                                    color: Colors.purple,
+                                                  )),
+                                              PopupMenuButton(
+                                                itemBuilder: ((context) => [
+                                                      PopupMenuItem(
+                                                          child: Text(
+                                                              'remove marker'),
+                                                          onTap: () {
+                                                            _firestore.deleteEvent(
+                                                                friend
+                                                                    .chatsID!);
+                                                          })
+                                                    ]),
                                               ),
-                                              CircleAvatar(
-                                                  child:
-                                                      Icon(Icons.location_on)),
                                             ],
-                                          ),
-                                          title: Text(
-                                              '${friend.displayName ?? 'null error'}'),
-                                          subtitle:
-                                              Text('@ ${eventData.placeName}'),
-                                          trailing: PopupMenuButton(
-                                            itemBuilder: ((context) => [
-                                                  PopupMenuItem(
-                                                      child:
-                                                          Text('remove marker'),
-                                                      onTap: () {
-                                                        _firestore.deleteEvent(
-                                                            friend.chatsID!);
-                                                      })
-                                                ]),
                                           )),
                                   SizedBox(
                                     height: 10,

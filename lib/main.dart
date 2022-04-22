@@ -3,7 +3,6 @@ import 'package:architectured/services/auth_service.dart';
 import 'package:architectured/services/singletons.dart';
 import 'package:architectured/views/friends.dart';
 import 'package:architectured/views/chat.dart';
-import 'package:architectured/views/google_maps.dart';
 import 'package:architectured/wrapper.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';

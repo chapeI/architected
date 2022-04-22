@@ -34,34 +34,33 @@ class _GoogleMapsState extends State<GoogleMaps> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: TextField(
-            onChanged: (val) {
-              _searchValue = val;
-            },
-            decoration: InputDecoration(hintText: widget.friend.uid)),
-        actions: [
-          IconButton(
-              onPressed: () async {
-                _searchController.clear();
-                result = await LocationService().getPlace(_searchValue);
-                lat = result['geometry']['location']['lat'];
-                lng = result['geometry']['location']['lng'];
-                address = result['formatted_address'];
-                placeName = result['name'];
-                _goToPlace(lat, lng);
-                _markers.add(Marker(
-                    markerId: MarkerId('yolo'), position: LatLng(lat, lng)));
-                setState(() {
-                  _showCard = true;
-                });
-              },
-              icon: Icon(Icons.search))
-        ],
-      ),
+      // appBar: AppBar(
+      //   title: TextField(
+      //       onChanged: (val) {
+      //         _searchValue = val;
+      //       },
+      //       decoration: InputDecoration(hintText: widget.friend.uid)),
+      //   actions: [
+      //     IconButton(
+      //         onPressed: () async {
+      //           _searchController.clear();
+      //           result = await LocationService().getPlace(_searchValue);
+      //           lat = result['geometry']['location']['lat'];
+      //           lng = result['geometry']['location']['lng'];
+      //           address = result['formatted_address'];
+      //           placeName = result['name'];
+      //           _goToPlace(lat, lng);
+      //           _markers.add(Marker(
+      //               markerId: MarkerId('yolo'), position: LatLng(lat, lng)));
+      //           setState(() {
+      //             _showCard = true;
+      //           });
+      //         },
+      //         icon: Icon(Icons.search))
+      //   ],
+      // ),
       body: Stack(children: [
         GoogleMap(
-          mapType: MapType.hybrid,
           markers: _markers,
           initialCameraPosition:
               CameraPosition(target: LatLng(43.723598, -79.598046), zoom: 15),
