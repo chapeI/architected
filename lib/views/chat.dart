@@ -86,28 +86,24 @@ class _ChatState extends State<Chat> {
                         });
                       },
                       defaultPanelState: PanelState.OPEN,
-                      body: GoogleMaps(),
+                      body: GoogleMaps(
+                        friend: friend,
+                      ),
                       panel: StreamBuilder<EventModel>(
                           stream: _firestore.events(friend.chatsID!),
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
                               EventModel? eventData = snapshot.data;
-                              if (eventData!.hour == null) {
-                                _time = null;
-                              } else {
-                                _time = TimeOfDay(
-                                    hour: eventData.hour!,
-                                    minute: eventData.minute!);
-                              }
-                              eventData.location == null
-                                  ? latLng = null
-                                  : latLng = LatLng(
-                                      eventData.location!.latitude,
-                                      eventData.location!.longitude);
                               return Column(
                                 children: [
-                                  eventData!.event == null
+                                  eventData!.address == null
                                       ? ListTile(
+                                          title: Text(friend.displayName!),
+                                          leading: CircleAvatar(
+                                              backgroundImage: NetworkImage(
+                                                  friend.avatarUrl!)),
+                                        )
+                                      : ListTile(
                                           leading: Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
@@ -125,101 +121,18 @@ class _ChatState extends State<Chat> {
                                           title: Text(
                                               '${friend.displayName ?? 'null error'}'),
                                           subtitle:
-                                              Text('25 Benoth Ave, Brampton'),
-                                          trailing: IconButton(
-                                            icon: Icon(Icons.more_vert),
-                                            onPressed: null,
-                                          ),
-                                        )
-                                      : ExpansionTile(
-                                          collapsedIconColor: Colors.white,
-                                          subtitle: Row(
-                                            children: [
-                                              Text(
-                                                'Added: ',
-                                              ),
-                                              Text(
-                                                '${eventName}',
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                            ],
-                                          ),
-                                          leading: CircleAvatar(
-                                              backgroundImage: NetworkImage(
-                                                  friend.avatarUrl!)),
-                                          trailing: IconButton(
-                                              padding: EdgeInsets.zero,
-                                              icon: Icon(
-                                                Icons.location_on,
-                                                color: Colors.purple,
-                                              ),
-                                              onPressed: () async {
-                                                _panelController.close();
-                                              }),
-                                          title: Text(friend.displayName!),
-                                          onExpansionChanged: (val) {
-                                            setState(() {
-                                              expandedTile = val;
-                                            });
-                                          },
-                                          children: [
-                                            AppBar(
-                                              backgroundColor: Colors.white,
-                                              elevation: 0,
-                                              actions: [
-                                                IconButton(
-                                                    onPressed: () {},
-                                                    icon: Icon(Icons
-                                                        .add_location_alt)),
-                                                IconButton(
-                                                    onPressed: _selectTime,
-                                                    icon:
-                                                        Icon(Icons.more_time)),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          right: 8.0),
-                                                  child: ElevatedButton.icon(
-                                                    label: Text(
-                                                        "${eventData.event}"),
-                                                    icon: Icon(Icons.settings),
-                                                    onPressed: () {
-                                                      showModal(
-                                                          context, eventData);
-                                                    },
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            Divider(),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            ListTile(
-                                              title: Text(
-                                                  'TicketMaster reserved 3 tickets'),
-                                              subtitle: Text('ACC Center'),
-                                              trailing: Icon(Icons.pending),
-                                            ),
-                                            ListTile(
-                                              leading: CircleAvatar(
-                                                  backgroundImage: AssetImage(
-                                                      'assets/pp2.jpeg')),
-                                              title: Text(
-                                                  'Caroline purchased her ticket'),
-                                              subtitle: Text(
-                                                  '\$10 paid to TicketMaster'),
-                                              trailing: Icon(
-                                                Icons.check,
-                                                color: Colors.green,
-                                              ),
-                                            )
-                                            // Text(
-                                            //     'event details, purchased, confirms, '),
-                                          ],
-                                        ),
+                                              Text('@ ${eventData.placeName}'),
+                                          trailing: PopupMenuButton(
+                                            itemBuilder: ((context) => [
+                                                  PopupMenuItem(
+                                                      child:
+                                                          Text('remove marker'),
+                                                      onTap: () {
+                                                        _firestore.deleteEvent(
+                                                            friend.chatsID!);
+                                                      })
+                                                ]),
+                                          )),
                                   SizedBox(
                                     height: 10,
                                   ),
@@ -322,7 +235,7 @@ class _ChatState extends State<Chat> {
                                     fillColor: Colors.blue[50],
                                     hintText: panelOpen
                                         ? '    send a message'
-                                        : '    search map'),
+                                        : '    use top search bar for now'),
                                 controller:
                                     panelOpen ? _controller : _searchController,
                               ),
@@ -383,12 +296,6 @@ class _ChatState extends State<Chat> {
   }
 
   Future<dynamic> showModal(BuildContext context, EventModel? eventData) {
-    if (eventData!.hour == null) {
-      _time = null;
-    } else {
-      _time = TimeOfDay(hour: eventData.hour!, minute: eventData.minute!);
-    }
-
     return showModalBottomSheet(
         isScrollControlled: true,
         context: context,
@@ -410,8 +317,11 @@ class _ChatState extends State<Chat> {
                           IconButton(onPressed: () {}, icon: Icon(Icons.event)),
                           IconButton(
                               onPressed: () {
-                                _firestore.addLocation(friend.chatsID!,
-                                    LatLng(43.723598, -79.598046));
+                                _firestore.addLocation(
+                                    friend.chatsID!,
+                                    LatLng(43.723598, -79.598046),
+                                    'bad name',
+                                    'bad addy');
                               },
                               icon: Icon(Icons.add_location_alt)),
                           IconButton(

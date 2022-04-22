@@ -2,6 +2,8 @@
 import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
+import 'package:architectured/models/user_model.dart';
+import 'package:architectured/services/firestore_service.dart';
 import 'package:architectured/services/location_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +11,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class GoogleMaps extends StatefulWidget {
+  UserModel friend;
+  GoogleMaps({required this.friend});
   @override
   State<GoogleMaps> createState() => _GoogleMapsState();
 }
@@ -18,11 +22,14 @@ class _GoogleMapsState extends State<GoogleMaps> {
   Set<Marker> _markers = {};
   final _searchController = TextEditingController();
   var _searchValue;
-  bool added = false;
-  var results = "nothing yet";
+  bool _showCard = false;
   Map<String, dynamic> result = {};
-  var test = 'bad';
-  late Iterable keys;
+  late var placeName;
+  late var address;
+  late var lat;
+  late var lng;
+
+  // late Iterable keys;
 
   @override
   Widget build(BuildContext context) {
@@ -32,18 +39,21 @@ class _GoogleMapsState extends State<GoogleMaps> {
             onChanged: (val) {
               _searchValue = val;
             },
-            decoration: InputDecoration(hintText: 'search')),
+            decoration: InputDecoration(hintText: widget.friend.uid)),
         actions: [
           IconButton(
               onPressed: () async {
                 _searchController.clear();
                 result = await LocationService().getPlace(_searchValue);
-                keys = result.keys;
+                lat = result['geometry']['location']['lat'];
+                lng = result['geometry']['location']['lng'];
+                address = result['formatted_address'];
+                placeName = result['name'];
+                _goToPlace(lat, lng);
+                _markers.add(Marker(
+                    markerId: MarkerId('yolo'), position: LatLng(lat, lng)));
                 setState(() {
-                  test = result.entries.last.key;
-                });
-                keys.forEach((element) {
-                  print(element);
+                  _showCard = true;
                 });
               },
               icon: Icon(Icons.search))
@@ -59,27 +69,37 @@ class _GoogleMapsState extends State<GoogleMaps> {
             googleMapController = controller;
           },
         ),
-        Card(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-            margin: EdgeInsets.all(25),
-            child: added
-                ? null
-                : ListTile(
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        VerticalDivider(thickness: 2),
-                        IconButton(
-                            icon: Icon(
-                              Icons.add,
-                            ),
-                            onPressed: toggleAdded),
-                      ],
-                    ),
-                    title: Text('CN Tower'),
-                    subtitle: Text(test),
-                  )),
+        _showCard
+            ? Card(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
+                margin: EdgeInsets.all(25),
+                child: ListTile(
+                  contentPadding: EdgeInsets.all(9),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      VerticalDivider(thickness: 2),
+                      IconButton(
+                          icon: Icon(
+                            Icons.add,
+                          ),
+                          onPressed: () {
+                            FirestoreService().addLocation(
+                                widget.friend.chatsID!,
+                                LatLng(lat, lng),
+                                placeName,
+                                address);
+                            setState(() {
+                              _showCard = false;
+                            });
+                          }),
+                    ],
+                  ),
+                  title: Text(placeName),
+                  subtitle: Text(address),
+                ))
+            : Container(),
       ]),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 180),
@@ -122,19 +142,9 @@ class _GoogleMapsState extends State<GoogleMaps> {
     );
   }
 
-  Future<void> _goToPlace(Map<String, dynamic> place) async {
-    final double lat = place['geometry']['location']['lat'];
-    final double lng = place['geometry']['location']['lng'];
-
-    // final GoogleMapController controller = await googleMapController.future;
-    // controller.animateCamera(CameraUpdate.newCameraPosition(
-    //     CameraPosition(target: LatLng(lat, lng), zoom: 12)));
-  }
-
-  toggleAdded() {
-    setState(() {
-      added = !added;
-    });
+  Future<void> _goToPlace(lat, lng) async {
+    googleMapController.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(target: LatLng(lat, lng), zoom: 20)));
   }
 
   Future<Uint8List> getBytesFromAsset(path, int width) async {

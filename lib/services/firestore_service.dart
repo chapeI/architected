@@ -70,6 +70,8 @@ class FirestoreService {
       'location': null,
       'hour': null,
       'minute': null,
+      'address': null,
+      'placeName': null,
     }).then((documentReference) async {
       await _usersCollection
           .doc(me.uid)
@@ -166,7 +168,9 @@ class FirestoreService {
       'event': null,
       'minute': null,
       'hour': null,
-      'location': null
+      'location': null,
+      'placeName': null,
+      'address': null,
     }).whenComplete(() {});
   }
 
@@ -186,6 +190,8 @@ class FirestoreService {
       event: snapshot['event'],
       hour: snapshot['hour'],
       minute: snapshot['minute'],
+      address: snapshot['address'],
+      placeName: snapshot['placeName'],
       location: snapshot['location'],
       lastMessage: snapshot['lastMessage'] ?? 'lastmessageDebug',
     );
@@ -197,9 +203,11 @@ class FirestoreService {
         .update({'hour': time.hour, 'minute': time.minute});
   }
 
-  void addLocation(DocumentReference doc, LatLng latLng) {
-    eventCollection
-        .doc(doc.id)
-        .update({'location': GeoPoint(latLng.latitude, latLng.longitude)});
+  void addLocation(DocumentReference doc, LatLng latLng, name, address) {
+    eventCollection.doc(doc.id).update({
+      'placeName': name,
+      'address': address,
+      'location': GeoPoint(latLng.latitude, latLng.longitude)
+    });
   }
 }

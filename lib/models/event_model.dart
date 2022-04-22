@@ -5,12 +5,16 @@ class EventModel {
   int? hour;
   int? minute;
   GeoPoint? location;
+  String? address;
+  String? placeName;
   String? picture;
   String lastMessage;
   EventModel(
       {this.event,
       required this.lastMessage,
       this.minute,
+      this.address,
+      this.placeName,
       this.hour,
       this.location,
       this.picture});
