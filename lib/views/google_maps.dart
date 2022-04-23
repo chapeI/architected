@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
+import 'package:architectured/bloc/application_bloc.dart';
 import 'package:architectured/models/user_model.dart';
 import 'package:architectured/services/firestore_service.dart';
 import 'package:architectured/services/location_service.dart';
@@ -9,10 +10,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
 
 class GoogleMaps extends StatefulWidget {
-  UserModel friend;
-  GoogleMaps({required this.friend});
+  // UserModel friend;
+  // GoogleMaps({required this.friend});
   @override
   State<GoogleMaps> createState() => _GoogleMapsState();
 }
@@ -29,36 +31,17 @@ class _GoogleMapsState extends State<GoogleMaps> {
   late var lat;
   late var lng;
 
-  // late Iterable keys;
-
   @override
   Widget build(BuildContext context) {
+    final applicationBloc = Provider.of<ApplicationBloc>(context);
     return Scaffold(
-      // appBar: AppBar(
-      //   title: TextField(
-      //       onChanged: (val) {
-      //         _searchValue = val;
-      //       },
-      //       decoration: InputDecoration(hintText: widget.friend.uid)),
-      //   actions: [
-      //     IconButton(
-      //         onPressed: () async {
-      //           _searchController.clear();
-      //           result = await LocationService().getPlace(_searchValue);
-      //           lat = result['geometry']['location']['lat'];
-      //           lng = result['geometry']['location']['lng'];
-      //           address = result['formatted_address'];
-      //           placeName = result['name'];
-      //           _goToPlace(lat, lng);
-      //           _markers.add(Marker(
-      //               markerId: MarkerId('yolo'), position: LatLng(lat, lng)));
-      //           setState(() {
-      //             _showCard = true;
-      //           });
-      //         },
-      //         icon: Icon(Icons.search))
-      //   ],
-      // ),
+      appBar: AppBar(
+        title: TextField(
+          onChanged: (val) => applicationBloc.searchPlaces(val),
+          // decoration: InputDecoration(hintText: widget.friend.uid)
+        ),
+        actions: [IconButton(onPressed: () async {}, icon: Icon(Icons.search))],
+      ),
       body: Stack(children: [
         GoogleMap(
           markers: _markers,
@@ -68,37 +51,30 @@ class _GoogleMapsState extends State<GoogleMaps> {
             googleMapController = controller;
           },
         ),
-        _showCard
-            ? Card(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8)),
-                margin: EdgeInsets.all(25),
-                child: ListTile(
-                  contentPadding: EdgeInsets.all(9),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      VerticalDivider(thickness: 2),
-                      IconButton(
-                          icon: Icon(
-                            Icons.add,
-                          ),
-                          onPressed: () {
-                            FirestoreService().addLocation(
-                                widget.friend.chatsID!,
-                                LatLng(lat, lng),
-                                placeName,
-                                address);
-                            setState(() {
-                              _showCard = false;
-                            });
-                          }),
-                    ],
-                  ),
-                  title: Text(placeName),
-                  subtitle: Text(address),
-                ))
-            : Container(),
+        if (applicationBloc.searchResults != null &&
+            applicationBloc.searchResults!.isNotEmpty)
+          Container(
+            height: 300,
+            width: double.infinity,
+            decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.6),
+                backgroundBlendMode: ui.BlendMode.darken),
+          ),
+        if (applicationBloc.searchResults != null &&
+            applicationBloc.searchResults!.isNotEmpty)
+          Container(
+            height: 300,
+            child: ListView.builder(
+                itemCount: applicationBloc.searchResults!.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(
+                      applicationBloc.searchResults![index].desc,
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  );
+                }),
+          )
       ]),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 180),

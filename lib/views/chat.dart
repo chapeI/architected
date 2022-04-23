@@ -30,7 +30,6 @@ class _ChatState extends State<Chat> {
   var panelOpen = true;
   final _panelController = PanelController();
   bool planning = false;
-  bool expandedTile = false;
   LatLng? latLng;
   final _searchController = TextEditingController();
 
@@ -46,7 +45,7 @@ class _ChatState extends State<Chat> {
                     child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                      'firestore document structure may change in the future. were still in alpha. That means convos may be deleted. click here if profile picture doesnt show up. get in touch w me directly here, post issues or desired features here '),
+                      'since this is still alphe, data structures change on the fly. That means chats may be deleted on updates. if your profile picture isnt showing up CLICK THIS BUTTON. dont add anyone if your profile picture isnt working. if you want a feature to be developed, poll it here '),
                 )),
                 OutlinedButton(
                     onPressed: () async {
@@ -74,7 +73,7 @@ class _ChatState extends State<Chat> {
                   SlidingUpPanel(
                       controller: _panelController,
                       maxHeight: MediaQuery.of(context).size.height,
-                      minHeight: expandedTile ? 210 : 140,
+                      minHeight: 80,
                       onPanelClosed: () {
                         setState(() {
                           panelOpen = false;
@@ -87,8 +86,8 @@ class _ChatState extends State<Chat> {
                       },
                       defaultPanelState: PanelState.OPEN,
                       body: GoogleMaps(
-                        friend: friend,
-                      ),
+                          // friend: friend,
+                          ),
                       panel: StreamBuilder<EventModel>(
                           stream: _firestore.events(friend.chatsID!),
                           builder: (context, snapshot) {
@@ -105,11 +104,11 @@ class _ChatState extends State<Chat> {
                                         )
                                       : ListTile(
                                           leading: CircleAvatar(
-                                              backgroundImage: AssetImage(
-                                                  'assets/pp1.jpeg')),
-                                          title: Text('John Smith'
-                                              // '${friend.displayName ?? 'null error'}'
-                                              ),
+                                            backgroundImage:
+                                                NetworkImage(friend.avatarUrl!),
+                                          ),
+                                          title: Text(
+                                              '${friend.displayName ?? 'null error'}'),
                                           isThreeLine: true,
                                           subtitle: Text(
                                               '${eventData.placeName} @ ${eventData.address!.substring(0, 34)}'),
@@ -212,39 +211,39 @@ class _ChatState extends State<Chat> {
                             return Text(
                                 'event field may have been deleted, create it again and set it to null');
                           })),
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      height: 70,
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                onChanged: (val) {
-                                  message = val;
-                                },
-                                cursorColor: Colors.blue[200],
-                                cursorWidth: 8,
-                                decoration: InputDecoration(
-                                    filled: true,
-                                    border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10.0),
-                                        borderSide: BorderSide.none),
-                                    fillColor: Colors.blue[50],
-                                    hintText: panelOpen
-                                        ? '    send a message'
-                                        : '    use top search bar for now'),
-                                controller:
-                                    panelOpen ? _controller : _searchController,
-                              ),
-                            ),
-                            panelOpen
-                                ? Padding(
+                  panelOpen
+                      ? Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: Container(
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: TextField(
+                                      onChanged: (val) {
+                                        message = val;
+                                      },
+                                      cursorColor: Colors.blue[200],
+                                      cursorWidth: 8,
+                                      decoration: InputDecoration(
+                                          filled: true,
+                                          border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10.0),
+                                              borderSide: BorderSide.none),
+                                          fillColor: Colors.blue[50],
+                                          hintText: panelOpen
+                                              ? '    send a message'
+                                              : '    use top search bar for now'),
+                                      controller: panelOpen
+                                          ? _controller
+                                          : _searchController,
+                                    ),
+                                  ),
+                                  Padding(
                                     padding: const EdgeInsets.only(left: 8.0),
                                     child: ElevatedButton(
                                       onPressed: () {
@@ -255,21 +254,12 @@ class _ChatState extends State<Chat> {
                                       child: Icon(Icons.send),
                                     ),
                                   )
-                                : Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
-                                    child: ElevatedButton(
-                                        onPressed: () async {
-                                          var place = await LocationService()
-                                              .getPlace(_searchController.text);
-                                          // await _goToPlace(place);
-                                        },
-                                        child: Icon(Icons.search)),
-                                  )
-                          ],
-                        ),
-                      ),
-                    ),
-                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
+                      : Container()
                 ]),
               ),
             ),
@@ -334,9 +324,6 @@ class _ChatState extends State<Chat> {
                             ),
                             onPressed: () {
                               _firestore.deleteEvent(friend.chatsID!);
-                              setState(() {
-                                expandedTile = false;
-                              });
                             },
                           ),
                         ],

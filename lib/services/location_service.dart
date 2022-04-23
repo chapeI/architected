@@ -28,4 +28,24 @@ class LocationService {
     print(results);
     return results;
   }
+
+  Future<List<PlaceSearch>> getAutoComplete(String search) async {
+    var url =
+        'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${search}&types=%28cities%29&key=${key}';
+    var response = await http.get(Uri.parse(url));
+    var json = convert.jsonDecode(response.body);
+    var results = json['predictions'] as List;
+    return results.map((place) => PlaceSearch.fromJson(place)).toList();
+  }
+}
+
+class PlaceSearch {
+  final String desc;
+  final String placeId;
+
+  PlaceSearch({required this.desc, required this.placeId});
+
+  factory PlaceSearch.fromJson(Map<String, dynamic> json) {
+    return PlaceSearch(desc: json['description'], placeId: json['place_id']);
+  }
 }
