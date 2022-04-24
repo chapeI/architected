@@ -127,7 +127,7 @@ class _GoogleMapsState extends State<GoogleMaps> {
           )
       ]),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 120),
+        padding: const EdgeInsets.only(bottom: 180),
         child: FloatingActionButton(
             child: CircleAvatar(
               backgroundImage:

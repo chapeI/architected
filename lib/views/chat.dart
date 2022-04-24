@@ -37,7 +37,10 @@ class _ChatState extends State<Chat> {
   Widget build(BuildContext context) {
     return friend.uid == null
         ? Scaffold(
-            appBar: AppBar(title: Text('welcome to chatsdev v1.0')),
+            appBar: AppBar(
+              title: Text('welcome to chatsdev v1.0'),
+              elevation: 0,
+            ),
             body: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -68,221 +71,268 @@ class _ChatState extends State<Chat> {
               return false;
             },
             child: Scaffold(
-              body: SafeArea(
-                child: Stack(children: [
-                  SlidingUpPanel(
-                      controller: _panelController,
-                      maxHeight: MediaQuery.of(context).size.height,
-                      minHeight: 80,
-                      onPanelClosed: () {
-                        setState(() {
-                          panelOpen = false;
-                        });
-                      },
-                      onPanelOpened: () {
-                        setState(() {
-                          panelOpen = true;
-                        });
-                      },
-                      defaultPanelState: PanelState.OPEN,
-                      body: GoogleMaps(
-                        friend: friend,
-                      ),
-                      panel: StreamBuilder<EventModel>(
-                          stream: _firestore.events(friend.chatsID!),
-                          builder: (context, snapshot) {
-                            if (snapshot.hasData) {
-                              EventModel? eventData = snapshot.data;
-                              return Column(
-                                children: [
-                                  eventData!.address == null
-                                      ? ListTile(
-                                          title: Text(friend.displayName!),
-                                          leading: CircleAvatar(
-                                              backgroundImage: NetworkImage(
-                                                  friend.avatarUrl!)),
-                                        )
-                                      : ListTile(
-                                          leading: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              CircleAvatar(
-                                                backgroundImage: NetworkImage(
-                                                    friend.avatarUrl!),
-                                              ),
-                                              OutlinedButton(
-                                                  style:
-                                                      OutlinedButton.styleFrom(
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  10),
-                                                          shape:
-                                                              CircleBorder()),
-                                                  onPressed: null,
-                                                  child: Icon(
-                                                    Icons.location_on,
-                                                    color: Colors.purple,
-                                                  )),
-                                            ],
-                                          ),
-                                          title: Row(
-                                            children: [
-                                              Text('${friend.displayName} '),
-                                              Text(
-                                                '@${eventData.placeName}',
-                                                style: TextStyle(
-                                                  color: Colors.purple,
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                          isThreeLine: true,
-                                          subtitle: Text(
-                                            '${eventData.address!.substring(0, 34)}',
-                                            style: TextStyle(
-                                                color: Colors.purple[200]),
-                                          ),
-                                          trailing: PopupMenuButton(
-                                            itemBuilder: ((context) => [
-                                                  PopupMenuItem(
-                                                      child: Text('edit'),
-                                                      onTap: () {}),
-                                                  PopupMenuItem(
-                                                      child: Text(
-                                                          'remove location'),
-                                                      onTap: () {
-                                                        _firestore.deleteEvent(
-                                                            friend.chatsID!);
-                                                      }),
-                                                ]),
-                                          )),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  StreamBuilder<List<ChatModel>>(
-                                    stream: _firestore.getChats(friend),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.hasData) {
-                                        var data = snapshot.data;
-                                        return Expanded(
-                                          child: ListView.builder(
-                                              reverse: false,
-                                              itemCount: data!.length,
-                                              itemBuilder: ((context, index) {
-                                                return Row(
-                                                  mainAxisAlignment: data[index]
-                                                              .uid ==
-                                                          _auth.me.uid
-                                                      ? MainAxisAlignment.end
-                                                      : MainAxisAlignment.start,
-                                                  children: [
-                                                    Container(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal: 10,
-                                                                vertical: 2),
-                                                        // color: Colors.blue[100],
-                                                        child: Material(
-                                                          shape: RoundedRectangleBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          5),
-                                                              side: BorderSide(
-                                                                  color: Colors
-                                                                      .lightBlueAccent)),
-                                                          color: data[index]
-                                                                      .uid ==
-                                                                  _auth.me.uid
-                                                              ? null
-                                                              : Colors
-                                                                  .lightBlueAccent,
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(8.0),
-                                                            child: Text(
-                                                              data[index].text,
-                                                              style: TextStyle(
-                                                                  color: data[index]
-                                                                              .uid ==
-                                                                          _auth.me
-                                                                              .uid
-                                                                      ? Colors
-                                                                          .lightBlueAccent
-                                                                      : Colors
-                                                                          .white),
-                                                            ),
-                                                          ),
-                                                        ))
-                                                  ],
-                                                );
-                                              })),
-                                        );
-                                      }
-                                      return LinearProgressIndicator();
-                                    },
-                                  ),
-                                  SizedBox(
-                                    height: 120,
-                                  )
-                                ],
-                              );
-                            }
-                            return Text(
-                                'event field may have been deleted, create it again and set it to null');
-                          })),
-                  panelOpen
-                      ? Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          child: Container(
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: TextField(
-                                      onChanged: (val) {
-                                        message = val;
-                                      },
-                                      cursorColor: Colors.blue[200],
-                                      cursorWidth: 8,
-                                      decoration: InputDecoration(
-                                          filled: true,
-                                          border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10.0),
-                                              borderSide: BorderSide.none),
-                                          fillColor: Colors.blue[50],
-                                          hintText: panelOpen
-                                              ? '    send a message'
-                                              : '    use top search bar for now'),
-                                      controller: panelOpen
-                                          ? _controller
-                                          : _searchController,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        _firestore.sendMessage(
-                                            message, friend.chatsID!.id);
-                                        _controller.clear();
-                                      },
-                                      child: Icon(Icons.send),
-                                    ),
-                                  )
-                                ],
+              appBar: AppBar(
+                  title: Text('friend 1'),
+                  leading: Padding(
+                    padding: const EdgeInsets.only(left: 18.0),
+                    child: CircleAvatar(),
+                  ),
+                  elevation: 0,
+                  actions: [
+                    PopupMenuButton(
+                      itemBuilder: ((context) => [
+                            PopupMenuItem(
+                                child: Text('reveal map'), onTap: () {}),
+                            PopupMenuItem(
+                                child: Text(
+                                    'search map (show only if panel is closed)'),
+                                onTap: () {}),
+                            PopupMenuItem(
+                                child:
+                                    Text('request John to share his location'),
+                                onTap: () {}),
+                          ]),
+                    )
+                  ]),
+              body: StreamBuilder<EventModel>(
+                  stream: _firestore.events(friend.chatsID!),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return Stack(children: [
+                        SlidingUpPanel(
+                            collapsed: Card(
+                              child: ListTile(
+                                trailing: OutlinedButton(
+                                  style: OutlinedButton.styleFrom(
+                                      shape: CircleBorder(),
+                                      padding: EdgeInsets.all(10)),
+                                  child: Icon(Icons.location_on),
+                                  onPressed: () {},
+                                ),
+                                title: Text('Tim Hortons hears a hoot'),
+                                subtitle: Text(
+                                    'some address (drag me back up to return to chat)'),
                               ),
                             ),
-                          ),
-                        )
-                      : Container()
-                ]),
-              ),
+                            controller: _panelController,
+                            maxHeight: MediaQuery.of(context).size.height,
+                            minHeight: 80,
+                            onPanelClosed: () {
+                              setState(() {
+                                panelOpen = false;
+                              });
+                            },
+                            onPanelOpened: () {
+                              setState(() {
+                                panelOpen = true;
+                              });
+                            },
+                            defaultPanelState: PanelState.OPEN,
+                            body: GoogleMaps(
+                              friend: friend,
+                            ),
+                            panel: Column(
+                              children: [
+                                ListTile(
+                                  title: Text('Tim Horton hears a whoot'),
+                                  subtitle:
+                                      Text('some address (drag me downwards)'),
+                                  trailing: IconButton(
+                                    icon: Icon(Icons.cancel),
+                                    onPressed: () {},
+                                  ),
+                                ),
+                                Divider(),
+
+                                // eventData!.address == null
+                                //     ? ListTile(
+                                //         title: Text(friend.displayName!),
+                                //         leading: CircleAvatar(
+                                //             backgroundImage: NetworkImage(
+                                //                 friend.avatarUrl!)),
+                                //       )
+                                //     : ListTile(
+                                //         leading: Row(
+                                //           mainAxisSize: MainAxisSize.min,
+                                //           children: [
+                                //             CircleAvatar(
+                                //               backgroundImage: NetworkImage(
+                                //                   friend.avatarUrl!),
+                                //             ),
+                                //             OutlinedButton(
+                                //                 style:
+                                //                     OutlinedButton.styleFrom(
+                                //                         padding:
+                                //                             EdgeInsets.all(
+                                //                                 10),
+                                //                         shape:
+                                //                             CircleBorder()),
+                                //                 onPressed: null,
+                                //                 child: Icon(
+                                //                   Icons.location_on,
+                                //                   color: Colors.purple,
+                                //                 )),
+                                //           ],
+                                //         ),
+                                //         title: Row(
+                                //           children: [
+                                //             Text('${friend.displayName} '),
+                                //             Text(
+                                //               '@${eventData.placeName}',
+                                //               style: TextStyle(
+                                //                 color: Colors.purple,
+                                //               ),
+                                //             )
+                                //           ],
+                                //         ),
+                                //         isThreeLine: true,
+                                //         subtitle: Text(
+                                //           '${eventData.address!.substring(0, 34)}',
+                                //           style: TextStyle(
+                                //               color: Colors.purple[200]),
+                                //         ),
+                                //         trailing: PopupMenuButton(
+                                //           itemBuilder: ((context) => [
+                                //                 PopupMenuItem(
+                                //                     child: Text('edit'),
+                                //                     onTap: () {}),
+                                //                 PopupMenuItem(
+                                //                     child: Text(
+                                //                         'remove location'),
+                                //                     onTap: () {
+                                //                       _firestore.deleteEvent(
+                                //                           friend.chatsID!);
+                                //                     }),
+                                //               ]),
+                                //         )
+                                // '),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                StreamBuilder<List<ChatModel>>(
+                                  stream: _firestore.getChats(friend),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData) {
+                                      var data = snapshot.data;
+                                      return Expanded(
+                                        child: ListView.builder(
+                                            reverse: false,
+                                            itemCount: data!.length,
+                                            itemBuilder: ((context, index) {
+                                              return Row(
+                                                mainAxisAlignment: data[index]
+                                                            .uid ==
+                                                        _auth.me.uid
+                                                    ? MainAxisAlignment.end
+                                                    : MainAxisAlignment.start,
+                                                children: [
+                                                  Container(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 10,
+                                                              vertical: 2),
+                                                      // color: Colors.blue[100],
+                                                      child: Material(
+                                                        shape: RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5),
+                                                            side: BorderSide(
+                                                                color: Colors
+                                                                    .lightBlueAccent)),
+                                                        color: data[index]
+                                                                    .uid ==
+                                                                _auth.me.uid
+                                                            ? null
+                                                            : Colors
+                                                                .lightBlueAccent,
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          child: Text(
+                                                            data[index].text,
+                                                            style: TextStyle(
+                                                                color: data[index].uid ==
+                                                                        _auth.me
+                                                                            .uid
+                                                                    ? Colors
+                                                                        .lightBlueAccent
+                                                                    : Colors
+                                                                        .white),
+                                                          ),
+                                                        ),
+                                                      ))
+                                                ],
+                                              );
+                                            })),
+                                      );
+                                    }
+                                    return LinearProgressIndicator();
+                                  },
+                                ),
+                                SizedBox(
+                                  height: 120,
+                                )
+                              ],
+                            )),
+                        panelOpen
+                            ? Positioned(
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                child: Container(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: TextField(
+                                            onChanged: (val) {
+                                              message = val;
+                                            },
+                                            cursorColor: Colors.blue[200],
+                                            cursorWidth: 8,
+                                            decoration: InputDecoration(
+                                                filled: true,
+                                                border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10.0),
+                                                    borderSide:
+                                                        BorderSide.none),
+                                                fillColor: Colors.blue[50],
+                                                hintText: panelOpen
+                                                    ? '    send a message'
+                                                    : '    use top search bar for now'),
+                                            controller: panelOpen
+                                                ? _controller
+                                                : _searchController,
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 8.0),
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              _firestore.sendMessage(
+                                                  message, friend.chatsID!.id);
+                                              _controller.clear();
+                                            },
+                                            child: Icon(Icons.send),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Container()
+                      ]);
+                    }
+                    return Text('what is this');
+                  }),
             ),
           );
   }
