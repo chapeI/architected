@@ -10,7 +10,8 @@ class StorageService {
     Reference storageRef =
         _storage.ref().child('users/profilePictures/$uid.jpg');
     UploadTask uploadTask = storageRef.putFile(imagePath);
-    var url = 'click fix broken profile picture button';
+    // this is causing issues if the picture is too large. TODO: fix
+    var url = 'THIS IS CAUSING ISSUES';
     uploadTask.whenComplete(() async {
       url = await storageRef.getDownloadURL();
       print('await url: $url');
@@ -27,7 +28,4 @@ class StorageService {
         await _storage.ref('users/profilePictures/$uid.jpg').getDownloadURL();
     return downloadUrl;
   }
-
-  void getAvatarUrl(uid) {}
-  void uploadAvatarUrl() {}
 }

@@ -6,6 +6,7 @@ import 'package:architectured/bloc/application_bloc.dart';
 import 'package:architectured/models/user_model.dart';
 import 'package:architectured/services/firestore_service.dart';
 import 'package:architectured/services/location_service.dart';
+import 'package:architectured/services/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
@@ -13,8 +14,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
 class GoogleMaps extends StatefulWidget {
-  // UserModel friend;
-  // GoogleMaps({required this.friend});
+  UserModel friend;
+  GoogleMaps({required this.friend});
   @override
   State<GoogleMaps> createState() => _GoogleMapsState();
 }
@@ -37,10 +38,28 @@ class _GoogleMapsState extends State<GoogleMaps> {
     return Scaffold(
       appBar: AppBar(
         title: TextField(
-          onChanged: (val) => applicationBloc.searchPlaces(val),
-          // decoration: InputDecoration(hintText: widget.friend.uid)
-        ),
-        actions: [IconButton(onPressed: () async {}, icon: Icon(Icons.search))],
+            onChanged: (val) {
+              _searchValue = val;
+            },
+            decoration: InputDecoration(hintText: widget.friend.uid)),
+        actions: [
+          IconButton(
+              onPressed: () async {
+                _searchController.clear();
+                result = await LocationService().getPlace(_searchValue);
+                lat = result['geometry']['location']['lat'];
+                lng = result['geometry']['location']['lng'];
+                address = result['formatted_address'];
+                placeName = result['name'];
+                _goToPlace(lat, lng);
+                _markers.add(Marker(
+                    markerId: MarkerId('yolo'), position: LatLng(lat, lng)));
+                setState(() {
+                  _showCard = true;
+                });
+              },
+              icon: Icon(Icons.search))
+        ],
       ),
       body: Stack(children: [
         GoogleMap(
@@ -51,6 +70,37 @@ class _GoogleMapsState extends State<GoogleMaps> {
             googleMapController = controller;
           },
         ),
+        _showCard
+            ? Card(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
+                margin: EdgeInsets.all(25),
+                child: ListTile(
+                  contentPadding: EdgeInsets.all(9),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      VerticalDivider(thickness: 2),
+                      IconButton(
+                          icon: Icon(
+                            Icons.add,
+                          ),
+                          onPressed: () {
+                            FirestoreService().addLocation(
+                                widget.friend.chatsID!,
+                                LatLng(lat, lng),
+                                placeName,
+                                address);
+                            setState(() {
+                              _showCard = false;
+                            });
+                          }),
+                    ],
+                  ),
+                  title: Text(placeName),
+                  subtitle: Text(address),
+                ))
+            : Container(),
         if (applicationBloc.searchResults != null &&
             applicationBloc.searchResults!.isNotEmpty)
           Container(
@@ -77,9 +127,13 @@ class _GoogleMapsState extends State<GoogleMaps> {
           )
       ]),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 180),
+        padding: const EdgeInsets.only(bottom: 120),
         child: FloatingActionButton(
-            child: Icon(Icons.my_location),
+            child: CircleAvatar(
+              backgroundImage:
+                  NetworkImage(UserController().currentUser.avatarUrl!),
+              radius: 24,
+            ),
             onPressed: () async {
               Position position = await _determineMyPosition();
 
@@ -122,15 +176,15 @@ class _GoogleMapsState extends State<GoogleMaps> {
         CameraPosition(target: LatLng(lat, lng), zoom: 20)));
   }
 
-  Future<Uint8List> getBytesFromAsset(path, int width) async {
-    ByteData data = await rootBundle.load(path);
-    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
-        targetWidth: width);
-    ui.FrameInfo fi = await codec.getNextFrame();
-    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
-        .buffer
-        .asUint8List();
-  }
+  // Future<Uint8List> getBytesFromAsset(path, int width) async {
+  //   ByteData data = await rootBundle.load(path);
+  //   ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+  //       targetWidth: width);
+  //   ui.FrameInfo fi = await codec.getNextFrame();
+  //   return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+  //       .buffer
+  //       .asUint8List();
+  // }
 
   Future<BitmapDescriptor> userImageMarker(
     imageFile, {

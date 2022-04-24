@@ -63,8 +63,8 @@ class FirestoreService {
   Future<void> addFriend(UserModel friend) async {
     final me = _authService.me;
     _firestore.collection('chats').add({
-      'user1': me.uid,
-      'user2': friend.uid,
+      'user1': {'uid': me.uid, 'broadcasting': false},
+      'user2': {'uid': friend.uid, 'broadcasting': false},
       'lastMessage': 'Start chatting with ${friend.displayName}!',
       'event': null,
       'location': null,
@@ -186,7 +186,25 @@ class FirestoreService {
   }
 
   EventModel _events(DocumentSnapshot snapshot) {
+    var myUid = _authService.me;
+    var me;
+    var friend;
+
+    if (snapshot['user1.uid'] == myUid.uid) {
+      me = 'user1';
+      friend = 'user2';
+    } else {
+      me = 'user2';
+      friend = 'user1';
+    }
+
+    // ignore: curly_braces_in_flow_control_structures
     return EventModel(
+      me: UserInfo(
+          uid: snapshot['$me.uid'], broadcasting: snapshot['$me.broadcasting']),
+      friend: UserInfo(
+          uid: snapshot['$friend.uid'],
+          broadcasting: snapshot['$friend.broadcasting']),
       event: snapshot['event'],
       hour: snapshot['hour'],
       minute: snapshot['minute'],

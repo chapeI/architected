@@ -86,8 +86,8 @@ class _ChatState extends State<Chat> {
                       },
                       defaultPanelState: PanelState.OPEN,
                       body: GoogleMaps(
-                          // friend: friend,
-                          ),
+                        friend: friend,
+                      ),
                       panel: StreamBuilder<EventModel>(
                           stream: _firestore.events(friend.chatsID!),
                           builder: (context, snapshot) {
@@ -103,37 +103,58 @@ class _ChatState extends State<Chat> {
                                                   friend.avatarUrl!)),
                                         )
                                       : ListTile(
-                                          leading: CircleAvatar(
-                                            backgroundImage:
-                                                NetworkImage(friend.avatarUrl!),
-                                          ),
-                                          title: Text(
-                                              '${friend.displayName ?? 'null error'}'),
-                                          isThreeLine: true,
-                                          subtitle: Text(
-                                              '${eventData.placeName} @ ${eventData.address!.substring(0, 34)}'),
-                                          trailing: Row(
+                                          leading: Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
+                                              CircleAvatar(
+                                                backgroundImage: NetworkImage(
+                                                    friend.avatarUrl!),
+                                              ),
                                               OutlinedButton(
+                                                  style:
+                                                      OutlinedButton.styleFrom(
+                                                          padding:
+                                                              EdgeInsets.all(
+                                                                  10),
+                                                          shape:
+                                                              CircleBorder()),
                                                   onPressed: null,
                                                   child: Icon(
                                                     Icons.location_on,
                                                     color: Colors.purple,
                                                   )),
-                                              PopupMenuButton(
-                                                itemBuilder: ((context) => [
-                                                      PopupMenuItem(
-                                                          child: Text(
-                                                              'remove marker'),
-                                                          onTap: () {
-                                                            _firestore.deleteEvent(
-                                                                friend
-                                                                    .chatsID!);
-                                                          })
-                                                    ]),
-                                              ),
                                             ],
+                                          ),
+                                          title: Row(
+                                            children: [
+                                              Text('${friend.displayName} '),
+                                              Text(
+                                                '@${eventData.placeName}',
+                                                style: TextStyle(
+                                                  color: Colors.purple,
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                          isThreeLine: true,
+                                          subtitle: Text(
+                                            '${eventData.address!.substring(0, 34)}',
+                                            style: TextStyle(
+                                                color: Colors.purple[200]),
+                                          ),
+                                          trailing: PopupMenuButton(
+                                            itemBuilder: ((context) => [
+                                                  PopupMenuItem(
+                                                      child: Text('edit'),
+                                                      onTap: () {}),
+                                                  PopupMenuItem(
+                                                      child: Text(
+                                                          'remove location'),
+                                                      onTap: () {
+                                                        _firestore.deleteEvent(
+                                                            friend.chatsID!);
+                                                      }),
+                                                ]),
                                           )),
                                   SizedBox(
                                     height: 10,

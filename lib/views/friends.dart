@@ -21,13 +21,8 @@ class Friends extends StatelessWidget {
                   leading: Padding(
                     padding: const EdgeInsets.only(left: 15.0),
                     child: CircleAvatar(
-                      radius: 20,
-                      backgroundColor: Colors.green,
-                      child: CircleAvatar(
-                          radius: 18,
-                          backgroundImage: NetworkImage(
-                              UserController().currentUser.avatarUrl!)),
-                    ),
+                        backgroundImage: NetworkImage(
+                            UserController().currentUser.avatarUrl!)),
                   ),
                   title: Text(AuthService().me.uid!.substring(0, 7)),
                   automaticallyImplyLeading: false,
@@ -63,42 +58,27 @@ class Friends extends StatelessWidget {
                             return ListTile(
                               title: eventData.event == null
                                   ? Text(friends[index].displayName!)
-                                  : eventData.hour == null
-                                      ? Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Text(
-                                              '${eventData.event}? ',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Text(
-                                                'w ${friends[index].displayName!}')
-                                          ],
-                                        )
-                                      : Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Text(
-                                              '${eventData.event}@${_time!.format(context).substring(0, 4)}',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Text(
-                                                ' w ${friends[index].displayName!}'),
-                                            SizedBox(
-                                              width: 3,
-                                            ),
-                                            Icon(
-                                              Icons.check_circle_rounded,
-                                              color: Colors.green,
-                                              size: 15,
-                                            )
-                                          ],
+                                  : Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          '${eventData.event}? ',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
                                         ),
-                              leading: CircleAvatar(
-                                  backgroundImage:
-                                      NetworkImage(friends[index].avatarUrl!)),
+                                        Text('w ${friends[index].displayName!}')
+                                      ],
+                                    ),
+                              leading: eventData.friend.broadcasting
+                                  ? CircleAvatar(
+                                      backgroundColor: Colors.green,
+                                      radius: 20,
+                                      child: CircleAvatar(
+                                          radius: 16,
+                                          backgroundImage: NetworkImage(
+                                              friends[index].avatarUrl!)),
+                                    )
+                                  : CircleAvatar(),
                               subtitle: Text(eventData!.lastMessage),
                               trailing: eventData.event == null
                                   ? Icon(
@@ -120,7 +100,7 @@ class Friends extends StatelessWidget {
                   }),
             );
           }
-          return LinearProgressIndicator();
+          return Text('FRIENDS.dart');
         });
   }
 }
