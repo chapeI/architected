@@ -11,7 +11,6 @@ import 'package:architectured/models/event_model.dart';
 import 'package:architectured/models/user_model.dart';
 import 'package:architectured/services/auth_service.dart';
 import 'package:architectured/services/firestore_service.dart';
-import 'package:architectured/services/location_service.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class Chat extends StatefulWidget {
@@ -72,21 +71,53 @@ class _ChatState extends State<Chat> {
             },
             child: Scaffold(
               appBar: AppBar(
-                  title: Text('friend 1'),
+                  backgroundColor: Colors.green[50],
+                  foregroundColor: Colors.black,
+                  title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(friend.displayName!),
+                        Text(
+                          'online',
+                          style: TextStyle(fontSize: 12),
+                        )
+                      ]),
                   leading: Padding(
                     padding: const EdgeInsets.only(left: 18.0),
-                    child: CircleAvatar(),
+                    child: PopupMenuButton(
+                      child: CircleAvatar(
+                        radius: 18,
+                        backgroundColor: Colors.green,
+                        child: CircleAvatar(
+                          radius: 15,
+                          backgroundImage: NetworkImage(friend.avatarUrl!),
+                        ),
+                      ),
+                      itemBuilder: ((context) => [
+                            PopupMenuItem(child: Text('view profile picture')),
+                            PopupMenuItem(
+                                child:
+                                    Text('request john to share his location'))
+                          ]),
+                    ),
                   ),
                   elevation: 0,
                   actions: [
                     PopupMenuButton(
+                      child: Icon(Icons.share_location),
+                      itemBuilder: ((context) => [
+                            PopupMenuItem(
+                                child: Text('broadcast for only 15 minutes'),
+                                onTap: () {}),
+                            PopupMenuItem(
+                                child: Text('broadcast location'),
+                                onTap: () {}),
+                          ]),
+                    ),
+                    PopupMenuButton(
                       itemBuilder: ((context) => [
                             PopupMenuItem(
                                 child: Text('reveal map'), onTap: () {}),
-                            PopupMenuItem(
-                                child: Text(
-                                    'search map (show only if panel is closed)'),
-                                onTap: () {}),
                             PopupMenuItem(
                                 child:
                                     Text('request John to share his location'),
@@ -98,25 +129,12 @@ class _ChatState extends State<Chat> {
                   stream: _firestore.events(friend.chatsID!),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
+                      var eventData = snapshot.data;
                       return Stack(children: [
                         SlidingUpPanel(
-                            collapsed: Card(
-                              child: ListTile(
-                                trailing: OutlinedButton(
-                                  style: OutlinedButton.styleFrom(
-                                      shape: CircleBorder(),
-                                      padding: EdgeInsets.all(10)),
-                                  child: Icon(Icons.location_on),
-                                  onPressed: () {},
-                                ),
-                                title: Text('Tim Hortons hears a hoot'),
-                                subtitle: Text(
-                                    'some address (drag me back up to return to chat)'),
-                              ),
-                            ),
                             controller: _panelController,
                             maxHeight: MediaQuery.of(context).size.height,
-                            minHeight: 80,
+                            minHeight: 60,
                             onPanelClosed: () {
                               setState(() {
                                 panelOpen = false;
@@ -131,81 +149,72 @@ class _ChatState extends State<Chat> {
                             body: GoogleMaps(
                               friend: friend,
                             ),
+                            collapsed: eventData!.placeName == null
+                                ? AppBar(
+                                    actions: [
+                                      IconButton(
+                                          onPressed: () {},
+                                          icon: Icon(Icons.my_location)),
+                                      IconButton(
+                                          onPressed: () {},
+                                          icon: Icon(Icons.search)),
+                                    ],
+                                  )
+                                : AppBar(
+                                    title: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(eventData.placeName!),
+                                        Text(
+                                          eventData.address!,
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w100),
+                                        )
+                                      ],
+                                    ),
+                                    actions: [
+                                      IconButton(
+                                          onPressed: () {},
+                                          icon: Icon(
+                                            Icons.location_on,
+                                          )),
+                                      IconButton(
+                                        onPressed: () {
+                                          _firestore
+                                              .deleteEvent(friend.chatsID!);
+                                        },
+                                        icon: Icon(Icons.delete),
+                                      ),
+                                      IconButton(
+                                          onPressed: () {},
+                                          icon: Icon(Icons.my_location)),
+                                      IconButton(
+                                          onPressed: () {},
+                                          icon: Icon(
+                                            Icons.search,
+                                            color: Colors.lightGreenAccent[400],
+                                          )),
+                                    ],
+                                  ),
                             panel: Column(
                               children: [
-                                ListTile(
-                                  title: Text('Tim Horton hears a whoot'),
-                                  subtitle:
-                                      Text('some address (drag me downwards)'),
-                                  trailing: IconButton(
-                                    icon: Icon(Icons.cancel),
-                                    onPressed: () {},
-                                  ),
-                                ),
+                                eventData.placeName == null
+                                    ? Container()
+                                    : Card(
+                                        elevation: 0,
+                                        child: ListTile(
+                                          contentPadding: EdgeInsets.all(8),
+                                          title: Text(
+                                              '${eventData.placeName!} (drag me)'),
+                                          subtitle: Text(eventData.address!),
+                                          trailing: IconButton(
+                                              onPressed: () {},
+                                              icon: Icon(Icons.swipe)),
+                                        ),
+                                      ),
                                 Divider(),
-
-                                // eventData!.address == null
-                                //     ? ListTile(
-                                //         title: Text(friend.displayName!),
-                                //         leading: CircleAvatar(
-                                //             backgroundImage: NetworkImage(
-                                //                 friend.avatarUrl!)),
-                                //       )
-                                //     : ListTile(
-                                //         leading: Row(
-                                //           mainAxisSize: MainAxisSize.min,
-                                //           children: [
-                                //             CircleAvatar(
-                                //               backgroundImage: NetworkImage(
-                                //                   friend.avatarUrl!),
-                                //             ),
-                                //             OutlinedButton(
-                                //                 style:
-                                //                     OutlinedButton.styleFrom(
-                                //                         padding:
-                                //                             EdgeInsets.all(
-                                //                                 10),
-                                //                         shape:
-                                //                             CircleBorder()),
-                                //                 onPressed: null,
-                                //                 child: Icon(
-                                //                   Icons.location_on,
-                                //                   color: Colors.purple,
-                                //                 )),
-                                //           ],
-                                //         ),
-                                //         title: Row(
-                                //           children: [
-                                //             Text('${friend.displayName} '),
-                                //             Text(
-                                //               '@${eventData.placeName}',
-                                //               style: TextStyle(
-                                //                 color: Colors.purple,
-                                //               ),
-                                //             )
-                                //           ],
-                                //         ),
-                                //         isThreeLine: true,
-                                //         subtitle: Text(
-                                //           '${eventData.address!.substring(0, 34)}',
-                                //           style: TextStyle(
-                                //               color: Colors.purple[200]),
-                                //         ),
-                                //         trailing: PopupMenuButton(
-                                //           itemBuilder: ((context) => [
-                                //                 PopupMenuItem(
-                                //                     child: Text('edit'),
-                                //                     onTap: () {}),
-                                //                 PopupMenuItem(
-                                //                     child: Text(
-                                //                         'remove location'),
-                                //                     onTap: () {
-                                //                       _firestore.deleteEvent(
-                                //                           friend.chatsID!);
-                                //                     }),
-                                //               ]),
-                                //         )
-                                // '),
                                 SizedBox(
                                   height: 10,
                                 ),
@@ -240,13 +249,12 @@ class _ChatState extends State<Chat> {
                                                                         5),
                                                             side: BorderSide(
                                                                 color: Colors
-                                                                    .lightBlueAccent)),
-                                                        color: data[index]
-                                                                    .uid ==
-                                                                _auth.me.uid
-                                                            ? null
-                                                            : Colors
-                                                                .lightBlueAccent,
+                                                                    .blue)),
+                                                        color:
+                                                            data[index].uid ==
+                                                                    _auth.me.uid
+                                                                ? null
+                                                                : Colors.blue,
                                                         child: Padding(
                                                           padding:
                                                               const EdgeInsets
@@ -254,11 +262,12 @@ class _ChatState extends State<Chat> {
                                                           child: Text(
                                                             data[index].text,
                                                             style: TextStyle(
-                                                                color: data[index].uid ==
+                                                                color: data[index]
+                                                                            .uid ==
                                                                         _auth.me
                                                                             .uid
                                                                     ? Colors
-                                                                        .lightBlueAccent
+                                                                        .blue
                                                                     : Colors
                                                                         .white),
                                                           ),

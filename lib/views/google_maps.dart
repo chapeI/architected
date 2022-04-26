@@ -36,31 +36,36 @@ class _GoogleMapsState extends State<GoogleMaps> {
   Widget build(BuildContext context) {
     final applicationBloc = Provider.of<ApplicationBloc>(context);
     return Scaffold(
-      appBar: AppBar(
-        title: TextField(
-            onChanged: (val) {
-              _searchValue = val;
-            },
-            decoration: InputDecoration(hintText: widget.friend.uid)),
-        actions: [
-          IconButton(
-              onPressed: () async {
-                _searchController.clear();
-                result = await LocationService().getPlace(_searchValue);
-                lat = result['geometry']['location']['lat'];
-                lng = result['geometry']['location']['lng'];
-                address = result['formatted_address'];
-                placeName = result['name'];
-                _goToPlace(lat, lng);
-                _markers.add(Marker(
-                    markerId: MarkerId('yolo'), position: LatLng(lat, lng)));
-                setState(() {
-                  _showCard = true;
-                });
-              },
-              icon: Icon(Icons.search))
-        ],
-      ),
+      // appBar: AppBar(
+      //   backgroundColor: Colors.blue[300],
+      //   title: TextField(
+      //     onChanged: (val) {
+      //       _searchValue = val;
+      //     },
+      //     decoration: InputDecoration(
+      //         hintText: widget.friend.uid,
+      //         hintStyle: TextStyle(color: Colors.blue[300])),
+      //     style: TextStyle(color: Colors.white),
+      //   ),
+      //   actions: [
+      //     IconButton(
+      //         onPressed: () async {
+      //           result = await LocationService().getPlace(_searchValue);
+      //           lat = result['geometry']['location']['lat'];
+      //           lng = result['geometry']['location']['lng'];
+      //           address = result['formatted_address'];
+      //           placeName = result['name'];
+      //           _goToPlace(lat, lng);
+      //           _markers.add(Marker(
+      //               markerId: MarkerId('yolo'), position: LatLng(lat, lng)));
+      //           _searchController.text = '';
+      //           setState(() {
+      //             _showCard = true;
+      //           });
+      //         },
+      //         icon: Icon(Icons.search))
+      //   ],
+      // ),
       body: Stack(children: [
         GoogleMap(
           markers: _markers,
@@ -126,48 +131,44 @@ class _GoogleMapsState extends State<GoogleMaps> {
                 }),
           )
       ]),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 180),
-        child: FloatingActionButton(
-            child: CircleAvatar(
-              backgroundImage:
-                  NetworkImage(UserController().currentUser.avatarUrl!),
-              radius: 24,
-            ),
-            onPressed: () async {
-              Position position = await _determineMyPosition();
+      // floatingActionButton: Padding(
+      //   padding: const EdgeInsets.only(bottom: 180),
+      //   child: FloatingActionButton(
+      //       child: Icon(Icons.fullscreen),
+      //       onPressed: () async {
+      //         Position position = await _determineMyPosition();
 
-              googleMapController.animateCamera(CameraUpdate.newCameraPosition(
-                  CameraPosition(
-                      target: LatLng(position.latitude, position.longitude),
-                      zoom: 14)));
+      //         googleMapController.animateCamera(CameraUpdate.newCameraPosition(
+      //             CameraPosition(
+      //                 target: LatLng(position.latitude, position.longitude),
+      //                 zoom: 14)));
 
-              var myBitmap =
-                  await userImageMarker('assets/pp1.jpeg', title: 'me');
-              var myBitmap2 =
-                  await userImageMarker('assets/pp2.jpeg', title: 'godson');
+      //         var myBitmap =
+      //             await userImageMarker('assets/pp1.jpeg', title: 'me');
+      //         var myBitmap2 =
+      //             await userImageMarker('assets/pp2.jpeg', title: 'godson');
 
-              _markers.add(Marker(
-                  icon: myBitmap,
-                  markerId: MarkerId('some id'),
-                  position: LatLng(position.latitude, position.longitude)));
+      //         _markers.add(Marker(
+      //             icon: myBitmap,
+      //             markerId: MarkerId('some id'),
+      //             position: LatLng(position.latitude, position.longitude)));
 
-              _markers.add(Marker(
-                  icon: myBitmap2,
-                  markerId: MarkerId('anotehr id'),
-                  position: LatLng(
-                      position.latitude - 0.01, position.longitude - 0.01)));
+      //         _markers.add(Marker(
+      //             icon: myBitmap2,
+      //             markerId: MarkerId('anotehr id'),
+      //             position: LatLng(
+      //                 position.latitude - 0.01, position.longitude - 0.01)));
 
-              _markers.add(Marker(
-                  icon: BitmapDescriptor.defaultMarkerWithHue(270),
-                  markerId: MarkerId('another id'),
-                  position: LatLng(43.723598, -79.598046)));
+      //         _markers.add(Marker(
+      //             icon: BitmapDescriptor.defaultMarkerWithHue(270),
+      //             markerId: MarkerId('another id'),
+      //             position: LatLng(43.723598, -79.598046)));
 
-              setState(() {
-                print('is there another way to reload state?');
-              });
-            }),
-      ),
+      //         setState(() {
+      //           print('is there another way to reload state?');
+      //         });
+      //       }),
+      // ),
     );
   }
 
