@@ -78,7 +78,10 @@ class Friends extends StatelessWidget {
                                           backgroundImage: NetworkImage(
                                               friends[index].avatarUrl!)),
                                     )
-                                  : CircleAvatar(),
+                                  : CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                          friends[index].avatarUrl!),
+                                    ),
                               subtitle: Text(eventData!.lastMessage),
                               trailing: eventData.event == null
                                   ? Icon(

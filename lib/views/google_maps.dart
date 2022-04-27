@@ -6,7 +6,6 @@ import 'package:architectured/bloc/application_bloc.dart';
 import 'package:architectured/models/user_model.dart';
 import 'package:architectured/services/firestore_service.dart';
 import 'package:architectured/services/location_service.dart';
-import 'package:architectured/services/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
@@ -36,36 +35,40 @@ class _GoogleMapsState extends State<GoogleMaps> {
   Widget build(BuildContext context) {
     final applicationBloc = Provider.of<ApplicationBloc>(context);
     return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: Colors.blue[300],
-      //   title: TextField(
-      //     onChanged: (val) {
-      //       _searchValue = val;
-      //     },
-      //     decoration: InputDecoration(
-      //         hintText: widget.friend.uid,
-      //         hintStyle: TextStyle(color: Colors.blue[300])),
-      //     style: TextStyle(color: Colors.white),
-      //   ),
-      //   actions: [
-      //     IconButton(
-      //         onPressed: () async {
-      //           result = await LocationService().getPlace(_searchValue);
-      //           lat = result['geometry']['location']['lat'];
-      //           lng = result['geometry']['location']['lng'];
-      //           address = result['formatted_address'];
-      //           placeName = result['name'];
-      //           _goToPlace(lat, lng);
-      //           _markers.add(Marker(
-      //               markerId: MarkerId('yolo'), position: LatLng(lat, lng)));
-      //           _searchController.text = '';
-      //           setState(() {
-      //             _showCard = true;
-      //           });
-      //         },
-      //         icon: Icon(Icons.search))
-      //   ],
-      // ),
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
+        title: TextField(
+          onChanged: (val) {
+            _searchValue = val;
+          },
+          decoration: InputDecoration(
+              hintText: widget.friend.uid,
+              hintStyle: TextStyle(color: Colors.blue[300])),
+          style: TextStyle(color: Colors.blue),
+        ),
+        actions: [
+          IconButton(
+              onPressed: () async {
+                result = await LocationService().getPlace(_searchValue);
+                lat = result['geometry']['location']['lat'];
+                lng = result['geometry']['location']['lng'];
+                address = result['formatted_address'];
+                placeName = result['name'];
+                _goToPlace(lat, lng);
+                _markers.add(Marker(
+                    markerId: MarkerId('yolo'), position: LatLng(lat, lng)));
+                _searchController.text = '';
+                setState(() {
+                  _showCard = true;
+                });
+              },
+              icon: Icon(
+                Icons.search,
+                color: Colors.blue,
+              ))
+        ],
+      ),
       body: Stack(children: [
         GoogleMap(
           markers: _markers,

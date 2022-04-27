@@ -201,10 +201,13 @@ class FirestoreService {
     // ignore: curly_braces_in_flow_control_structures
     return EventModel(
       me: UserInfo(
-          uid: snapshot['$me.uid'], broadcasting: snapshot['$me.broadcasting']),
+          uid: snapshot['$me.uid'],
+          broadcasting: snapshot['$me.broadcasting'],
+          userNumber: me),
       friend: UserInfo(
           uid: snapshot['$friend.uid'],
-          broadcasting: snapshot['$friend.broadcasting']),
+          broadcasting: snapshot['$friend.broadcasting'],
+          userNumber: friend),
       event: snapshot['event'],
       hour: snapshot['hour'],
       minute: snapshot['minute'],
@@ -226,6 +229,13 @@ class FirestoreService {
       'placeName': name,
       'address': address,
       'location': GeoPoint(latLng.latitude, latLng.longitude)
+    });
+  }
+
+  void toggleMyBroadcast(
+      DocumentReference docRef, bool broadcast, UserInfo me) {
+    eventCollection.doc(docRef.id).update({
+      '${me.userNumber}.broadcasting': !broadcast,
     });
   }
 }

@@ -27,6 +27,10 @@ class EventModel {
 class UserInfo {
   String uid;
   bool broadcasting;
+  String userNumber;
 
-  UserInfo({required this.uid, required this.broadcasting});
+  UserInfo(
+      {required this.uid,
+      required this.broadcasting,
+      required this.userNumber});
 }

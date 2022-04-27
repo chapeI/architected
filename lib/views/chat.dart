@@ -31,6 +31,7 @@ class _ChatState extends State<Chat> {
   bool planning = false;
   LatLng? latLng;
   final _searchController = TextEditingController();
+  bool _expandedEvent = false;
 
   @override
   Widget build(BuildContext context) {
@@ -75,70 +76,126 @@ class _ChatState extends State<Chat> {
                   if (snapshot.hasData) {
                     var eventData = snapshot.data;
                     return Scaffold(
-                        appBar: AppBar(
-                            backgroundColor: Colors.green[50],
-                            foregroundColor: Colors.black,
-                            title: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(friend.displayName!),
-                                  Text(
-                                    'online',
-                                    style: TextStyle(fontSize: 12),
-                                  )
-                                ]),
-                            leading: Padding(
-                              padding: const EdgeInsets.only(left: 18.0),
-                              child: PopupMenuButton(
-                                child: CircleAvatar(
-                                  radius: 18,
-                                  backgroundColor: Colors.green,
-                                  child: CircleAvatar(
-                                    radius: 15,
-                                    backgroundImage:
-                                        NetworkImage(friend.avatarUrl!),
+                        appBar: panelOpen
+                            ? AppBar(
+                                backgroundColor: eventData!.me.broadcasting
+                                    ? Colors.green[200]
+                                    : null,
+                                foregroundColor: eventData.me.broadcasting
+                                    ? Colors.black
+                                    : null,
+                                title: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(friend.displayName!),
+                                      Text(
+                                        '${friend.uid}',
+                                        style: TextStyle(fontSize: 12),
+                                      )
+                                    ]),
+                                leading: Padding(
+                                  padding: const EdgeInsets.only(left: 18.0),
+                                  child: PopupMenuButton(
+                                    child: eventData.friend.broadcasting
+                                        ? CircleAvatar(
+                                            radius: 18,
+                                            backgroundColor: Colors.green[200],
+                                            child: CircleAvatar(
+                                              radius: 15,
+                                              backgroundImage: NetworkImage(
+                                                  friend.avatarUrl!),
+                                            ),
+                                          )
+                                        : CircleAvatar(
+                                            backgroundImage:
+                                                NetworkImage(friend.avatarUrl!),
+                                          ),
+                                    itemBuilder: ((context) => [
+                                          PopupMenuItem(
+                                              child: Text('view picture')),
+                                          PopupMenuItem(
+                                              child: Text(
+                                                  'request for godsons location'))
+                                        ]),
                                   ),
                                 ),
-                                itemBuilder: ((context) => [
-                                      PopupMenuItem(
-                                          child: Text('view profile picture')),
-                                      PopupMenuItem(
-                                          child: Text(
-                                              'request john to share his location'))
-                                    ]),
+                                elevation: 0,
+                                actions: [
+                                    // PopupMenuButton(
+                                    //   child: Icon(
+                                    //     eventData.me.broadcasting
+                                    //         ? Icons.cancel
+                                    //         : Icons.share_location,
+                                    //     color: eventData.me.broadcasting
+                                    //         ? Colors.red
+                                    //         : null,
+                                    //   ),
+                                    //   itemBuilder: ((context) => [
+                                    //         PopupMenuItem(
+                                    //             child: eventData.me.broadcasting
+                                    //                 ? Text(
+                                    //                     'stop broadcasting',
+                                    //                     style: TextStyle(
+                                    //                         color: Colors.red),
+                                    //                   )
+                                    //                 : Text('broadcast my location'),
+                                    //             onTap: () {
+                                    //               _firestore.toggleMyBroadcast(
+                                    //                   friend.chatsID!,
+                                    //                   eventData.me.broadcasting,
+                                    //                   eventData.me);
+                                    //             }),
+                                    //         PopupMenuItem(
+                                    //             child: Text(
+                                    //                 'broadcast my location for just 15 minutes'),
+                                    //             onTap: null),
+                                    //       ]),
+                                    // ),
+                                    PopupMenuButton(
+                                      itemBuilder: ((context) => [
+                                            PopupMenuItem(
+                                                child: Text('reveal map'),
+                                                onTap: () {}),
+                                            PopupMenuItem(
+                                                child:
+                                                    Text('make an event BETA'),
+                                                onTap: () {}),
+                                            PopupMenuItem(
+                                                child:
+                                                    Text('share my location'),
+                                                onTap: () {
+                                                  // this should also pull screen down
+                                                  _firestore.toggleMyBroadcast(
+                                                      friend.chatsID!,
+                                                      eventData.me.broadcasting,
+                                                      eventData.me);
+                                                }),
+                                          ]),
+                                    )
+                                  ])
+                            : AppBar(
+                                title: Row(
+                                  children: [
+                                    CircleAvatar(),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    CircleAvatar(),
+                                  ],
+                                ),
+                                // leading: Row(
+                                //   children: [
+                                //     CircleAvatar(),
+                                //     CircleAvatar(),
+                                //   ],
+                                // ),
                               ),
-                            ),
-                            elevation: 0,
-                            actions: [
-                              PopupMenuButton(
-                                child: Icon(Icons.share_location),
-                                itemBuilder: ((context) => [
-                                      PopupMenuItem(
-                                          child: Text(
-                                              'broadcast for only 15 minutes'),
-                                          onTap: () {}),
-                                      PopupMenuItem(
-                                          child: Text('broadcast location'),
-                                          onTap: () {}),
-                                    ]),
-                              ),
-                              PopupMenuButton(
-                                itemBuilder: ((context) => [
-                                      PopupMenuItem(
-                                          child: Text('reveal map'),
-                                          onTap: () {}),
-                                      PopupMenuItem(
-                                          child: Text(
-                                              'request John to share his location'),
-                                          onTap: () {}),
-                                    ]),
-                              )
-                            ]),
                         body: Stack(children: [
                           SlidingUpPanel(
                               controller: _panelController,
                               maxHeight: MediaQuery.of(context).size.height,
-                              minHeight: 60,
+                              minHeight: 70,
                               onPanelClosed: () {
                                 setState(() {
                                   panelOpen = false;
@@ -155,16 +212,133 @@ class _ChatState extends State<Chat> {
                               ),
                               collapsed: eventData!.placeName == null
                                   ? AppBar(
+                                      backgroundColor: eventData.me.broadcasting
+                                          ? Colors.green[200]
+                                          : null,
                                       actions: [
-                                        IconButton(
+                                        OutlinedButton.icon(
+                                            style: OutlinedButton.styleFrom(
+                                                primary:
+                                                    eventData.me.broadcasting
+                                                        ? Colors.black
+                                                        : Colors.white),
+                                            label: Text(
+                                              'add a place',
+                                            ),
                                             onPressed: () {},
-                                            icon: Icon(Icons.my_location)),
-                                        IconButton(
-                                            onPressed: () {},
-                                            icon: Icon(Icons.search)),
+                                            icon: Icon(Icons.add)),
+                                        eventData.me.broadcasting
+                                            ? OutlinedButton(
+                                                style: OutlinedButton.styleFrom(
+                                                    primary: eventData
+                                                            .me.broadcasting
+                                                        ? Colors.black
+                                                        : Colors.white),
+                                                onPressed: () {
+                                                  _firestore.toggleMyBroadcast(
+                                                      friend.chatsID!,
+                                                      eventData.me.broadcasting,
+                                                      eventData.me);
+                                                },
+                                                child: Text(
+                                                  'stop sharing',
+                                                ))
+                                            : OutlinedButton.icon(
+                                                label:
+                                                    Text('share my location'),
+                                                onPressed: () {
+                                                  _firestore.toggleMyBroadcast(
+                                                      friend.chatsID!,
+                                                      eventData.me.broadcasting,
+                                                      eventData.me);
+                                                },
+                                                icon: Icon(Icons.add))
                                       ],
                                     )
-                                  : AppBar(
+                                  //  ListTile(
+                                  //     dense: true,
+                                  //     tileColor: eventData.me.broadcasting
+                                  //         ? Colors.green[500]
+                                  //         : null,
+                                  //     // leading: Icon(Icons.expand_less),
+                                  //     title: ElevatedButton(
+                                  //       child: Text('Add a place'),
+                                  //       onPressed: () {},
+                                  //     ),
+                                  //     trailing: eventData.me.broadcasting
+                                  //         ? ElevatedButton.icon(
+                                  //             style: ElevatedButton.styleFrom(
+                                  //                 primary: Colors.white),
+                                  //             onPressed: () {
+                                  //               _firestore.toggleMyBroadcast(
+                                  //                   friend.chatsID!,
+                                  //                   eventData.me.broadcasting,
+                                  //                   eventData.me);
+                                  //             },
+                                  //             label: Text(
+                                  //               'Stop Sharing',
+                                  //               style: TextStyle(
+                                  //                   color: Colors.blue),
+                                  //             ),
+                                  //             icon: Icon(Icons.cancel,
+                                  //                 color: Colors.red))
+                                  //         : ElevatedButton(
+                                  //             child: Text('Share my location'),
+                                  //             onPressed: () {
+                                  //               _firestore.toggleMyBroadcast(
+                                  //                   friend.chatsID!,
+                                  //                   eventData.me.broadcasting,
+                                  //                   eventData.me);
+                                  //             },
+                                  //           ))
+                                  :
+                                  // Card(
+                                  //     child: ListTile(
+                                  //         tileColor: eventData.me.broadcasting
+                                  //             ? Colors.green
+                                  //             : null,
+                                  //         leading: Icon(Icons.expand_less),
+                                  //         title: OutlinedButton.icon(
+                                  //           label: Text(eventData.placeName!),
+                                  //           icon: Icon(
+                                  //             Icons.location_on,
+                                  //             color: Colors.purple,
+                                  //           ),
+                                  //           onPressed: () {},
+                                  //         ),
+                                  //         trailing: eventData.me.broadcasting
+                                  //             ? OutlinedButton.icon(
+                                  //                 onPressed: () {
+                                  //                   _firestore
+                                  //                       .toggleMyBroadcast(
+                                  //                           friend.chatsID!,
+                                  //                           eventData.me
+                                  //                               .broadcasting,
+                                  //                           eventData.me);
+                                  //                 },
+                                  //                 label: Text('Stop'),
+                                  //                 icon: Icon(Icons.cancel,
+                                  //                     color: Colors.red))
+                                  //             : ElevatedButton(
+                                  //                 child:
+                                  //                     Text('Share my location'),
+                                  //                 onPressed: () {
+                                  //                   _firestore
+                                  //                       .toggleMyBroadcast(
+                                  //                           friend.chatsID!,
+                                  //                           eventData.me
+                                  //                               .broadcasting,
+                                  //                           eventData.me);
+                                  //                 },
+                                  //               )),
+                                  //   ),
+                                  AppBar(
+                                      backgroundColor: eventData.me.broadcasting
+                                          ? Colors.green[300]
+                                          : null,
+                                      foregroundColor: eventData.me.broadcasting
+                                          ? Colors.black
+                                          : null,
                                       title: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -185,44 +359,72 @@ class _ChatState extends State<Chat> {
                                               Icons.location_on,
                                             )),
                                         IconButton(
-                                          onPressed: () {
-                                            _firestore
-                                                .deleteEvent(friend.chatsID!);
-                                          },
+                                          onPressed: () {},
                                           icon: Icon(Icons.delete),
                                         ),
                                         IconButton(
                                             onPressed: () {},
                                             icon: Icon(Icons.my_location)),
-                                        IconButton(
-                                            onPressed: () {},
-                                            icon: Icon(
-                                              Icons.search,
-                                              color:
-                                                  Colors.lightGreenAccent[400],
-                                            )),
                                       ],
                                     ),
                               panel: Column(
                                 children: [
                                   eventData.placeName == null
                                       ? Container()
-                                      : Card(
+                                      : ExpansionPanelList(
                                           elevation: 0,
-                                          child: ListTile(
-                                            contentPadding: EdgeInsets.all(8),
-                                            title: Text(
-                                                '${eventData.placeName!} (drag me)'),
-                                            subtitle: Text(eventData.address!),
-                                            trailing: IconButton(
-                                                onPressed: () {},
-                                                icon: Icon(Icons.swipe)),
-                                          ),
+                                          animationDuration:
+                                              Duration(milliseconds: 500),
+                                          expansionCallback:
+                                              (int index, bool isExpanded) {
+                                            _expandedEvent = !_expandedEvent;
+                                            setState(() {});
+                                          },
+                                          children: [
+                                            ExpansionPanel(
+                                                canTapOnHeader: true,
+                                                headerBuilder: (context,
+                                                        isExpanded) =>
+                                                    ListTile(
+                                                      leading: IconButton(
+                                                        onPressed: () {},
+                                                        icon: Icon(
+                                                            Icons.drag_handle),
+                                                      ),
+                                                      title: Text(
+                                                          eventData.placeName!),
+                                                      subtitle: Text(eventData
+                                                          .address!
+                                                          .substring(0, 34)),
+                                                    ),
+                                                body: ListTile(
+                                                  title: Text('body'),
+                                                  subtitle: Text('j'),
+                                                  trailing: IconButton(
+                                                    icon: Icon(Icons.delete),
+                                                    onPressed: () {
+                                                      _firestore.deleteEvent(
+                                                          friend.chatsID!);
+                                                    },
+                                                  ),
+                                                ),
+                                                isExpanded: _expandedEvent)
+                                          ],
                                         ),
+                                  // Card(
+                                  //     elevation: 0,
+                                  //     child: ListTile(
+                                  //         contentPadding: EdgeInsets.all(8),
+                                  //         title: Text(
+                                  //             '${eventData.placeName!}'),
+                                  //         subtitle: Text(eventData.address!
+                                  //             .substring(0, 34)),
+                                  //         trailing: IconButton(
+                                  //             onPressed: () {},
+                                  //             icon:
+                                  //                 Icon(Icons.expand_more))),
+                                  //   ),
                                   Divider(),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
                                   StreamBuilder<List<ChatModel>>(
                                     stream: _firestore.getChats(friend),
                                     builder: (context, snapshot) {
