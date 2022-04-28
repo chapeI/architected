@@ -134,44 +134,46 @@ class _GoogleMapsState extends State<GoogleMaps> {
                 }),
           )
       ]),
-      // floatingActionButton: Padding(
-      //   padding: const EdgeInsets.only(bottom: 180),
-      //   child: FloatingActionButton(
-      //       child: Icon(Icons.fullscreen),
-      //       onPressed: () async {
-      //         Position position = await _determineMyPosition();
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 140),
+        child: FloatingActionButton(
+            elevation: 0,
+            backgroundColor: Colors.grey[300],
+            child: Icon(Icons.add),
+            onPressed: () async {
+              Position position = await _determineMyPosition();
 
-      //         googleMapController.animateCamera(CameraUpdate.newCameraPosition(
-      //             CameraPosition(
-      //                 target: LatLng(position.latitude, position.longitude),
-      //                 zoom: 14)));
+              googleMapController.animateCamera(CameraUpdate.newCameraPosition(
+                  CameraPosition(
+                      target: LatLng(position.latitude, position.longitude),
+                      zoom: 14)));
 
-      //         var myBitmap =
-      //             await userImageMarker('assets/pp1.jpeg', title: 'me');
-      //         var myBitmap2 =
-      //             await userImageMarker('assets/pp2.jpeg', title: 'godson');
+              var myBitmap =
+                  await userImageMarker('assets/pp1.jpeg', title: 'me');
+              var myBitmap2 =
+                  await userImageMarker('assets/pp2.jpeg', title: 'godson');
 
-      //         _markers.add(Marker(
-      //             icon: myBitmap,
-      //             markerId: MarkerId('some id'),
-      //             position: LatLng(position.latitude, position.longitude)));
+              _markers.add(Marker(
+                  icon: myBitmap,
+                  markerId: MarkerId('some id'),
+                  position: LatLng(position.latitude, position.longitude)));
 
-      //         _markers.add(Marker(
-      //             icon: myBitmap2,
-      //             markerId: MarkerId('anotehr id'),
-      //             position: LatLng(
-      //                 position.latitude - 0.01, position.longitude - 0.01)));
+              _markers.add(Marker(
+                  icon: myBitmap2,
+                  markerId: MarkerId('anotehr id'),
+                  position: LatLng(
+                      position.latitude - 0.01, position.longitude - 0.01)));
 
-      //         _markers.add(Marker(
-      //             icon: BitmapDescriptor.defaultMarkerWithHue(270),
-      //             markerId: MarkerId('another id'),
-      //             position: LatLng(43.723598, -79.598046)));
+              _markers.add(Marker(
+                  icon: BitmapDescriptor.defaultMarkerWithHue(270),
+                  markerId: MarkerId('another id'),
+                  position: LatLng(43.723598, -79.598046)));
 
-      //         setState(() {
-      //           print('is there another way to reload state?');
-      //         });
-      //       }),
-      // ),
+              setState(() {
+                print('is there another way to reload state?');
+              });
+            }),
+      ),
     );
   }
 

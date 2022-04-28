@@ -18,26 +18,28 @@ class Friends extends StatelessWidget {
             return Scaffold(
               appBar: AppBar(
                   elevation: 0,
-                  leading: Padding(
-                    padding: const EdgeInsets.only(left: 15.0),
-                    child: CircleAvatar(
-                        backgroundImage: NetworkImage(
-                            UserController().currentUser.avatarUrl!)),
-                  ),
                   title: Text(AuthService().me.uid!.substring(0, 7)),
                   automaticallyImplyLeading: false,
                   actions: [
-                    PopupMenuButton(itemBuilder: (context) {
-                      return [
-                        PopupMenuItem(
-                            child: TextButton(
-                          onPressed: () {},
-                          child: Text('create a group'),
-                        )),
-                        PopupMenuItem(child: AddFriendButton()),
-                        PopupMenuItem(child: SignOut()),
-                      ];
-                    })
+                    PopupMenuButton(
+                        child: CircleAvatar(
+                          backgroundImage:
+                              NetworkImage(AuthService().me.avatarUrl!),
+                        ),
+                        itemBuilder: (context) {
+                          return [
+                            PopupMenuItem(
+                                child: TextButton(
+                              onPressed: () {},
+                              child: Text('create a group'),
+                            )),
+                            PopupMenuItem(child: AddFriendButton()),
+                            PopupMenuItem(child: SignOut()),
+                          ];
+                        }),
+                    SizedBox(
+                      width: 20,
+                    )
                   ]),
               body: ListView.builder(
                   itemCount: friends!.length,
@@ -56,19 +58,19 @@ class Friends extends StatelessWidget {
                                   minute: eventData.minute!);
                             }
                             return ListTile(
-                              title: eventData.event == null
-                                  ? Text(friends[index].displayName!)
-                                  : Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          '${eventData.event}? ',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        Text('w ${friends[index].displayName!}')
-                                      ],
-                                    ),
+                              title: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(friends[index].displayName!),
+                                  Text(
+                                    '11:01AM',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w100,
+                                        fontSize: 12),
+                                  )
+                                ],
+                              ),
                               leading: eventData.friend.broadcasting
                                   ? CircleAvatar(
                                       backgroundColor: Colors.green,
@@ -82,16 +84,24 @@ class Friends extends StatelessWidget {
                                       backgroundImage: NetworkImage(
                                           friends[index].avatarUrl!),
                                     ),
-                              subtitle: Text(eventData!.lastMessage),
-                              trailing: eventData.event == null
-                                  ? Icon(
-                                      Icons.delete,
-                                      color: Colors.white,
-                                    )
-                                  : Icon(
-                                      Icons.check,
-                                      color: Colors.white,
-                                    ),
+                              subtitle: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(eventData!.lastMessage),
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.location_on,
+                                        color: Colors.purple,
+                                        size: 18,
+                                      ),
+                                      Icon(Icons.podcasts,
+                                          size: 18, color: Colors.green)
+                                    ],
+                                  ),
+                                ],
+                              ),
                               onTap: () {
                                 Navigator.pop(context, friends[index]);
                               },
