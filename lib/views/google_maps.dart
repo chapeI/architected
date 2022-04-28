@@ -12,9 +12,11 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
+GlobalKey<_GoogleMapsState> globalKey = GlobalKey();
+
 class GoogleMaps extends StatefulWidget {
+  GoogleMaps({required Key key, required this.friend}) : super(key: key);
   UserModel friend;
-  GoogleMaps({required this.friend});
   @override
   State<GoogleMaps> createState() => _GoogleMapsState();
 }
@@ -30,6 +32,10 @@ class _GoogleMapsState extends State<GoogleMaps> {
   late var address;
   late var lat;
   late var lng;
+
+  void testA() {
+    print('im alive bby');
+  }
 
   @override
   Widget build(BuildContext context) {

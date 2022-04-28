@@ -76,6 +76,10 @@ class _ChatState extends State<Chat> {
                   if (snapshot.hasData) {
                     var eventData = snapshot.data;
                     return Scaffold(
+                        floatingActionButton:
+                            FloatingActionButton(onPressed: () {
+                          globalKey.currentState!.testA();
+                        }),
                         appBar: panelOpen
                             ? AppBar(
                                 title: Text(friend.displayName!),
@@ -232,6 +236,7 @@ class _ChatState extends State<Chat> {
                               },
                               defaultPanelState: PanelState.OPEN,
                               body: GoogleMaps(
+                                key: globalKey,
                                 friend: friend,
                               ),
                               collapsed: eventData!.placeName == null
