@@ -32,49 +32,52 @@ class _GoogleMapsState extends State<GoogleMaps> {
   late var address;
   late var lat;
   late var lng;
+  bool showSearch = false;
 
-  void testA() {
-    print('im alive bby');
+  void toggleShowSearch() {
+    setState(() {
+      showSearch = !showSearch;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final applicationBloc = Provider.of<ApplicationBloc>(context);
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        title: TextField(
-          onChanged: (val) {
-            _searchValue = val;
-          },
-          decoration: InputDecoration(
-              hintText: widget.friend.uid,
-              hintStyle: TextStyle(color: Colors.blue[300])),
-          style: TextStyle(color: Colors.blue),
-        ),
-        actions: [
-          IconButton(
-              onPressed: () async {
-                result = await LocationService().getPlace(_searchValue);
-                lat = result['geometry']['location']['lat'];
-                lng = result['geometry']['location']['lng'];
-                address = result['formatted_address'];
-                placeName = result['name'];
-                _goToPlace(lat, lng);
-                _markers.add(Marker(
-                    markerId: MarkerId('yolo'), position: LatLng(lat, lng)));
-                _searchController.text = '';
-                setState(() {
-                  _showCard = true;
-                });
-              },
-              icon: Icon(
-                Icons.search,
-                color: Colors.blue,
-              ))
-        ],
-      ),
+      appBar: showSearch
+          ? AppBar(
+              elevation: 0,
+              title: TextField(
+                onChanged: (val) {
+                  _searchValue = val;
+                },
+                decoration: InputDecoration(
+                    hintText: widget.friend.uid,
+                    hintStyle: TextStyle(color: Colors.blue[300])),
+              ),
+              actions: [
+                IconButton(
+                    onPressed: () async {
+                      result = await LocationService().getPlace(_searchValue);
+                      lat = result['geometry']['location']['lat'];
+                      lng = result['geometry']['location']['lng'];
+                      address = result['formatted_address'];
+                      placeName = result['name'];
+                      _goToPlace(lat, lng);
+                      _markers.add(Marker(
+                          markerId: MarkerId('yolo'),
+                          position: LatLng(lat, lng)));
+                      _searchController.text = '';
+                      setState(() {
+                        _showCard = true;
+                      });
+                    },
+                    icon: Icon(
+                      Icons.search,
+                    ))
+              ],
+            )
+          : null,
       body: Stack(children: [
         GoogleMap(
           markers: _markers,

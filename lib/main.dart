@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
                       child: Friends(),
                       type: PageTransitionType.leftToRightWithFade,
                       settings: settings,
-                      reverseDuration: Duration(milliseconds: 200));
+                      reverseDuration: Duration(milliseconds: 500));
               }
             },
           )),

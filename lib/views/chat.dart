@@ -30,8 +30,6 @@ class _ChatState extends State<Chat> {
   final _panelController = PanelController();
   bool planning = false;
   LatLng? latLng;
-  final _searchController = TextEditingController();
-  bool _expandedEvent = false;
 
   @override
   Widget build(BuildContext context) {
@@ -76,10 +74,6 @@ class _ChatState extends State<Chat> {
                   if (snapshot.hasData) {
                     var eventData = snapshot.data;
                     return Scaffold(
-                        floatingActionButton:
-                            FloatingActionButton(onPressed: () {
-                          globalKey.currentState!.testA();
-                        }),
                         appBar: panelOpen
                             ? AppBar(
                                 title: Text(friend.displayName!),
@@ -103,39 +97,34 @@ class _ChatState extends State<Chat> {
                                     itemBuilder: ((context) => [
                                           PopupMenuItem(
                                               child: Text(
-                                                  'pulls down map then goes to his location, if broadcasting, else request'))
+                                                  '(if broadcasting) opens map, jump to his location, else request for his location'))
                                         ]),
                                   ),
                                 ),
                                 elevation: 0,
                                 actions: [
-                                    VerticalDivider(
-                                      thickness: 2,
-                                    ),
-                                    SizedBox(
-                                      width: 14,
-                                    ),
+                                    eventData!.placeName == null
+                                        ? Container()
+                                        : IconButton(
+                                            icon: Icon(
+                                              Icons.delete,
+                                            ),
+                                            onPressed: () {
+                                              _firestore
+                                                  .deleteEvent(friend.chatsID!);
+                                            },
+                                          ),
                                     PopupMenuButton(
-                                      child: CircleAvatar(
-                                        backgroundImage: NetworkImage(
-                                            AuthService().me.avatarUrl!),
-                                      ),
                                       itemBuilder: ((context) => [
                                             PopupMenuItem(
                                                 child: Text(
-                                                    'see my location on the map'),
-                                                onTap: () {}),
-                                            PopupMenuItem(
-                                                child: Text(
-                                                    'share my location with ${friend.displayName}'),
+                                                    'open map and jump to my location'),
                                                 onTap: () {}),
                                           ]),
                                     ),
-                                    SizedBox(
-                                      width: 20,
-                                    )
                                   ])
                             : AppBar(
+                                elevation: 0,
                                 leading: Padding(
                                   padding: const EdgeInsets.only(left: 18.0),
                                   child: PopupMenuButton(
@@ -167,28 +156,14 @@ class _ChatState extends State<Chat> {
                                   ],
                                 ),
                                 actions: [
-                                  VerticalDivider(
-                                    thickness: 2,
-                                  ),
-                                  SizedBox(
-                                    width: 16,
-                                  ),
                                   PopupMenuButton(
-                                    child: eventData!.me.broadcasting
-                                        ? CircleAvatar(
-                                            radius: 20,
-                                            backgroundColor: Colors.blue[900],
-                                            child: CircleAvatar(
-                                                radius: 17,
-                                                backgroundImage: NetworkImage(
-                                                    AuthService()
-                                                        .me
-                                                        .avatarUrl!)))
-                                        : CircleAvatar(
-                                            backgroundImage: NetworkImage(
-                                                AuthService().me.avatarUrl!),
-                                          ),
                                     itemBuilder: ((context) => [
+                                          PopupMenuItem(
+                                              child: Text('search map'),
+                                              onTap: () {
+                                                globalKey.currentState!
+                                                    .toggleShowSearch();
+                                              }),
                                           PopupMenuItem(
                                               child: eventData!.me.broadcasting
                                                   ? Text(
@@ -203,20 +178,8 @@ class _ChatState extends State<Chat> {
                                                     eventData.me.broadcasting,
                                                     eventData.me);
                                               }),
-                                          PopupMenuItem(
-                                              child: Text('search map'),
-                                              onTap: null),
-                                          PopupMenuItem(
-                                              child: Icon(
-                                                Icons.my_location,
-                                                color: Colors.blue,
-                                              ),
-                                              onTap: null),
                                         ]),
                                   ),
-                                  SizedBox(
-                                    width: 20,
-                                  )
                                 ],
                               ),
                         body: Stack(children: [
@@ -252,10 +215,6 @@ class _ChatState extends State<Chat> {
                                   : AppBar(
                                       backgroundColor: Colors.white,
                                       foregroundColor: Colors.black54,
-                                      leading: Icon(
-                                        Icons.location_on,
-                                        color: Colors.purple,
-                                      ),
                                       title: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -263,7 +222,7 @@ class _ChatState extends State<Chat> {
                                           Text(
                                             eventData.placeName!,
                                             style: TextStyle(
-                                                fontWeight: FontWeight.w300),
+                                                fontWeight: FontWeight.w400),
                                           ),
                                           Text(
                                             eventData.address!,
@@ -281,10 +240,10 @@ class _ChatState extends State<Chat> {
                                           padding:
                                               const EdgeInsets.only(right: 8.0),
                                           child: IconButton(
-                                              onPressed: () {},
-                                              icon: Icon(
-                                                Icons.near_me,
-                                              )),
+                                            onPressed: () {},
+                                            icon: Icon(Icons.location_on),
+                                            color: Colors.purple,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -292,72 +251,15 @@ class _ChatState extends State<Chat> {
                                 children: [
                                   eventData.placeName == null
                                       ? Container()
-                                      : ExpansionPanelList(
-                                          expandedHeaderPadding:
-                                              EdgeInsets.zero,
-                                          dividerColor: Colors.red,
-                                          elevation: 0,
-                                          animationDuration:
-                                              Duration(milliseconds: 500),
-                                          expansionCallback:
-                                              (int index, bool isExpanded) {
-                                            _expandedEvent = !_expandedEvent;
-                                            setState(() {});
-                                          },
-                                          children: [
-                                            ExpansionPanel(
-                                                body: AppBar(
-                                                  backgroundColor: Colors.white,
-                                                  // leading: OutlinedButton(
-                                                  //   child: Icon(Icons.settings),
-                                                  //   onPressed: () {},
-                                                  // ),
-                                                  actions: [
-                                                    OutlinedButton(
-                                                        onPressed: () {},
-                                                        child: Icon(
-                                                            Icons.more_time)),
-                                                    OutlinedButton(
-                                                        onPressed: () {},
-                                                        child: Icon(
-                                                            Icons.settings)),
-                                                    OutlinedButton(
-                                                      child: Icon(Icons.delete),
-                                                      onPressed: () {
-                                                        _firestore.deleteEvent(
-                                                            friend.chatsID!);
-                                                      },
-                                                    ),
-                                                  ],
-                                                ),
-                                                isExpanded: _expandedEvent,
-                                                canTapOnHeader: false,
-                                                headerBuilder: (context,
-                                                        isExpanded) =>
-                                                    ListTile(
-                                                      dense: true,
-                                                      leading: Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.min,
-                                                        children: [
-                                                          IconButton(
-                                                            onPressed: () {},
-                                                            icon: Icon(
-                                                              Icons.location_on,
-                                                              color:
-                                                                  Colors.purple,
-                                                            ),
-                                                          ),
-                                                          VerticalDivider()
-                                                        ],
-                                                      ),
-                                                      title: Text(
-                                                          eventData.placeName!),
-                                                      subtitle: Text(eventData
-                                                          .address!
-                                                          .substring(0, 34)),
-                                                    ))
-                                          ],
+                                      : ListTile(
+                                          dense: true,
+                                          title: Text(eventData.placeName!),
+                                          subtitle: Text(eventData.address!),
+                                          trailing: IconButton(
+                                            icon: Icon(Icons.location_on,
+                                                color: Colors.purple),
+                                            onPressed: () {},
+                                          ),
                                         ),
                                   // Divider(),
                                   SizedBox(
@@ -443,12 +345,12 @@ class _ChatState extends State<Chat> {
                                         children: [
                                           Expanded(
                                             child: TextField(
-                                              onChanged: (val) {
-                                                message = val;
-                                              },
-                                              cursorColor: Colors.blue[200],
-                                              cursorWidth: 8,
-                                              decoration: InputDecoration(
+                                                onChanged: (val) {
+                                                  message = val;
+                                                },
+                                                cursorColor: Colors.blue[200],
+                                                cursorWidth: 8,
+                                                decoration: InputDecoration(
                                                   filled: true,
                                                   border: OutlineInputBorder(
                                                       borderRadius:
@@ -457,13 +359,11 @@ class _ChatState extends State<Chat> {
                                                       borderSide:
                                                           BorderSide.none),
                                                   fillColor: Colors.blue[50],
-                                                  hintText: panelOpen
-                                                      ? '    send a message'
-                                                      : '    use top search bar for now'),
-                                              controller: panelOpen
-                                                  ? _controller
-                                                  : _searchController,
-                                            ),
+                                                  hintText:
+                                                      '    send a message',
+                                                  enabled: false,
+                                                ),
+                                                controller: _controller),
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.only(
@@ -485,7 +385,7 @@ class _ChatState extends State<Chat> {
                               : Container()
                         ]));
                   }
-                  return Text('chat loading');
+                  return CircularProgressIndicator();
                 }),
           );
   }
