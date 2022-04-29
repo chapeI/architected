@@ -24,17 +24,25 @@ class Friends extends StatelessWidget {
                   ),
                   automaticallyImplyLeading: false,
                   actions: [
-                    PopupMenuButton(itemBuilder: (context) {
-                      return [
-                        PopupMenuItem(
-                            child: TextButton(
-                          onPressed: () {},
-                          child: Text('create a group'),
-                        )),
-                        PopupMenuItem(child: AddFriendButton()),
-                        PopupMenuItem(child: SignOut()),
-                      ];
-                    }),
+                    PopupMenuButton(
+                        child: CircleAvatar(
+                          backgroundImage:
+                              NetworkImage(AuthService().me.avatarUrl!),
+                        ),
+                        itemBuilder: (context) {
+                          return [
+                            PopupMenuItem(
+                                child: TextButton(
+                              onPressed: () {},
+                              child: Text('create a group'),
+                            )),
+                            PopupMenuItem(child: AddFriendButton()),
+                            PopupMenuItem(child: SignOut()),
+                          ];
+                        }),
+                    SizedBox(
+                      width: 20,
+                    ),
                   ]),
               body: ListView.builder(
                   itemCount: friends!.length,
@@ -62,10 +70,11 @@ class Friends extends StatelessWidget {
                                     '11:01AM',
                                     style: TextStyle(
                                         fontWeight: FontWeight.w100,
-                                        fontSize: 12),
+                                        fontSize: 8),
                                   )
                                 ],
                               ),
+                              dense: true,
                               tileColor: eventData.me.broadcasting
                                   ? Colors.green[50]
                                   : null,
@@ -93,7 +102,7 @@ class Friends extends StatelessWidget {
                                           ? Container()
                                           : Icon(
                                               Icons.location_on,
-                                              color: Colors.purple,
+                                              color: Colors.pink,
                                               size: 18,
                                             )
                                     ],

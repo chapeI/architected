@@ -53,7 +53,7 @@ class _GoogleMapsState extends State<GoogleMaps> {
                 },
                 decoration: InputDecoration(
                     hintText: widget.friend.uid,
-                    hintStyle: TextStyle(color: Colors.blue[300])),
+                    hintStyle: TextStyle(color: Colors.blue[200])),
               ),
               actions: [
                 IconButton(
@@ -201,16 +201,14 @@ class _GoogleMapsState extends State<GoogleMaps> {
   //       .asUint8List();
   // }
 
-  Future<BitmapDescriptor> userImageMarker(
-    imageFile, {
-    int size = 150,
-    required title,
-    // bool addBorder = false,
-    Color borderColor = Colors.blue,
-    double borderSize = 15,
-    Color titleColor = Colors.white,
-    Color titleBackgroundColor = Colors.blue,
-  }) async {
+  Future<BitmapDescriptor> userImageMarker(imageFile,
+      {int size = 150,
+      required title,
+      // bool addBorder = false,
+      Color borderColor = Colors.green,
+      double borderSize = 15,
+      Color titleColor = Colors.black,
+      Color titleBackgroundColor = Colors.green}) async {
     final pictureRecorder = ui.PictureRecorder();
     final canvas = Canvas(pictureRecorder);
     final paint = Paint()..color;
