@@ -18,28 +18,23 @@ class Friends extends StatelessWidget {
             return Scaffold(
               appBar: AppBar(
                   elevation: 0,
-                  title: Text(AuthService().me.uid!.substring(0, 7)),
+                  title: Text(
+                    AuthService().me.uid!,
+                    style: TextStyle(color: Colors.blue[300], fontSize: 12),
+                  ),
                   automaticallyImplyLeading: false,
                   actions: [
-                    PopupMenuButton(
-                        child: CircleAvatar(
-                          backgroundImage:
-                              NetworkImage(AuthService().me.avatarUrl!),
-                        ),
-                        itemBuilder: (context) {
-                          return [
-                            PopupMenuItem(
-                                child: TextButton(
-                              onPressed: () {},
-                              child: Text('create a group'),
-                            )),
-                            PopupMenuItem(child: AddFriendButton()),
-                            PopupMenuItem(child: SignOut()),
-                          ];
-                        }),
-                    SizedBox(
-                      width: 20,
-                    )
+                    PopupMenuButton(itemBuilder: (context) {
+                      return [
+                        PopupMenuItem(
+                            child: TextButton(
+                          onPressed: () {},
+                          child: Text('create a group'),
+                        )),
+                        PopupMenuItem(child: AddFriendButton()),
+                        PopupMenuItem(child: SignOut()),
+                      ];
+                    }),
                   ]),
               body: ListView.builder(
                   itemCount: friends!.length,
@@ -71,12 +66,15 @@ class Friends extends StatelessWidget {
                                   )
                                 ],
                               ),
+                              tileColor: eventData.me.broadcasting
+                                  ? Colors.green[50]
+                                  : null,
                               leading: eventData.friend.broadcasting
                                   ? CircleAvatar(
                                       backgroundColor: Colors.green,
                                       radius: 20,
                                       child: CircleAvatar(
-                                          radius: 16,
+                                          radius: 18,
                                           backgroundImage: NetworkImage(
                                               friends[index].avatarUrl!)),
                                     )
@@ -91,13 +89,13 @@ class Friends extends StatelessWidget {
                                   Text(eventData!.lastMessage),
                                   Row(
                                     children: [
-                                      Icon(
-                                        Icons.location_on,
-                                        color: Colors.purple,
-                                        size: 18,
-                                      ),
-                                      Icon(Icons.podcasts,
-                                          size: 18, color: Colors.green)
+                                      eventData.placeName == null
+                                          ? Container()
+                                          : Icon(
+                                              Icons.location_on,
+                                              color: Colors.purple,
+                                              size: 18,
+                                            )
                                     ],
                                   ),
                                 ],

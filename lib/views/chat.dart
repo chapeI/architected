@@ -83,7 +83,7 @@ class _ChatState extends State<Chat> {
                                     child: eventData!.friend.broadcasting
                                         ? CircleAvatar(
                                             radius: 22,
-                                            backgroundColor: Colors.red,
+                                            backgroundColor: Colors.green,
                                             child: CircleAvatar(
                                               radius: 17,
                                               backgroundImage: NetworkImage(
@@ -96,8 +96,7 @@ class _ChatState extends State<Chat> {
                                           ),
                                     itemBuilder: ((context) => [
                                           PopupMenuItem(
-                                              child: Text(
-                                                  '(if broadcasting) opens map, jump to his location, else request for his location'))
+                                              child: Text('what to do here'))
                                         ]),
                                   ),
                                 ),
@@ -117,21 +116,22 @@ class _ChatState extends State<Chat> {
                                     PopupMenuButton(
                                       itemBuilder: ((context) => [
                                             PopupMenuItem(
-                                                child: Text(
-                                                    'open map and jump to my location'),
+                                                child: Text('whad a do'),
                                                 onTap: () {}),
                                           ]),
                                     ),
                                   ])
                             : AppBar(
+                                backgroundColor: Colors.lightGreen[200],
+                                foregroundColor: Colors.black,
                                 elevation: 0,
                                 leading: Padding(
                                   padding: const EdgeInsets.only(left: 18.0),
                                   child: PopupMenuButton(
-                                    child: eventData!.me.broadcasting
+                                    child: eventData!.friend.broadcasting
                                         ? CircleAvatar(
                                             radius: 18,
-                                            backgroundColor: Colors.blue[900],
+                                            backgroundColor: Colors.green,
                                             child: CircleAvatar(
                                                 radius: 16,
                                                 backgroundImage: NetworkImage(
@@ -205,11 +205,15 @@ class _ChatState extends State<Chat> {
                               collapsed: eventData!.placeName == null
                                   ? Container(
                                       height: 10,
-                                      color: Colors.blue,
+                                      color: eventData.me.broadcasting
+                                          ? Colors.green[200]
+                                          : Colors.blue,
                                       child: Center(
                                           child: Icon(
                                         Icons.drag_handle_outlined,
-                                        color: Colors.white,
+                                        color: eventData.me.broadcasting
+                                            ? Colors.black
+                                            : Colors.white,
                                       )),
                                     )
                                   : AppBar(
