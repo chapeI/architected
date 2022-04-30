@@ -89,50 +89,82 @@ class _ChatState extends State<Chat> {
                             appBar: panelOpen
                                 ? AppBar(
                                     title: Text(friend.displayName!),
-                                    leading: Padding(
-                                      padding: const EdgeInsets.only(left: 18),
-                                      child: PopupMenuButton(
-                                        child: eventData!.friend.broadcasting
-                                            ? CircleAvatar(
-                                                radius: 22,
-                                                backgroundColor: Colors.green,
-                                                child: CircleAvatar(
-                                                  radius: 17,
-                                                  backgroundImage: NetworkImage(
-                                                      friend.avatarUrl!),
-                                                ),
-                                              )
-                                            : CircleAvatar(
-                                                backgroundImage: NetworkImage(
-                                                    friend.avatarUrl!),
-                                              ),
-                                        itemBuilder: ((context) => [
-                                              PopupMenuItem(
-                                                  child: Text(
-                                                      'only if friend is broadcasting will i see this'))
-                                            ]),
-                                      ),
+                                    leading: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(Icons.chevron_left),
+                                        Flexible(
+                                          child: PopupMenuButton(
+                                            child: eventData!
+                                                    .friend.broadcasting
+                                                ? CircleAvatar(
+                                                    radius: 22,
+                                                    backgroundColor:
+                                                        Colors.green,
+                                                    child: CircleAvatar(
+                                                      radius: 17,
+                                                      backgroundImage:
+                                                          NetworkImage(friend
+                                                              .avatarUrl!),
+                                                    ),
+                                                  )
+                                                : CircleAvatar(
+                                                    backgroundImage:
+                                                        NetworkImage(
+                                                            friend.avatarUrl!),
+                                                  ),
+                                            itemBuilder: ((context) => [
+                                                  PopupMenuItem(
+                                                      child: Text(
+                                                          'only if friend is broadcasting will i see this'))
+                                                ]),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                     elevation: 0,
                                     actions: [
                                         eventData!.placeName == null
                                             ? Container()
-                                            : IconButton(
-                                                icon: Icon(
-                                                  Icons.delete,
+                                            : Container(
+                                                margin: EdgeInsets.all(6),
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        width: 0.2,
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .inversePrimary),
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                10))),
+                                                child: Row(
+                                                  children: [
+                                                    IconButton(
+                                                        onPressed: () {
+                                                          _panelController
+                                                              .close();
+                                                        },
+                                                        icon: Icon(Icons
+                                                            .map_outlined)),
+                                                    VerticalDivider(
+                                                      thickness: 0.2,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .inversePrimary,
+                                                    ),
+                                                    IconButton(
+                                                      icon: Icon(
+                                                        Icons.delete,
+                                                      ),
+                                                      onPressed: () {
+                                                        _firestore.deleteEvent(
+                                                            friend.chatsID!);
+                                                      },
+                                                    ),
+                                                  ],
                                                 ),
-                                                onPressed: () {
-                                                  _firestore.deleteEvent(
-                                                      friend.chatsID!);
-                                                },
                                               ),
-                                        panelOpen
-                                            ? IconButton(
-                                                onPressed: () {
-                                                  _panelController.close();
-                                                },
-                                                icon: Icon(Icons.map_outlined))
-                                            : Container(),
                                         PopupMenuButton(
                                           itemBuilder: ((context) => [
                                                 PopupMenuItem(
@@ -159,30 +191,36 @@ class _ChatState extends State<Chat> {
                                       ])
                                 : AppBar(
                                     elevation: 0,
-                                    leading: Padding(
-                                      padding:
-                                          const EdgeInsets.only(left: 18.0),
-                                      child: PopupMenuButton(
-                                        child: eventData!.friend.broadcasting
-                                            ? CircleAvatar(
-                                                radius: 18,
-                                                backgroundColor: Colors.green,
-                                                child: CircleAvatar(
-                                                    radius: 16,
+                                    leading: Row(
+                                      children: [
+                                        Icon(Icons.chevron_left),
+                                        Flexible(
+                                          child: PopupMenuButton(
+                                            child: eventData!
+                                                    .friend.broadcasting
+                                                ? CircleAvatar(
+                                                    radius: 18,
+                                                    backgroundColor:
+                                                        Colors.green,
+                                                    child: CircleAvatar(
+                                                        radius: 16,
+                                                        backgroundImage:
+                                                            NetworkImage(friend
+                                                                .avatarUrl!)))
+                                                : CircleAvatar(
                                                     backgroundImage:
                                                         NetworkImage(
-                                                            friend.avatarUrl!)))
-                                            : CircleAvatar(
-                                                backgroundImage: NetworkImage(
-                                                    friend.avatarUrl!)),
-                                        itemBuilder: ((context) => [
-                                              PopupMenuItem(
-                                                  child: Text(
-                                                    'onClick, map animates to friends position',
-                                                  ),
-                                                  onTap: () {}),
-                                            ]),
-                                      ),
+                                                            friend.avatarUrl!)),
+                                            itemBuilder: ((context) => [
+                                                  PopupMenuItem(
+                                                      child: Text(
+                                                        'onClick, map animates to friends position',
+                                                      ),
+                                                      onTap: () {}),
+                                                ]),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                     title: Row(
                                       children: [
@@ -192,20 +230,64 @@ class _ChatState extends State<Chat> {
                                       ],
                                     ),
                                     actions: [
-                                      eventData.placeName == null
-                                          ? Container()
-                                          : IconButton(
-                                              onPressed: () {
-                                                _firestore.deleteEvent(
-                                                    friend.chatsID!);
-                                              },
-                                              icon: Icon(Icons.delete)),
                                       IconButton(
                                           onPressed: () {
                                             globalKey.currentState!
                                                 .toggleShowSearch();
                                           },
                                           icon: Icon(Icons.search)),
+                                      eventData!.placeName == null
+                                          ? Container()
+                                          : Container(
+                                              margin: EdgeInsets.all(6),
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      width: 0.2,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .inversePrimary),
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(10))),
+                                              child: Row(
+                                                children: [
+                                                  Stack(
+                                                    children: [
+                                                      IconButton(
+                                                          onPressed: () {
+                                                            _panelController
+                                                                .open();
+                                                          },
+                                                          icon: Icon(Icons
+                                                              .map_outlined)),
+                                                      Positioned(
+                                                        left: 30,
+                                                        top: 25,
+                                                        child: Icon(
+                                                          Icons.cancel,
+                                                          size: 12,
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                  VerticalDivider(
+                                                    thickness: 0.2,
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .inversePrimary,
+                                                  ),
+                                                  IconButton(
+                                                    icon: Icon(
+                                                      Icons.delete,
+                                                    ),
+                                                    onPressed: () {
+                                                      _firestore.deleteEvent(
+                                                          friend.chatsID!);
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
                                       PopupMenuButton(
                                         itemBuilder: ((context) => [
                                               PopupMenuItem(
@@ -228,15 +310,14 @@ class _ChatState extends State<Chat> {
                                                             eventData.me);
                                                   }),
                                             ]),
-                                      ),
+                                      )
                                     ],
                                   ),
                             body: Stack(children: [
                               SlidingUpPanel(
                                   controller: _panelController,
                                   maxHeight: MediaQuery.of(context).size.height,
-                                  minHeight:
-                                      eventData.placeName == null ? 40 : 60,
+                                  minHeight: 40,
                                   onPanelClosed: () {
                                     setState(() {
                                       panelOpen = false;
@@ -252,70 +333,47 @@ class _ChatState extends State<Chat> {
                                     key: globalKey,
                                     friend: friend,
                                   ),
-                                  collapsed: eventData!.placeName == null
-                                      ? Container(
-                                          height: 10,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                          child: Center(
-                                              child: Icon(
-                                            Icons.drag_handle_outlined,
-                                          )),
-                                        )
-                                      : AppBar(
-                                          backgroundColor: Colors.white,
-                                          foregroundColor: Colors.black54,
-                                          title: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                eventData.placeName!,
-                                                style: TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.w400),
-                                              ),
-                                              Text(
-                                                eventData.address!,
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    fontWeight:
-                                                        FontWeight.w100),
-                                              )
-                                            ],
-                                          ),
-                                          actions: [
-                                            VerticalDivider(
-                                              thickness: 1,
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  right: 8.0),
-                                              child: IconButton(
-                                                onPressed: () {},
-                                                icon: Icon(Icons.location_on),
-                                                color: Colors.purple,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
                                   panel: Column(
                                     children: [
                                       eventData.placeName == null
                                           ? Container()
-                                          : ListTile(
-                                              dense: true,
-                                              title: Text(eventData.placeName!),
-                                              subtitle:
-                                                  Text(eventData.address!),
-                                              trailing: IconButton(
-                                                icon: Icon(Icons.location_on,
-                                                    color: Colors.purple),
-                                                onPressed: () {},
+                                          : Container(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary
+                                                  .withOpacity(0.6),
+                                              padding: const EdgeInsets.all(12),
+                                              child: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.location_on,
+                                                    color: Colors.red,
+                                                    size: 15,
+                                                  ),
+                                                  Text(
+                                                    eventData.placeName!,
+                                                    style: TextStyle(
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .inversePrimary,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 4,
+                                                  ),
+                                                  Flexible(
+                                                    child: Text(
+                                                      '(${eventData.address!.substring(0, 38)})',
+                                                      style: TextStyle(
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .inversePrimary,
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
                                               ),
                                             ),
-                                      // Divider(),
                                       SizedBox(
                                         height: 10,
                                       ),
@@ -347,7 +405,6 @@ class _ChatState extends State<Chat> {
                                                                         10,
                                                                     vertical:
                                                                         2),
-                                                            // color: Colors.blue[100],
                                                             child: Material(
                                                               shape: RoundedRectangleBorder(
                                                                   borderRadius:
