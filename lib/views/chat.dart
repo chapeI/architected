@@ -406,16 +406,13 @@ class _ChatState extends State<Chat> {
                                                                     vertical:
                                                                         2),
                                                             child: Material(
-                                                              shape: RoundedRectangleBorder(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              5),
-                                                                  side: BorderSide(
-                                                                      color: Theme.of(
-                                                                              context)
-                                                                          .colorScheme
-                                                                          .primary)),
+                                                              shape:
+                                                                  RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            10),
+                                                              ),
                                                               color: data[index]
                                                                           .uid ==
                                                                       _auth.me
@@ -425,13 +422,13 @@ class _ChatState extends State<Chat> {
                                                                       .colorScheme
                                                                       .primary
                                                                       .withOpacity(
-                                                                          0.3)
+                                                                          0.7)
                                                                   : Theme.of(
                                                                           context)
                                                                       .colorScheme
                                                                       .primary
                                                                       .withOpacity(
-                                                                          0.1),
+                                                                          0.8),
                                                               child: Padding(
                                                                 padding:
                                                                     const EdgeInsets
@@ -440,6 +437,11 @@ class _ChatState extends State<Chat> {
                                                                 child: Text(
                                                                   data[index]
                                                                       .text,
+                                                                  style: TextStyle(
+                                                                      color: Theme.of(
+                                                                              context)
+                                                                          .colorScheme
+                                                                          .inversePrimary),
                                                                 ),
                                                               ),
                                                             ))
@@ -458,51 +460,49 @@ class _ChatState extends State<Chat> {
                                   )),
                               panelOpen
                                   ? Positioned(
-                                      bottom: 0,
+                                      bottom: 3,
                                       left: 0,
                                       right: 0,
                                       child: Container(
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(10.0),
-                                          child: Row(
-                                            children: [
-                                              Expanded(
-                                                child: TextField(
-                                                    onChanged: (val) {
-                                                      message = val;
-                                                    },
-                                                    cursorWidth: 8,
-                                                    decoration: InputDecoration(
-                                                      filled: true,
-                                                      border:
-                                                          OutlineInputBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10.0),
-                                                              borderSide:
-                                                                  BorderSide
-                                                                      .none),
-                                                      hintText:
-                                                          '    send a message',
-                                                    ),
-                                                    controller: _controller),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 8.0),
-                                                child: ElevatedButton(
-                                                  onPressed: () {
-                                                    _firestore.sendMessage(
-                                                        message,
-                                                        friend.chatsID!.id);
-                                                    _controller.clear();
+                                        height: 70,
+                                        padding: EdgeInsets.all(9),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: TextField(
+                                                  onChanged: (val) {
+                                                    message = val;
                                                   },
-                                                  child: Icon(Icons.send),
+                                                  cursorWidth: 8,
+                                                  decoration: InputDecoration(
+                                                    filled: true,
+                                                    border: OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(50.0),
+                                                        borderSide:
+                                                            BorderSide.none),
+                                                    hintText:
+                                                        '    send a message',
+                                                  ),
+                                                  controller: _controller),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 8.0),
+                                              child: OutlinedButton(
+                                                onPressed: () {
+                                                  _firestore.sendMessage(
+                                                      message,
+                                                      friend.chatsID!.id);
+                                                  _controller.clear();
+                                                },
+                                                child: Icon(
+                                                  Icons.chat,
                                                 ),
-                                              )
-                                            ],
-                                          ),
+                                              ),
+                                            )
+                                          ],
                                         ),
                                       ),
                                     )
