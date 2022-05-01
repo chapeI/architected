@@ -87,7 +87,9 @@ class _ChatState extends State<Chat> {
                                     leading: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Icon(Icons.chevron_left),
+                                        Icon(
+                                          Icons.chevron_left,
+                                        ),
                                         Flexible(
                                           child: PopupMenuButton(
                                             child: eventData!
@@ -193,7 +195,12 @@ class _ChatState extends State<Chat> {
                                     elevation: 0,
                                     leading: Row(
                                       children: [
-                                        Icon(Icons.chevron_left),
+                                        Icon(
+                                          Icons.chevron_left,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                        ),
                                         Flexible(
                                           child: PopupMenuButton(
                                             child: eventData!
