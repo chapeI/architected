@@ -4,7 +4,6 @@ import 'dart:ui' as ui;
 import 'package:architectured/views/google_maps.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:architectured/models/chat_model.dart';
 import 'package:architectured/models/event_model.dart';
@@ -23,13 +22,9 @@ class _ChatState extends State<Chat> {
   final _firestore = FirestoreService();
   final _auth = AuthService();
   final _controller = TextEditingController();
-  final _nameEventController = TextEditingController();
   String message = '';
-  String eventName = '';
   var panelOpen = true;
   final _panelController = PanelController();
-  bool planning = false;
-  LatLng? latLng;
 
   @override
   Widget build(BuildContext context) {
@@ -524,104 +519,6 @@ class _ChatState extends State<Chat> {
                   return CircularProgressIndicator();
                 }),
           );
-  }
-
-  TimeOfDay? _time;
-
-  void _selectTime() async {
-    final TimeOfDay? newTime = await showTimePicker(
-        context: context,
-        initialTime: _time ?? const TimeOfDay(hour: 8, minute: 00),
-        initialEntryMode: TimePickerEntryMode.input);
-
-    if (newTime != null) {
-      setState(() {
-        _time = newTime;
-      });
-      FirestoreService().addEventTime(friend.chatsID!, newTime);
-    }
-  }
-
-  togglePlanning() {
-    setState(() {
-      planning = !planning;
-    });
-  }
-
-  Future<dynamic> showModal(BuildContext context, EventModel? eventData) {
-    return showModalBottomSheet(
-        isScrollControlled: true,
-        context: context,
-        builder: (BuildContext context) {
-          return SingleChildScrollView(
-              child: Container(
-                  padding: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).viewInsets.bottom),
-                  child: Column(
-                    children: [
-                      AppBar(
-                        elevation: 0,
-                        automaticallyImplyLeading: false,
-                        actions: [
-                          IconButton(
-                            onPressed: null,
-                            icon: Icon(Icons.more_time),
-                          ),
-                          IconButton(onPressed: () {}, icon: Icon(Icons.event)),
-                          IconButton(
-                              onPressed: () {
-                                _firestore.addLocation(
-                                    friend.chatsID!,
-                                    LatLng(43.723598, -79.598046),
-                                    'bad name',
-                                    'bad addy');
-                              },
-                              icon: Icon(Icons.add_location_alt)),
-                          IconButton(
-                            icon: Icon(
-                              Icons.delete,
-                              color: Colors.red,
-                            ),
-                            onPressed: () {
-                              _firestore.deleteEvent(friend.chatsID!);
-                            },
-                          ),
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                autofocus: true,
-                                onChanged: (val) {
-                                  eventName = val;
-                                },
-                                controller: _nameEventController,
-                                decoration: InputDecoration(
-                                    hintText: eventData!.event == null
-                                        ? 'for ie. Raptors Game'
-                                        : "edit: '${eventData.event}'"),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 18.0),
-                              child: ElevatedButton(
-                                  onPressed: () {
-                                    _firestore.addEvent(
-                                        friend.chatsID!, eventName);
-                                    _nameEventController.clear();
-                                    Navigator.pop(context);
-                                  },
-                                  child: Icon(Icons.check)),
-                            )
-                          ],
-                        ),
-                      ),
-                    ],
-                  )));
-        });
   }
 
   Future<Uint8List> getBytesFromAsset(path, int width) async {
