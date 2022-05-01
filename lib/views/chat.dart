@@ -392,6 +392,9 @@ class _ChatState extends State<Chat> {
                                                     color: Colors.red,
                                                     size: 15,
                                                   ),
+                                                  SizedBox(
+                                                    width: 4,
+                                                  ),
                                                   Text(
                                                     eventData.placeName!,
                                                     style: TextStyle(
@@ -403,15 +406,30 @@ class _ChatState extends State<Chat> {
                                                   SizedBox(
                                                     width: 4,
                                                   ),
-                                                  Flexible(
-                                                    child: Text(
-                                                      '(${eventData.address!.substring(0, 20)})',
-                                                      style: TextStyle(
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .inversePrimary,
-                                                      ),
+                                                  Text(
+                                                    '(${eventData.address!.substring(0, 20)})',
+                                                    style: TextStyle(
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .inversePrimary,
                                                     ),
+                                                  ),
+                                                  Spacer(),
+                                                  IconButton(
+                                                    constraints:
+                                                        BoxConstraints(),
+                                                    padding: EdgeInsets.zero,
+                                                    onPressed: () {
+                                                      _firestore.deleteEvent(
+                                                          friend.chatsID!);
+                                                    },
+                                                    icon: Icon(
+                                                      Icons.delete,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .inversePrimary,
+                                                    ),
+                                                    iconSize: 16,
                                                   )
                                                 ],
                                               ),
