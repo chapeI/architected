@@ -23,7 +23,7 @@ class _ChatState extends State<Chat> {
   final _auth = AuthService();
   final _controller = TextEditingController();
   String message = '';
-  var panelOpen = true;
+  var mapMode = false;
   final _panelController = PanelController();
 
   @override
@@ -81,117 +81,8 @@ class _ChatState extends State<Chat> {
                           : Theme.of(context),
                       child: Builder(
                         builder: (context) => Scaffold(
-                            appBar: panelOpen
+                            appBar: mapMode
                                 ? AppBar(
-                                    title: Text(friend.displayName!),
-                                    leading: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          Icons.chevron_left,
-                                        ),
-                                        Flexible(
-                                          child: PopupMenuButton(
-                                            child: eventData!
-                                                    .friend.broadcasting
-                                                ? CircleAvatar(
-                                                    radius: 22,
-                                                    backgroundColor:
-                                                        Colors.green,
-                                                    child: CircleAvatar(
-                                                      radius: 17,
-                                                      backgroundImage:
-                                                          NetworkImage(friend
-                                                              .avatarUrl!),
-                                                    ),
-                                                  )
-                                                : CircleAvatar(
-                                                    backgroundImage:
-                                                        NetworkImage(
-                                                            friend.avatarUrl!),
-                                                  ),
-                                            itemBuilder: ((context) => [
-                                                  PopupMenuItem(
-                                                      child: Text(
-                                                          'only if friend is broadcasting will i see this'))
-                                                ]),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    elevation: 0,
-                                    actions: [
-                                        eventData!.placeName == null
-                                            ? IconButton(
-                                                icon: Icon(Icons.map_outlined),
-                                                onPressed: () {
-                                                  _panelController.close();
-                                                },
-                                              )
-                                            : Container(
-                                                margin: EdgeInsets.all(6),
-                                                decoration: BoxDecoration(
-                                                    border: Border.all(
-                                                        width: 0.2,
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .inversePrimary),
-                                                    borderRadius:
-                                                        BorderRadius.all(
-                                                            Radius.circular(
-                                                                10))),
-                                                child: Row(
-                                                  children: [
-                                                    IconButton(
-                                                      icon: Icon(
-                                                        Icons.delete,
-                                                      ),
-                                                      onPressed: () {
-                                                        _firestore.deleteEvent(
-                                                            friend.chatsID!);
-                                                      },
-                                                    ),
-                                                    VerticalDivider(
-                                                      thickness: 0.2,
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .inversePrimary,
-                                                    ),
-                                                    IconButton(
-                                                        onPressed: () {
-                                                          _panelController
-                                                              .close();
-                                                        },
-                                                        icon: Icon(Icons
-                                                            .map_outlined)),
-                                                  ],
-                                                ),
-                                              ),
-                                        PopupMenuButton(
-                                          itemBuilder: ((context) => [
-                                                PopupMenuItem(
-                                                    child: eventData
-                                                            .me.broadcasting
-                                                        ? Text(
-                                                            'stop sharing location',
-                                                            style: TextStyle(
-                                                                color:
-                                                                    Colors.red),
-                                                          )
-                                                        : Text(
-                                                            'DBG: share locatoin'),
-                                                    onTap: () {
-                                                      _firestore
-                                                          .toggleMyBroadcast(
-                                                              friend.chatsID!,
-                                                              eventData.me
-                                                                  .broadcasting,
-                                                              eventData.me);
-                                                    }),
-                                              ]),
-                                        ),
-                                      ])
-                                : AppBar(
                                     elevation: 0,
                                     leading: Row(
                                       children: [
@@ -341,20 +232,130 @@ class _ChatState extends State<Chat> {
                                             ]),
                                       )
                                     ],
-                                  ),
+                                  )
+                                : AppBar(
+                                    title: Text(friend.displayName!),
+                                    leading: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.chevron_left,
+                                        ),
+                                        Flexible(
+                                          child: PopupMenuButton(
+                                            child: eventData!
+                                                    .friend.broadcasting
+                                                ? CircleAvatar(
+                                                    radius: 22,
+                                                    backgroundColor:
+                                                        Colors.green,
+                                                    child: CircleAvatar(
+                                                      radius: 17,
+                                                      backgroundImage:
+                                                          NetworkImage(friend
+                                                              .avatarUrl!),
+                                                    ),
+                                                  )
+                                                : CircleAvatar(
+                                                    backgroundImage:
+                                                        NetworkImage(
+                                                            friend.avatarUrl!),
+                                                  ),
+                                            itemBuilder: ((context) => [
+                                                  PopupMenuItem(
+                                                      child: Text(
+                                                          'only if friend is broadcasting will i see this'))
+                                                ]),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    elevation: 0,
+                                    actions: [
+                                        eventData!.placeName == null
+                                            ? IconButton(
+                                                icon: Icon(Icons.map_outlined),
+                                                onPressed: () {
+                                                  _panelController.close();
+                                                },
+                                              )
+                                            : Container(
+                                                margin: EdgeInsets.all(6),
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        width: 0.2,
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .inversePrimary),
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                10))),
+                                                child: Row(
+                                                  children: [
+                                                    IconButton(
+                                                      icon: Icon(
+                                                        Icons.delete,
+                                                      ),
+                                                      onPressed: () {
+                                                        _firestore.deleteEvent(
+                                                            friend.chatsID!);
+                                                      },
+                                                    ),
+                                                    VerticalDivider(
+                                                      thickness: 0.2,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .inversePrimary,
+                                                    ),
+                                                    IconButton(
+                                                        onPressed: () {
+                                                          _panelController
+                                                              .close();
+                                                        },
+                                                        icon: Icon(Icons
+                                                            .map_outlined)),
+                                                  ],
+                                                ),
+                                              ),
+                                        PopupMenuButton(
+                                          itemBuilder: ((context) => [
+                                                PopupMenuItem(
+                                                    child: eventData
+                                                            .me.broadcasting
+                                                        ? Text(
+                                                            'stop sharing location',
+                                                            style: TextStyle(
+                                                                color:
+                                                                    Colors.red),
+                                                          )
+                                                        : Text(
+                                                            'DBG: share locatoin'),
+                                                    onTap: () {
+                                                      _firestore
+                                                          .toggleMyBroadcast(
+                                                              friend.chatsID!,
+                                                              eventData.me
+                                                                  .broadcasting,
+                                                              eventData.me);
+                                                    }),
+                                              ]),
+                                        ),
+                                      ]),
                             body: Stack(children: [
                               SlidingUpPanel(
                                   controller: _panelController,
                                   maxHeight: MediaQuery.of(context).size.height,
                                   minHeight: 40,
                                   onPanelClosed: () {
+                                    print('i am closing, this is mapmode');
                                     setState(() {
-                                      panelOpen = false;
+                                      mapMode = true;
                                     });
                                   },
                                   onPanelOpened: () {
                                     setState(() {
-                                      panelOpen = true;
+                                      mapMode = false;
                                     });
                                   },
                                   collapsed: eventData.placeName == null
@@ -495,8 +496,9 @@ class _ChatState extends State<Chat> {
                                       )
                                     ],
                                   )),
-                              panelOpen
-                                  ? Positioned(
+                              mapMode
+                                  ? Container()
+                                  : Positioned(
                                       bottom: 3,
                                       left: 0,
                                       right: 0,
@@ -543,7 +545,6 @@ class _ChatState extends State<Chat> {
                                         ),
                                       ),
                                     )
-                                  : Container()
                             ])),
                       ),
                     );
