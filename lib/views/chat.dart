@@ -88,9 +88,6 @@ class _ChatState extends State<Chat> {
                         builder: (context) => Scaffold(
                             appBar: mapMode
                                 ? AppBar(
-                                    backgroundColor: Theme.of(context)
-                                        .primaryColor
-                                        .withOpacity(0.8),
                                     elevation: 0,
                                     leading: Row(
                                       children: [
@@ -145,85 +142,29 @@ class _ChatState extends State<Chat> {
                                       ],
                                     ),
                                     actions: [
-                                      Stack(
-                                        children: [
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 4.0),
-                                            child: IconButton(
-                                              icon: Icon(Icons.map_outlined),
-                                              onPressed: () {
-                                                _panelController.open();
-                                              },
-                                            ),
+                                      Padding(
+                                        padding:
+                                            EdgeInsets.symmetric(vertical: 8),
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                              primary:
+                                                  eventData.placeName == null
+                                                      ? Theme.of(context)
+                                                          .colorScheme
+                                                          .primary
+                                                      : Colors.purple),
+                                          child: Text(
+                                            'close map',
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .inversePrimary),
                                           ),
-                                          Positioned(
-                                              left: 30,
-                                              top: 32,
-                                              child: Icon(
-                                                Icons.cancel,
-                                                size: 12,
-                                              )),
-                                          eventData.placeName == null
-                                              ? Container()
-                                              : Positioned(
-                                                  top: 10,
-                                                  left: 27,
-                                                  child: Icon(
-                                                    Icons.location_on,
-                                                    color: Colors.purple,
-                                                    size: 18,
-                                                  ))
-                                        ],
+                                          onPressed: () {
+                                            _panelController.open();
+                                          },
+                                        ),
                                       ),
-                                      // eventData!.placeName == null
-                                      //     ?
-                                      //     Stack(
-                                      //         children: [
-                                      //           Padding(
-                                      //             padding:
-                                      //                 const EdgeInsets.only(
-                                      //                     top: 4.0),
-                                      //             child: IconButton(
-                                      //               icon: Icon(
-                                      //                   Icons.map_outlined),
-                                      //               onPressed: () {
-                                      //                 _panelController.open();
-                                      //               },
-                                      //             ),
-                                      //           ),
-                                      //           Positioned(
-                                      //               left: 30,
-                                      //               top: 32,
-                                      //               child: Icon(
-                                      //                 Icons.cancel,
-                                      //                 size: 12,
-                                      //               ))
-                                      //         ],
-                                      //       )
-                                      //     : Stack(
-                                      //         children: [
-                                      //           Padding(
-                                      //             padding:
-                                      //                 const EdgeInsets.only(
-                                      //                     top: 4.0),
-                                      //             child: IconButton(
-                                      //                 onPressed: () {
-                                      //                   _panelController.open();
-                                      //                 },
-                                      //                 icon: Icon(
-                                      //                     Icons.map_outlined)),
-                                      //           ),
-                                      //           Positioned(
-                                      //             left: 30,
-                                      //             top: 30,
-                                      //             child: Icon(
-                                      //               Icons.cancel,
-                                      //               size: 12,
-                                      //             ),
-                                      //           )
-                                      //         ],
-                                      //       ),
                                       PopupMenuButton(
                                         itemBuilder: ((context) => [
                                               PopupMenuItem(
@@ -295,35 +236,29 @@ class _ChatState extends State<Chat> {
                                     ),
                                     elevation: 0,
                                     actions: [
-                                        Stack(
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 4.0),
-                                              child: OutlinedButton(
-                                                child: Text(
-                                                  'open map',
-                                                  style: TextStyle(
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .inversePrimary),
-                                                ),
-                                                onPressed: () {
-                                                  _panelController.close();
-                                                },
-                                              ),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 8.0),
+                                          child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                                elevation: 4,
+                                                primary:
+                                                    eventData.placeName == null
+                                                        ? Theme.of(context)
+                                                            .colorScheme
+                                                            .primary
+                                                        : Colors.purple),
+                                            child: Text(
+                                              'map',
+                                              style: TextStyle(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .inversePrimary),
                                             ),
-                                            eventData.placeName == null
-                                                ? Container()
-                                                : Positioned(
-                                                    top: 10,
-                                                    left: 27,
-                                                    child: Icon(
-                                                      Icons.location_on,
-                                                      color: Colors.purple,
-                                                      size: 18,
-                                                    ))
-                                          ],
+                                            onPressed: () {
+                                              _panelController.close();
+                                            },
+                                          ),
                                         ),
                                         PopupMenuButton(
                                           itemBuilder: ((context) => [
@@ -378,9 +313,7 @@ class _ChatState extends State<Chat> {
                                           : Container(
                                               color: Theme.of(context)
                                                   .colorScheme
-                                                  .primary
-                                                  .withOpacity(
-                                                      mapMode ? 0.8 : 1),
+                                                  .primary,
                                               padding: const EdgeInsets.all(12),
                                               child: Row(
                                                 children: [

@@ -50,7 +50,7 @@ class _GoogleMapsState extends State<GoogleMaps> {
       appBar: showSearch
           ? AppBar(
               toolbarHeight: 30,
-              backgroundColor: Theme.of(context).primaryColor.withOpacity(0.8),
+              backgroundColor: Theme.of(context).primaryColor,
               elevation: 0,
               title: Padding(
                 padding: const EdgeInsets.only(bottom: 8.0),
