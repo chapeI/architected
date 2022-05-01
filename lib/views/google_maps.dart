@@ -49,17 +49,26 @@ class _GoogleMapsState extends State<GoogleMaps> {
     return Scaffold(
       appBar: showSearch
           ? AppBar(
+              toolbarHeight: 30,
+              backgroundColor: Theme.of(context).primaryColor.withOpacity(0.8),
               elevation: 0,
-              title: TextField(
-                onChanged: (val) {
-                  _searchValue = val;
-                },
-                decoration: InputDecoration(
-                    hintText: widget.friend.uid,
-                    hintStyle: TextStyle(color: Colors.blue[200])),
+              title: Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: TextField(
+                  onChanged: (val) {
+                    _searchValue = val;
+                  },
+                  cursorColor: Colors.white,
+                  decoration: InputDecoration(
+                      hintText: '   ${widget.friend.uid}',
+                      hintStyle: TextStyle(
+                          fontSize: 12,
+                          color:
+                              Theme.of(context).primaryColor.withOpacity(1))),
+                ),
               ),
               actions: [
-                IconButton(
+                ElevatedButton(
                     onPressed: () async {
                       result = await LocationService().getPlace(_searchValue);
                       lat = result['geometry']['location']['lat'];
@@ -75,8 +84,9 @@ class _GoogleMapsState extends State<GoogleMaps> {
                         _showCard = true;
                       });
                     },
-                    icon: Icon(
+                    child: Icon(
                       Icons.search,
+                      size: 14,
                     ))
               ],
             )

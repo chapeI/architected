@@ -89,14 +89,25 @@ class _ChatState extends State<Chat> {
                                 ? AppBar(
                                     backgroundColor: Theme.of(context)
                                         .primaryColor
-                                        .withOpacity(0.6),
+                                        .withOpacity(0.8),
                                     elevation: 0,
                                     leading: Row(
                                       children: [
-                                        Icon(Icons.chevron_left,
-                                            color: Theme.of(context)
-                                                .primaryColor
-                                                .withOpacity(0.3)),
+                                        Stack(
+                                          children: [
+                                            Icon(
+                                              Icons.chevron_left,
+                                            ),
+                                            Positioned(
+                                              top: 16,
+                                              left: 4,
+                                              child: Icon(
+                                                Icons.lock,
+                                                size: 7,
+                                              ),
+                                            )
+                                          ],
+                                        ),
                                         Flexible(
                                           child: PopupMenuButton(
                                             child: eventData!
@@ -133,12 +144,6 @@ class _ChatState extends State<Chat> {
                                       ],
                                     ),
                                     actions: [
-                                      IconButton(
-                                          onPressed: () {
-                                            globalKey.currentState!
-                                                .toggleShowSearch();
-                                          },
-                                          icon: Icon(Icons.search)),
                                       eventData!.placeName == null
                                           ? Stack(
                                               children: [
@@ -207,6 +212,13 @@ class _ChatState extends State<Chat> {
                                                                 .broadcasting,
                                                             eventData.me);
                                                   }),
+                                              PopupMenuItem(
+                                                child: Text('toggle search'),
+                                                onTap: () {
+                                                  globalKey.currentState!
+                                                      .toggleShowSearch();
+                                                },
+                                              ),
                                             ]),
                                       )
                                     ],
@@ -290,7 +302,8 @@ class _ChatState extends State<Chat> {
                               SlidingUpPanel(
                                   controller: _panelController,
                                   maxHeight: MediaQuery.of(context).size.height,
-                                  minHeight: 40,
+                                  minHeight:
+                                      eventData.placeName == null ? 0 : 40,
                                   onPanelClosed: () {
                                     setState(() {
                                       mapMode = true;
@@ -301,14 +314,6 @@ class _ChatState extends State<Chat> {
                                       mapMode = false;
                                     });
                                   },
-                                  collapsed: eventData.placeName == null
-                                      ? Container(
-                                          height: 10,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                        )
-                                      : Container(),
                                   defaultPanelState: PanelState.OPEN,
                                   body: GoogleMaps(
                                     key: globalKey,
@@ -324,7 +329,7 @@ class _ChatState extends State<Chat> {
                                                   .colorScheme
                                                   .primary
                                                   .withOpacity(
-                                                      mapMode ? 0.6 : 1),
+                                                      mapMode ? 0.8 : 1),
                                               padding: const EdgeInsets.all(12),
                                               child: Row(
                                                 children: [
