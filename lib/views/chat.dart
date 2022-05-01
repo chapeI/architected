@@ -333,6 +333,14 @@ class _ChatState extends State<Chat> {
                                       panelOpen = true;
                                     });
                                   },
+                                  collapsed: eventData.placeName == null
+                                      ? Container(
+                                          height: 10,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                        )
+                                      : Container(),
                                   defaultPanelState: PanelState.OPEN,
                                   body: GoogleMaps(
                                     key: globalKey,
@@ -368,7 +376,7 @@ class _ChatState extends State<Chat> {
                                                   ),
                                                   Flexible(
                                                     child: Text(
-                                                      '(${eventData.address!.substring(0, 38)})',
+                                                      '(${eventData.address!.substring(0, 20)})',
                                                       style: TextStyle(
                                                         color: Theme.of(context)
                                                             .colorScheme
