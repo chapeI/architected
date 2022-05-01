@@ -146,19 +146,6 @@ class _ChatState extends State<Chat> {
                                                 child: Row(
                                                   children: [
                                                     IconButton(
-                                                        onPressed: () {
-                                                          _panelController
-                                                              .close();
-                                                        },
-                                                        icon: Icon(Icons
-                                                            .map_outlined)),
-                                                    VerticalDivider(
-                                                      thickness: 0.2,
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .inversePrimary,
-                                                    ),
-                                                    IconButton(
                                                       icon: Icon(
                                                         Icons.delete,
                                                       ),
@@ -167,6 +154,19 @@ class _ChatState extends State<Chat> {
                                                             friend.chatsID!);
                                                       },
                                                     ),
+                                                    VerticalDivider(
+                                                      thickness: 0.2,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .inversePrimary,
+                                                    ),
+                                                    IconButton(
+                                                        onPressed: () {
+                                                          _panelController
+                                                              .close();
+                                                        },
+                                                        icon: Icon(Icons
+                                                            .map_outlined)),
                                                   ],
                                                 ),
                                               ),
@@ -261,6 +261,21 @@ class _ChatState extends State<Chat> {
                                                           Radius.circular(10))),
                                               child: Row(
                                                 children: [
+                                                  IconButton(
+                                                    icon: Icon(
+                                                      Icons.delete,
+                                                    ),
+                                                    onPressed: () {
+                                                      _firestore.deleteEvent(
+                                                          friend.chatsID!);
+                                                    },
+                                                  ),
+                                                  VerticalDivider(
+                                                    thickness: 0.2,
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .inversePrimary,
+                                                  ),
                                                   Stack(
                                                     children: [
                                                       IconButton(
@@ -279,21 +294,6 @@ class _ChatState extends State<Chat> {
                                                         ),
                                                       )
                                                     ],
-                                                  ),
-                                                  VerticalDivider(
-                                                    thickness: 0.2,
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .inversePrimary,
-                                                  ),
-                                                  IconButton(
-                                                    icon: Icon(
-                                                      Icons.delete,
-                                                    ),
-                                                    onPressed: () {
-                                                      _firestore.deleteEvent(
-                                                          friend.chatsID!);
-                                                    },
                                                   ),
                                                 ],
                                               ),
