@@ -15,8 +15,11 @@ import 'package:provider/provider.dart';
 GlobalKey<_GoogleMapsState> globalKey = GlobalKey();
 
 class GoogleMaps extends StatefulWidget {
-  GoogleMaps({required Key key, required this.friend}) : super(key: key);
   UserModel friend;
+  final Function openChat;
+
+  GoogleMaps({required Key key, required this.friend, required this.openChat})
+      : super(key: key);
   @override
   State<GoogleMaps> createState() => _GoogleMapsState();
 }
@@ -111,6 +114,7 @@ class _GoogleMapsState extends State<GoogleMaps> {
                             setState(() {
                               _showCard = false;
                             });
+                            widget.openChat();
                           }),
                     ],
                   ),

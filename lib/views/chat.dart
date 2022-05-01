@@ -26,6 +26,10 @@ class _ChatState extends State<Chat> {
   var mapMode = false;
   final _panelController = PanelController();
 
+  void openChat() {
+    _panelController.open();
+  }
+
   @override
   Widget build(BuildContext context) {
     return friend.uid == null
@@ -348,7 +352,6 @@ class _ChatState extends State<Chat> {
                                   maxHeight: MediaQuery.of(context).size.height,
                                   minHeight: 40,
                                   onPanelClosed: () {
-                                    print('i am closing, this is mapmode');
                                     setState(() {
                                       mapMode = true;
                                     });
@@ -370,6 +373,7 @@ class _ChatState extends State<Chat> {
                                   body: GoogleMaps(
                                     key: globalKey,
                                     friend: friend,
+                                    openChat: openChat,
                                   ),
                                   panel: Column(
                                     children: [
