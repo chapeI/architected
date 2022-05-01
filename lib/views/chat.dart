@@ -125,7 +125,12 @@ class _ChatState extends State<Chat> {
                                     elevation: 0,
                                     actions: [
                                         eventData!.placeName == null
-                                            ? Container()
+                                            ? IconButton(
+                                                icon: Icon(Icons.map_outlined),
+                                                onPressed: () {
+                                                  _panelController.close();
+                                                },
+                                              )
                                             : Container(
                                                 margin: EdgeInsets.all(6),
                                                 decoration: BoxDecoration(
@@ -237,7 +242,12 @@ class _ChatState extends State<Chat> {
                                           },
                                           icon: Icon(Icons.search)),
                                       eventData!.placeName == null
-                                          ? Container()
+                                          ? IconButton(
+                                              icon: Icon(Icons.map_outlined),
+                                              onPressed: () {
+                                                _panelController.open();
+                                              },
+                                            )
                                           : Container(
                                               margin: EdgeInsets.all(6),
                                               decoration: BoxDecoration(
