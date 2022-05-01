@@ -237,11 +237,28 @@ class _ChatState extends State<Chat> {
                                           },
                                           icon: Icon(Icons.search)),
                                       eventData!.placeName == null
-                                          ? IconButton(
-                                              icon: Icon(Icons.map_outlined),
-                                              onPressed: () {
-                                                _panelController.open();
-                                              },
+                                          ? Stack(
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 4.0),
+                                                  child: IconButton(
+                                                    icon: Icon(
+                                                        Icons.map_outlined),
+                                                    onPressed: () {
+                                                      _panelController.open();
+                                                    },
+                                                  ),
+                                                ),
+                                                Positioned(
+                                                    left: 30,
+                                                    top: 32,
+                                                    child: Icon(
+                                                      Icons.cancel,
+                                                      size: 12,
+                                                    ))
+                                              ],
                                             )
                                           : Container(
                                               margin: EdgeInsets.all(6),
