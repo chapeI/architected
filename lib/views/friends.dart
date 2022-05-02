@@ -61,7 +61,13 @@ class Friends extends StatelessWidget {
                                   minute: eventData.minute!);
                             }
                             return ListTile(
-                              title: Text(friends[index].displayName!),
+                              title: Text(
+                                friends[index].displayName!,
+                                style: TextStyle(
+                                    color: eventData.friend.broadcasting
+                                        ? Colors.green
+                                        : null),
+                              ),
                               trailing: eventData.placeName == null
                                   ? null
                                   : ElevatedButton.icon(
@@ -84,7 +90,7 @@ class Friends extends StatelessWidget {
                                       )),
                               dense: true,
                               tileColor: eventData.me.broadcasting
-                                  ? Colors.green[50]
+                                  ? Colors.lightGreen[50]
                                   : null,
                               leading: eventData.friend.broadcasting
                                   ? CircleAvatar(
