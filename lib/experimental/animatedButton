@@ -1,0 +1,65 @@
+
+                            appBar: AppBar(
+                              title: Text('hello'),
+                              actions: [
+                                AnimatedContainer(
+                                  width: mapMode ? 80 : 120,
+                                  duration: Duration(milliseconds: 200),
+                                  child: mapMode
+                                      ? GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              mapMode = !mapMode;
+                                            });
+                                          },
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: Container(
+                                                decoration: BoxDecoration(
+                                                    color: Colors.blue,
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            ui.Radius.circular(
+                                                                10))),
+                                                key: Key('1'),
+                                                child:
+                                                    Center(child: Text('map'))),
+                                          ),
+                                        )
+                                      : GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              mapMode = !mapMode;
+                                            });
+                                          },
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: Container(
+                                                decoration: BoxDecoration(
+                                                    color: Colors.blue,
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                10))),
+                                                key: Key('2'),
+                                                child: Row(
+                                                  children: [
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 5.0),
+                                                      child: Icon(Icons.cancel),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 6.0),
+                                                      child: Text('close map'),
+                                                    ),
+                                                  ],
+                                                )),
+                                          ),
+                                        ),
+                                )
+                              ],
+                            ),
