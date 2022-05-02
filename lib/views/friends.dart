@@ -88,7 +88,6 @@ class Friends extends StatelessWidget {
                                         '${eventData.placeName}',
                                         style: TextStyle(color: Colors.black),
                                       )),
-                              dense: true,
                               tileColor: eventData.me.broadcasting
                                   ? Colors.lightGreen[50]
                                   : null,

@@ -177,8 +177,20 @@ class _ChatState extends State<Chat> {
                                     leading: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Icon(
-                                          Icons.chevron_left,
+                                        IconButton(
+                                          padding: EdgeInsets.zero,
+                                          constraints: BoxConstraints(),
+                                          onPressed: () async {
+                                            final result =
+                                                await Navigator.pushNamed(
+                                                    context, '/friends');
+                                            setState(() {
+                                              friend = result as UserModel;
+                                            });
+                                          },
+                                          icon: Icon(
+                                            Icons.chevron_left,
+                                          ),
                                         ),
                                         Flexible(
                                           child: PopupMenuButton(
