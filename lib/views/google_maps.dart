@@ -43,6 +43,13 @@ class _GoogleMapsState extends State<GoogleMaps> {
     });
   }
 
+  closeSearch() {
+    print('closing search');
+    setState(() {
+      showSearch = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final applicationBloc = Provider.of<ApplicationBloc>(context);
@@ -55,6 +62,9 @@ class _GoogleMapsState extends State<GoogleMaps> {
               title: Padding(
                 padding: const EdgeInsets.only(bottom: 8.0),
                 child: TextField(
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.inversePrimary),
+                  autofocus: true,
                   onChanged: (val) {
                     _searchValue = val;
                   },
@@ -68,7 +78,11 @@ class _GoogleMapsState extends State<GoogleMaps> {
                 ),
               ),
               actions: [
-                ElevatedButton(
+                OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                        side: BorderSide(
+                            color:
+                                Theme.of(context).colorScheme.inversePrimary)),
                     onPressed: () async {
                       result = await LocationService().getPlace(_searchValue);
                       lat = result['geometry']['location']['lat'];
@@ -82,11 +96,13 @@ class _GoogleMapsState extends State<GoogleMaps> {
                       _searchController.text = '';
                       setState(() {
                         _showCard = true;
+                        showSearch = false;
                       });
                     },
                     child: Icon(
                       Icons.search,
                       size: 14,
+                      color: Theme.of(context).colorScheme.inversePrimary,
                     ))
               ],
             )
@@ -124,7 +140,7 @@ class _GoogleMapsState extends State<GoogleMaps> {
                             setState(() {
                               _showCard = false;
                             });
-                            widget.openChat();
+                            // widget.openChat();
                           }),
                     ],
                   ),

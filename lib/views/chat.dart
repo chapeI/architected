@@ -10,7 +10,6 @@ import 'package:architectured/models/event_model.dart';
 import 'package:architectured/models/user_model.dart';
 import 'package:architectured/services/auth_service.dart';
 import 'package:architectured/services/firestore_service.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class Chat extends StatefulWidget {
@@ -147,12 +146,23 @@ class _ChatState extends State<Chat> {
                                             EdgeInsets.symmetric(vertical: 8),
                                         child: ElevatedButton(
                                           style: ElevatedButton.styleFrom(
+                                              elevation: 0,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                side: BorderSide(
+                                                    width: 1.5,
+                                                    style: BorderStyle.solid,
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .inversePrimary),
+                                              ),
                                               primary:
                                                   eventData.placeName == null
                                                       ? Theme.of(context)
                                                           .colorScheme
                                                           .primary
-                                                      : Colors.purple),
+                                                      : Colors.purple.shade300),
                                           child: Text(
                                             'close map',
                                             style: TextStyle(
@@ -162,6 +172,8 @@ class _ChatState extends State<Chat> {
                                           ),
                                           onPressed: () {
                                             _panelController.open();
+                                            globalKey.currentState!
+                                                .closeSearch();
                                           },
                                         ),
                                       ),
@@ -187,7 +199,7 @@ class _ChatState extends State<Chat> {
                                                             eventData.me);
                                                   }),
                                               PopupMenuItem(
-                                                child: Text('toggle search'),
+                                                child: Text('search map'),
                                                 onTap: () {
                                                   globalKey.currentState!
                                                       .toggleShowSearch();
@@ -241,13 +253,24 @@ class _ChatState extends State<Chat> {
                                               vertical: 8.0),
                                           child: ElevatedButton(
                                             style: ElevatedButton.styleFrom(
-                                                elevation: 4,
-                                                primary:
-                                                    eventData.placeName == null
-                                                        ? Theme.of(context)
+                                                elevation: 0,
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    side: BorderSide(
+                                                        width: 1.5,
+                                                        style:
+                                                            BorderStyle.solid,
+                                                        color: Theme.of(context)
                                                             .colorScheme
-                                                            .primary
-                                                        : Colors.purple),
+                                                            .inversePrimary)),
+                                                primary: eventData.placeName ==
+                                                        null
+                                                    ? Theme.of(context)
+                                                        .colorScheme
+                                                        .primary
+                                                    : Colors.purple.shade300),
                                             child: Text(
                                               'map',
                                               style: TextStyle(

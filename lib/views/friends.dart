@@ -102,7 +102,7 @@ class Friends extends StatelessWidget {
                                           ? Container()
                                           : Icon(
                                               Icons.location_on,
-                                              color: Colors.pink,
+                                              color: Colors.purple,
                                               size: 18,
                                             )
                                     ],
