@@ -144,7 +144,7 @@ class _ChatState extends State<Chat> {
                                       Padding(
                                         padding:
                                             EdgeInsets.symmetric(vertical: 8),
-                                        child: ElevatedButton(
+                                        child: ElevatedButton.icon(
                                           style: ElevatedButton.styleFrom(
                                               elevation: 0,
                                               shape: RoundedRectangleBorder(
@@ -163,7 +163,8 @@ class _ChatState extends State<Chat> {
                                                           .colorScheme
                                                           .primary
                                                       : Colors.purple.shade300),
-                                          child: Text(
+                                          icon: Icon(Icons.cancel),
+                                          label: Text(
                                             'close map',
                                             style: TextStyle(
                                                 color: Theme.of(context)
@@ -342,7 +343,8 @@ class _ChatState extends State<Chat> {
                                                 children: [
                                                   Icon(
                                                     Icons.location_on,
-                                                    color: Colors.purple,
+                                                    color:
+                                                        Colors.purple.shade200,
                                                     size: 15,
                                                   ),
                                                   SizedBox(
