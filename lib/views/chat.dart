@@ -81,70 +81,25 @@ class _ChatState extends State<Chat> {
                       data: eventData!.me.broadcasting
                           ? ThemeData.from(
                               colorScheme: ColorScheme.fromSwatch(
-                                  primarySwatch: Colors.lightGreen))
+                                  primarySwatch: Colors.green))
                           : Theme.of(context),
                       child: Builder(
                         builder: (context) => Scaffold(
                             appBar: mapMode
                                 ? AppBar(
                                     elevation: 0,
-                                    leading: Row(
-                                      children: [
-                                        Stack(
-                                          children: [
-                                            Icon(
-                                              Icons.chevron_left,
-                                            ),
-                                            Positioned(
-                                              top: 16,
-                                              left: 4,
-                                              child: Icon(
-                                                Icons.lock,
-                                                size: 7,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                        Flexible(
-                                          child: PopupMenuButton(
-                                            child: eventData!
-                                                    .friend.broadcasting
-                                                ? CircleAvatar(
-                                                    radius: 18,
-                                                    backgroundColor:
-                                                        Colors.green,
-                                                    child: CircleAvatar(
-                                                        radius: 16,
-                                                        backgroundImage:
-                                                            NetworkImage(friend
-                                                                .avatarUrl!)))
-                                                : CircleAvatar(
-                                                    backgroundImage:
-                                                        NetworkImage(
-                                                            friend.avatarUrl!)),
-                                            itemBuilder: ((context) => [
-                                                  PopupMenuItem(
-                                                      child: Text(
-                                                        'onClick, map animates to friends position',
-                                                      ),
-                                                      onTap: () {}),
-                                                ]),
-                                          ),
-                                        ),
-                                      ],
+                                    leading: ElevatedButton(
+                                      child: Icon(Icons.cancel),
+                                      onPressed: () {
+                                        _panelController.open();
+                                      },
                                     ),
-                                    title: Row(
-                                      children: [
-                                        Text(
-                                          friend.displayName!,
-                                        )
-                                      ],
-                                    ),
+                                    title: Text(friend.displayName!),
                                     actions: [
                                       Padding(
                                         padding:
                                             EdgeInsets.symmetric(vertical: 8),
-                                        child: ElevatedButton.icon(
+                                        child: ElevatedButton(
                                           style: ElevatedButton.styleFrom(
                                               elevation: 0,
                                               shape: RoundedRectangleBorder(
@@ -163,9 +118,8 @@ class _ChatState extends State<Chat> {
                                                           .colorScheme
                                                           .primary
                                                       : Colors.purple.shade300),
-                                          icon: Icon(Icons.cancel),
-                                          label: Text(
-                                            'close map',
+                                          child: Text(
+                                            '${eventData.placeName}',
                                             style: TextStyle(
                                                 color: Theme.of(context)
                                                     .colorScheme
@@ -273,7 +227,7 @@ class _ChatState extends State<Chat> {
                                                         .primary
                                                     : Colors.purple.shade300),
                                             child: Text(
-                                              'map',
+                                              '${eventData.placeName}',
                                               style: TextStyle(
                                                   color: Theme.of(context)
                                                       .colorScheme
@@ -304,6 +258,12 @@ class _ChatState extends State<Chat> {
                                                               eventData.me
                                                                   .broadcasting,
                                                               eventData.me);
+                                                    }),
+                                                PopupMenuItem(
+                                                    child: Text(
+                                                        'search (go to map mode first)'),
+                                                    onTap: () {
+                                                      _panelController.close();
                                                     }),
                                               ]),
                                         ),
@@ -344,48 +304,20 @@ class _ChatState extends State<Chat> {
                                                   Icon(
                                                     Icons.location_on,
                                                     color:
-                                                        Colors.purple.shade200,
+                                                        Colors.purple.shade300,
                                                     size: 15,
                                                   ),
                                                   SizedBox(
                                                     width: 4,
                                                   ),
                                                   Text(
-                                                    eventData.placeName!,
+                                                    '${eventData.address!.substring(0, 38)}',
                                                     style: TextStyle(
                                                       color: Theme.of(context)
                                                           .colorScheme
                                                           .inversePrimary,
                                                     ),
                                                   ),
-                                                  SizedBox(
-                                                    width: 4,
-                                                  ),
-                                                  Text(
-                                                    '(${eventData.address!.substring(0, 20)})',
-                                                    style: TextStyle(
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .inversePrimary,
-                                                    ),
-                                                  ),
-                                                  Spacer(),
-                                                  IconButton(
-                                                    constraints:
-                                                        BoxConstraints(),
-                                                    padding: EdgeInsets.zero,
-                                                    onPressed: () {
-                                                      _firestore.deleteEvent(
-                                                          friend.chatsID!);
-                                                    },
-                                                    icon: Icon(
-                                                      Icons.delete,
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .inversePrimary,
-                                                    ),
-                                                    iconSize: 16,
-                                                  )
                                                 ],
                                               ),
                                             ),

@@ -61,19 +61,27 @@ class Friends extends StatelessWidget {
                                   minute: eventData.minute!);
                             }
                             return ListTile(
-                              title: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(friends[index].displayName!),
-                                  Text(
-                                    '11:01AM',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w100,
-                                        fontSize: 8),
-                                  )
-                                ],
-                              ),
+                              title: Text(friends[index].displayName!),
+                              trailing: eventData.placeName == null
+                                  ? null
+                                  : ElevatedButton.icon(
+                                      style: ElevatedButton.styleFrom(
+                                          elevation: 0,
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              side: BorderSide(
+                                                width: 1.5,
+                                              )),
+                                          primary: Colors.purple.shade200
+                                              .withOpacity(0)),
+                                      onPressed: () {},
+                                      icon: Icon(Icons.location_on,
+                                          color: Colors.purple),
+                                      label: Text(
+                                        '${eventData.placeName}',
+                                        style: TextStyle(color: Colors.black),
+                                      )),
                               dense: true,
                               tileColor: eventData.me.broadcasting
                                   ? Colors.green[50]
@@ -96,17 +104,6 @@ class Friends extends StatelessWidget {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(eventData!.lastMessage),
-                                  Row(
-                                    children: [
-                                      eventData.placeName == null
-                                          ? Container()
-                                          : Icon(
-                                              Icons.location_on,
-                                              color: Colors.purple,
-                                              size: 18,
-                                            )
-                                    ],
-                                  ),
                                 ],
                               ),
                               onTap: () {

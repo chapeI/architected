@@ -78,32 +78,36 @@ class _GoogleMapsState extends State<GoogleMaps> {
                 ),
               ),
               actions: [
-                OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                        side: BorderSide(
-                            color:
-                                Theme.of(context).colorScheme.inversePrimary)),
-                    onPressed: () async {
-                      result = await LocationService().getPlace(_searchValue);
-                      lat = result['geometry']['location']['lat'];
-                      lng = result['geometry']['location']['lng'];
-                      address = result['formatted_address'];
-                      placeName = result['name'];
-                      _goToPlace(lat, lng);
-                      _markers.add(Marker(
-                          markerId: MarkerId('yolo'),
-                          position: LatLng(lat, lng)));
-                      _searchController.text = '';
-                      setState(() {
-                        _showCard = true;
-                        showSearch = false;
-                      });
-                    },
-                    child: Icon(
-                      Icons.search,
-                      size: 14,
-                      color: Theme.of(context).colorScheme.inversePrimary,
-                    ))
+                Padding(
+                  padding: const EdgeInsets.only(right: 3, bottom: 3.0),
+                  child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                          side: BorderSide(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .inversePrimary)),
+                      onPressed: () async {
+                        result = await LocationService().getPlace(_searchValue);
+                        lat = result['geometry']['location']['lat'];
+                        lng = result['geometry']['location']['lng'];
+                        address = result['formatted_address'];
+                        placeName = result['name'];
+                        _goToPlace(lat, lng);
+                        _markers.add(Marker(
+                            markerId: MarkerId('yolo'),
+                            position: LatLng(lat, lng)));
+                        _searchController.text = '';
+                        setState(() {
+                          _showCard = true;
+                          showSearch = false;
+                        });
+                      },
+                      child: Icon(
+                        Icons.search,
+                        size: 14,
+                        color: Theme.of(context).colorScheme.inversePrimary,
+                      )),
+                )
               ],
             )
           : null,
@@ -117,36 +121,53 @@ class _GoogleMapsState extends State<GoogleMaps> {
           },
         ),
         _showCard
-            ? Card(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8)),
-                margin: EdgeInsets.all(25),
-                child: ListTile(
-                  contentPadding: EdgeInsets.all(9),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      VerticalDivider(thickness: 2),
-                      IconButton(
-                          icon: Icon(
-                            Icons.add,
-                          ),
+            ? Stack(
+                children: [
+                  Card(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                      margin: EdgeInsets.all(25),
+                      child: ListTile(
+                        contentPadding: EdgeInsets.all(9),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            VerticalDivider(thickness: 2),
+                            IconButton(
+                                icon: Icon(
+                                  Icons.add,
+                                ),
+                                onPressed: () {
+                                  FirestoreService().addLocation(
+                                      widget.friend.chatsID!,
+                                      LatLng(lat, lng),
+                                      placeName,
+                                      address);
+                                  setState(() {
+                                    _showCard = false;
+                                  });
+                                  // widget.openChat();
+                                }),
+                          ],
+                        ),
+                        title: Text(placeName),
+                        subtitle: Text(address),
+                      )),
+                  Positioned(
+                      top: 5,
+                      left: 3,
+                      child: IconButton(
                           onPressed: () {
-                            FirestoreService().addLocation(
-                                widget.friend.chatsID!,
-                                LatLng(lat, lng),
-                                placeName,
-                                address);
                             setState(() {
                               _showCard = false;
                             });
-                            // widget.openChat();
-                          }),
-                    ],
-                  ),
-                  title: Text(placeName),
-                  subtitle: Text(address),
-                ))
+                          },
+                          icon: Icon(
+                            Icons.cancel,
+                            color: Colors.redAccent,
+                          ))),
+                ],
+              )
             : Container(),
         if (applicationBloc.searchResults != null &&
             applicationBloc.searchResults!.isNotEmpty)
