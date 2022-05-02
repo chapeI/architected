@@ -96,42 +96,50 @@ class _ChatState extends State<Chat> {
                                     ),
                                     title: Text(friend.displayName!),
                                     actions: [
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.symmetric(vertical: 8),
-                                        child: ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                              elevation: 0,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                side: BorderSide(
-                                                    width: 1.5,
-                                                    style: BorderStyle.solid,
+                                      eventData.placeName == null
+                                          ? Container()
+                                          : Container(
+                                              margin: EdgeInsets.all(4),
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          ui.Radius.circular(
+                                                              10)),
+                                                  border: Border.all(
+                                                      width: 0.4,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .inversePrimary)),
+                                              child: Row(
+                                                children: [
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      _panelController.close();
+                                                    },
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          horizontal: 8.0),
+                                                      child: Text(
+                                                          eventData.placeName!),
+                                                    ),
+                                                  ),
+                                                  VerticalDivider(
+                                                    thickness: 0.4,
                                                     color: Theme.of(context)
                                                         .colorScheme
-                                                        .inversePrimary),
+                                                        .inversePrimary,
+                                                  ),
+                                                  IconButton(
+                                                      onPressed: () {
+                                                        _firestore.deleteEvent(
+                                                            friend.chatsID!);
+                                                      },
+                                                      icon:
+                                                          Icon(Icons.settings))
+                                                ],
                                               ),
-                                              primary:
-                                                  eventData.placeName == null
-                                                      ? Theme.of(context)
-                                                          .colorScheme
-                                                          .primary
-                                                      : Colors.purple.shade300),
-                                          child: Text(
-                                            '${eventData.placeName}',
-                                            style: TextStyle(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .inversePrimary),
-                                          ),
-                                          onPressed: () {
-                                            _panelController.open();
-                                            globalKey.currentState!
-                                                .closeSearch();
-                                          },
-                                        ),
-                                      ),
+                                            ),
                                       PopupMenuButton(
                                         itemBuilder: ((context) => [
                                               PopupMenuItem(
@@ -203,41 +211,53 @@ class _ChatState extends State<Chat> {
                                     ),
                                     elevation: 0,
                                     actions: [
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 8.0),
-                                          child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                                elevation: 0,
-                                                shape: RoundedRectangleBorder(
+                                        eventData.placeName == null
+                                            ? Container()
+                                            : Container(
+                                                margin: EdgeInsets.all(4),
+                                                decoration: BoxDecoration(
                                                     borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
-                                                    side: BorderSide(
-                                                        width: 1.5,
-                                                        style:
-                                                            BorderStyle.solid,
+                                                        BorderRadius.all(
+                                                            ui.Radius.circular(
+                                                                10)),
+                                                    border: Border.all(
+                                                        width: 0.4,
                                                         color: Theme.of(context)
                                                             .colorScheme
                                                             .inversePrimary)),
-                                                primary: eventData.placeName ==
-                                                        null
-                                                    ? Theme.of(context)
-                                                        .colorScheme
-                                                        .primary
-                                                    : Colors.purple.shade300),
-                                            child: Text(
-                                              '${eventData.placeName}',
-                                              style: TextStyle(
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .inversePrimary),
-                                            ),
-                                            onPressed: () {
-                                              _panelController.close();
-                                            },
-                                          ),
-                                        ),
+                                                child: Row(
+                                                  children: [
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        _panelController
+                                                            .close();
+                                                      },
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                horizontal:
+                                                                    8.0),
+                                                        child: Text(eventData
+                                                            .placeName!),
+                                                      ),
+                                                    ),
+                                                    VerticalDivider(
+                                                      thickness: 0.4,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .inversePrimary,
+                                                    ),
+                                                    IconButton(
+                                                        onPressed: () {
+                                                          _firestore.deleteEvent(
+                                                              friend.chatsID!);
+                                                        },
+                                                        icon: Icon(
+                                                            Icons.settings))
+                                                  ],
+                                                ),
+                                              ),
                                         PopupMenuButton(
                                           itemBuilder: ((context) => [
                                                 PopupMenuItem(
