@@ -1,4 +1,5 @@
 import 'package:architectured/bloc/application_bloc.dart';
+import 'package:architectured/experimental/notification_practice.dart';
 import 'package:architectured/experimental/sand_box.dart';
 import 'package:architectured/services/auth_service.dart';
 import 'package:architectured/services/singletons.dart';
@@ -32,8 +33,9 @@ class MyApp extends StatelessWidget {
             theme: ThemeData(
               primarySwatch: Colors.blue,
             ),
-            initialRoute: '/wrapper',
+            initialRoute: '/notific',
             routes: {
+              '/notific': (context) => NotificationPractice(),
               '/wrapper': (context) => Wrapper(),
               '/chat': (context) => Chat(),
               '/sandbox': (context) => SandBox()
