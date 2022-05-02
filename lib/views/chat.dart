@@ -89,7 +89,7 @@ class _ChatState extends State<Chat> {
                                 ? AppBar(
                                     elevation: 0,
                                     leading: ElevatedButton(
-                                      child: Icon(Icons.cancel),
+                                      child: Icon(Icons.abc),
                                       onPressed: () {
                                         _panelController.open();
                                       },
