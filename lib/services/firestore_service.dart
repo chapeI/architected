@@ -224,8 +224,8 @@ class FirestoreService {
         .update({'hour': time.hour, 'minute': time.minute});
   }
 
-  void addLocation(DocumentReference doc, LatLng latLng, name, address) {
-    eventCollection.doc(doc.id).update({
+  void addLocation(String doc, LatLng latLng, name, address) {
+    eventCollection.doc(doc).update({
       'placeName': name,
       'address': address,
       'location': GeoPoint(latLng.latitude, latLng.longitude)

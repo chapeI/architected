@@ -6,6 +6,7 @@ import 'package:architectured/bloc/application_bloc.dart';
 import 'package:architectured/models/user_model.dart';
 import 'package:architectured/services/firestore_service.dart';
 import 'package:architectured/services/location_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
@@ -15,11 +16,11 @@ import 'package:provider/provider.dart';
 GlobalKey<_GoogleMapsState> globalKey = GlobalKey();
 
 class GoogleMaps extends StatefulWidget {
-  UserModel friend;
-  final Function openChat;
+  // UserModel friend;
+  // final Function openChat;
 
-  GoogleMaps({required Key key, required this.friend, required this.openChat})
-      : super(key: key);
+  // GoogleMaps({required Key key, required this.friend, required this.openChat})
+  //     : super(key: key);
   @override
   State<GoogleMaps> createState() => _GoogleMapsState();
 }
@@ -54,63 +55,57 @@ class _GoogleMapsState extends State<GoogleMaps> {
   Widget build(BuildContext context) {
     final applicationBloc = Provider.of<ApplicationBloc>(context);
     return Scaffold(
-      appBar: showSearch
-          ? AppBar(
-              toolbarHeight: 30,
-              backgroundColor: Theme.of(context).primaryColor,
-              elevation: 0,
-              title: Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: TextField(
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.inversePrimary),
-                  autofocus: true,
-                  onChanged: (val) {
-                    _searchValue = val;
-                  },
-                  cursorColor: Colors.white,
-                  decoration: InputDecoration(
-                      hintText: '   ${widget.friend.uid}',
-                      hintStyle: TextStyle(
-                          fontSize: 12,
-                          color:
-                              Theme.of(context).primaryColor.withOpacity(1))),
-                ),
-              ),
-              actions: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 3, bottom: 3.0),
-                  child: OutlinedButton(
-                      style: OutlinedButton.styleFrom(
-                          side: BorderSide(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .inversePrimary)),
-                      onPressed: () async {
-                        result = await LocationService().getPlace(_searchValue);
-                        lat = result['geometry']['location']['lat'];
-                        lng = result['geometry']['location']['lng'];
-                        address = result['formatted_address'];
-                        placeName = result['name'];
-                        _goToPlace(lat, lng);
-                        _markers.add(Marker(
-                            markerId: MarkerId('yolo'),
-                            position: LatLng(lat, lng)));
-                        _searchController.text = '';
-                        setState(() {
-                          _showCard = true;
-                          showSearch = false;
-                        });
-                      },
-                      child: Icon(
-                        Icons.search,
-                        size: 14,
-                        color: Theme.of(context).colorScheme.inversePrimary,
-                      )),
-                )
-              ],
-            )
-          : null,
+      appBar: AppBar(
+        toolbarHeight: 30,
+        backgroundColor: Theme.of(context).primaryColor,
+        elevation: 0,
+        title: Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: TextField(
+            style:
+                TextStyle(color: Theme.of(context).colorScheme.inversePrimary),
+            autofocus: true,
+            onChanged: (val) {
+              _searchValue = val;
+            },
+            cursorColor: Colors.white,
+            decoration: InputDecoration(
+                hintText: '   {widget.friend.uid}',
+                hintStyle: TextStyle(
+                    fontSize: 12,
+                    color: Theme.of(context).primaryColor.withOpacity(1))),
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 3, bottom: 3.0),
+            child: OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                    side: BorderSide(
+                        color: Theme.of(context).colorScheme.inversePrimary)),
+                onPressed: () async {
+                  result = await LocationService().getPlace(_searchValue);
+                  lat = result['geometry']['location']['lat'];
+                  lng = result['geometry']['location']['lng'];
+                  address = result['formatted_address'];
+                  placeName = result['name'];
+                  _goToPlace(lat, lng);
+                  _markers.add(Marker(
+                      markerId: MarkerId('yolo'), position: LatLng(lat, lng)));
+                  _searchController.text = '';
+                  setState(() {
+                    _showCard = true;
+                    showSearch = false;
+                  });
+                },
+                child: Icon(
+                  Icons.search,
+                  size: 14,
+                  color: Theme.of(context).colorScheme.inversePrimary,
+                )),
+          )
+        ],
+      ),
       body: Stack(children: [
         GoogleMap(
           markers: _markers,
@@ -139,7 +134,7 @@ class _GoogleMapsState extends State<GoogleMaps> {
                                 ),
                                 onPressed: () {
                                   FirestoreService().addLocation(
-                                      widget.friend.chatsID!,
+                                      '0mdXNlkwnjX304uZPpbJ',
                                       LatLng(lat, lng),
                                       placeName,
                                       address);
@@ -169,30 +164,6 @@ class _GoogleMapsState extends State<GoogleMaps> {
                 ],
               )
             : Container(),
-        if (applicationBloc.searchResults != null &&
-            applicationBloc.searchResults!.isNotEmpty)
-          Container(
-            height: 300,
-            width: double.infinity,
-            decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.6),
-                backgroundBlendMode: ui.BlendMode.darken),
-          ),
-        if (applicationBloc.searchResults != null &&
-            applicationBloc.searchResults!.isNotEmpty)
-          Container(
-            height: 300,
-            child: ListView.builder(
-                itemCount: applicationBloc.searchResults!.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(
-                      applicationBloc.searchResults![index].desc,
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  );
-                }),
-          )
       ]),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 140),
@@ -241,16 +212,6 @@ class _GoogleMapsState extends State<GoogleMaps> {
     googleMapController.animateCamera(CameraUpdate.newCameraPosition(
         CameraPosition(target: LatLng(lat, lng), zoom: 20)));
   }
-
-  // Future<Uint8List> getBytesFromAsset(path, int width) async {
-  //   ByteData data = await rootBundle.load(path);
-  //   ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
-  //       targetWidth: width);
-  //   ui.FrameInfo fi = await codec.getNextFrame();
-  //   return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
-  //       .buffer
-  //       .asUint8List();
-  // }
 
   Future<BitmapDescriptor> userImageMarker(imageFile,
       {int size = 150,

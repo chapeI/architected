@@ -318,10 +318,10 @@ class _ChatState extends State<Chat> {
                                   },
                                   defaultPanelState: PanelState.OPEN,
                                   body: GoogleMaps(
-                                    key: globalKey,
-                                    friend: friend,
-                                    openChat: openChat,
-                                  ),
+                                      // key: globalKey,
+                                      // friend: friend,
+                                      // openChat: openChat,
+                                      ),
                                   panel: Column(
                                     children: [
                                       eventData.placeName == null
