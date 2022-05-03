@@ -50,6 +50,7 @@ dependencies:
   rxdart: ^0.27.3
   geolocator: ^8.2.0
   flutter_local_notifications: ^9.4.1
+  firebase_messaging: ^11.3.0
 
 dev_dependencies:
   flutter_test:
