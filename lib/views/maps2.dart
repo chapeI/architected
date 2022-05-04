@@ -13,9 +13,14 @@ class Maps2 extends StatefulWidget {
 
 class _Maps2State extends State<Maps2> {
   late GoogleMapController googleMapController;
+  late Position myPosition;
+  Set<Marker> _markers = {};
+
   @override
   Widget build(BuildContext context) {
     var event = Provider.of<EventModel>(context);
+    // print('debg');
+    // print(event.me.uid);
     return Scaffold(
       body: GoogleMap(
         initialCameraPosition: CameraPosition(
@@ -24,19 +29,40 @@ class _Maps2State extends State<Maps2> {
           googleMapController = controller;
           _moveToMyPosition();
         },
+        markers: _markers,
       ),
     );
   }
 
   _moveToMyPosition() async {
-    Position position = await Geolocator.getCurrentPosition();
-    print(position);
+    myPosition = await Geolocator.getCurrentPosition();
     googleMapController
         .animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
             target: LatLng(
-              position.latitude,
-              position.longitude,
+              myPosition.latitude,
+              myPosition.longitude,
             ),
             zoom: 15)));
+    _dropMarker();
+  }
+
+  _dropMarker() {
+    // var event = Provider.of<EventModel>(context);
+    // print('debug');
+    // print(event.me.uid);
+    _markers.add(
+      Marker(
+          markerId: MarkerId('my position'),
+          infoWindow: InfoWindow(title: 'helo'),
+          icon:
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+          onTap: () {
+            print('i can be tapped');
+          },
+          position: LatLng(myPosition.latitude, myPosition.longitude)),
+    );
+    setState(() {
+      print('dropping marker');
+    });
   }
 }
