@@ -32,9 +32,9 @@ class MyApp extends StatelessWidget {
             theme: ThemeData(
               primarySwatch: Colors.blue,
             ),
-            initialRoute: '/maps',
+            initialRoute: '/wrapper',
             routes: {
-              '/maps': (context) => GoogleMaps(),
+              // '/maps': (context) => GoogleMaps2(),
               '/wrapper': (context) => Wrapper(),
               '/chat': (context) => Chat(),
               '/sandbox': (context) => SandBox()
