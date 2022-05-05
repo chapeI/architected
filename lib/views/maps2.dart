@@ -22,6 +22,15 @@ class _Maps2State extends State<Maps2> {
   Widget build(BuildContext context) {
     var event = Provider.of<EventModel>(context);
 
+    // checkMyMarker()
+    // me.broadcast ? green : blue
+    // onPress => broadcast
+
+    // checkFriend()
+    // locatio
+
+    // checkLocation()
+
     return Scaffold(
       floatingActionButton: FloatingActionButton(
           child: Icon(Icons.sync),
@@ -32,10 +41,13 @@ class _Maps2State extends State<Maps2> {
           }),
       body: GoogleMap(
         zoomControlsEnabled: false,
-        mapToolbarEnabled: false,
         initialCameraPosition:
             CameraPosition(target: LatLng(43.6426, -79.3871), zoom: 12),
-        markers: event.me.broadcasting ? _m1 : _m2,
+        markers: event.me.broadcasting ||
+                event.friend.broadcasting ||
+                event.location != null
+            ? _m1
+            : _m2,
         onMapCreated: (GoogleMapController controller) async {
           _setM1(event);
           _setM2(event);
