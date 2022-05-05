@@ -1,4 +1,5 @@
 import 'package:architectured/models/event_model.dart';
+import 'package:architectured/services/firestore_service.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -22,48 +23,50 @@ class _Maps2State extends State<Maps2> {
     var event = Provider.of<EventModel>(context);
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton(onPressed: () {
-        setState(() {
-          broadcast = !broadcast;
-        });
-      }),
+      floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.sync),
+          onPressed: () {
+            setState(() {
+              broadcast = !broadcast;
+            });
+          }),
       body: GoogleMap(
+        zoomControlsEnabled: false,
+        mapToolbarEnabled: false,
         initialCameraPosition:
             CameraPosition(target: LatLng(43.6426, -79.3871), zoom: 12),
-        markers: broadcast ? _m1 : _m2,
+        markers: event.me.broadcasting ? _m1 : _m2,
         onMapCreated: (GoogleMapController controller) async {
-          _setM1();
-          _setM2();
+          _setM1(event);
+          _setM2(event);
         },
       ),
     );
   }
 
-  _setM1() {
+  _setM1(EventModel event) {
     _m1 = {};
     _m1.add(Marker(
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
         markerId: MarkerId('marker 1'),
         position: LatLng(43.6426, -79.3871),
         onTap: () {
-          setState(() {
-            print('entered');
-            broadcast = !broadcast;
-          });
+          print('entered setm1');
+          FirestoreService()
+              .toggleMyBroadcast('fJFza8YUFQNXawP0XO3H', false, event.me);
         }));
   }
 
-  _setM2() {
+  _setM2(EventModel event) {
     _m2 = {};
     _m2.add(Marker(
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
         markerId: MarkerId('marker 2'),
         position: LatLng(43.6426, -79.3871),
         onTap: () {
-          setState(() {
-            print('entered');
-            broadcast = !broadcast;
-          });
+          print('entered setm2');
+          FirestoreService()
+              .toggleMyBroadcast('fJFza8YUFQNXawP0XO3H', true, event.me);
         }));
   }
 }

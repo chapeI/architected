@@ -232,10 +232,9 @@ class FirestoreService {
     });
   }
 
-  void toggleMyBroadcast(
-      DocumentReference docRef, bool broadcast, UserInfo me) {
-    eventCollection.doc(docRef.id).update({
-      '${me.userNumber}.broadcasting': !broadcast,
+  void toggleMyBroadcast(String chatId, bool broadcast, UserInfo me) {
+    eventCollection.doc(chatId).update({
+      '${me.userNumber}.broadcasting': broadcast,
     });
   }
 }
