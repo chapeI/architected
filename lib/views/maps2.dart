@@ -1,5 +1,7 @@
 // ignore_for_file: unused_local_variable
 
+import 'dart:typed_data';
+
 import 'package:architectured/models/event_model.dart';
 import 'package:architectured/services/firestore_service.dart';
 import 'package:architectured/services/user_controller.dart';
@@ -25,37 +27,44 @@ class _Maps2State extends State<Maps2> {
   @override
   Widget build(BuildContext context) {
     var event = Provider.of<EventModel>(context);
+    var color = event.me.broadcasting ? Colors.green : Colors.blue;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(event.lastMessage),
-        leading: CircleAvatar(
-            backgroundImage:
-                NetworkImage(UserController().currentUser.avatarUrl!)),
-      ),
-      body: GoogleMap(
-        zoomControlsEnabled: false,
-        initialCameraPosition:
-            const CameraPosition(target: LatLng(43.6426, -79.3871), zoom: 12),
-        markers: _markers,
-        onMapCreated: (GoogleMapController controller) async {},
-      ),
-      floatingActionButton: FloatingActionButton(onPressed: () async {
-        var myBitmap = await circleMarker(
-            UserController().currentUser.avatarUrl,
-            color: Colors.blue,
-            title: 'hi');
-        setState(() {
+    return FutureBuilder<BitmapDescriptor>(
+        future: circleMarker(UserController().currentUser.avatarUrl,
+            title: 'future', color: color),
+        builder: (context, snapshot) {
+          print(snapshot.data);
+          _markers = {};
           _markers.add(Marker(
-              markerId: MarkerId('test'),
-              icon: myBitmap,
-              position: LatLng(43.6426, -79.3271)));
+              markerId: MarkerId('futurebuilder'),
+              icon: snapshot.data!,
+              position: LatLng(43.6499, -79.3579),
+              onTap: () {
+                FirestoreService()
+                    .toggleMyBroadcast('fJFza8YUFQNXawP0XO3H', true, event.me);
+                setState(() {
+                  print('test2');
+                });
+              }));
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(event.lastMessage),
+              leading: CircleAvatar(
+                  backgroundImage:
+                      NetworkImage(UserController().currentUser.avatarUrl!)),
+            ),
+            body: GoogleMap(
+              zoomControlsEnabled: false,
+              initialCameraPosition: const CameraPosition(
+                  target: LatLng(43.6426, -79.3871), zoom: 12),
+              markers: _markers,
+              onMapCreated: (GoogleMapController controller) async {},
+            ),
+          );
         });
-      }),
-    );
   }
 
-  circleMarker(String? myAvatarUrl,
+  Future<BitmapDescriptor> circleMarker(String? myAvatarUrl,
       {required title, required Color color}) async {
     int size = 120; // change 150
     var borderColor = color;
