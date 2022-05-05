@@ -33,7 +33,6 @@ class _Maps2State extends State<Maps2> {
         future: circleMarker(UserController().currentUser.avatarUrl,
             title: 'future', color: color),
         builder: (context, snapshot) {
-          print(snapshot.data);
           _markers = {};
           _markers.add(Marker(
               markerId: MarkerId('futurebuilder'),
@@ -43,16 +42,10 @@ class _Maps2State extends State<Maps2> {
                 FirestoreService()
                     .toggleMyBroadcast('fJFza8YUFQNXawP0XO3H', true, event.me);
                 setState(() {
-                  print('test2');
+                  print('set color to red on error');
                 });
               }));
           return Scaffold(
-            appBar: AppBar(
-              title: Text(event.lastMessage),
-              leading: CircleAvatar(
-                  backgroundImage:
-                      NetworkImage(UserController().currentUser.avatarUrl!)),
-            ),
             body: GoogleMap(
               zoomControlsEnabled: false,
               initialCameraPosition: const CameraPosition(
