@@ -232,10 +232,16 @@ class FirestoreService {
     });
   }
 
-  void toggleMyBroadcast(
-      DocumentReference docRef, bool broadcast, UserInfo me) {
-    eventCollection.doc(docRef.id).update({
+  void toggleMyBroadcast(String docRef, bool broadcast, UserInfo me) {
+    // print('entering toggleMyBroadcast');
+    eventCollection.doc(docRef).update({
       '${me.userNumber}.broadcasting': !broadcast,
+    }).then((value) {
+      // print(broadcast);
+      // print(me.userNumber);
+      // print('debugging toggle');
+    }).onError((error, stackTrace) {
+      print('error: $error');
     });
   }
 }
