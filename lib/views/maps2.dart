@@ -13,26 +13,57 @@ class Maps2 extends StatefulWidget {
 
 class _Maps2State extends State<Maps2> {
   late GoogleMapController googleMapController;
+  Set<Marker> _m1 = {};
+  Set<Marker> _m2 = {};
+  bool broadcast = true;
+
   @override
   Widget build(BuildContext context) {
     var event = Provider.of<EventModel>(context);
 
     return Scaffold(
+      floatingActionButton: FloatingActionButton(onPressed: () {
+        setState(() {
+          broadcast = !broadcast;
+        });
+      }),
       body: GoogleMap(
-        initialCameraPosition: CameraPosition(target: LatLng(30, 30)),
+        initialCameraPosition:
+            CameraPosition(target: LatLng(43.6426, -79.3871), zoom: 12),
+        markers: broadcast ? _m1 : _m2,
         onMapCreated: (GoogleMapController controller) async {
-          googleMapController = controller;
-          Position position = await Geolocator.getCurrentPosition();
-          print(position);
-          googleMapController
-              .animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
-                  target: LatLng(
-                    position.latitude,
-                    position.longitude,
-                  ),
-                  zoom: 15)));
+          _setM1();
+          _setM2();
         },
       ),
     );
+  }
+
+  _setM1() {
+    _m1 = {};
+    _m1.add(Marker(
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+        markerId: MarkerId('marker 1'),
+        position: LatLng(43.6426, -79.3871),
+        onTap: () {
+          setState(() {
+            print('entered');
+            broadcast = !broadcast;
+          });
+        }));
+  }
+
+  _setM2() {
+    _m2 = {};
+    _m2.add(Marker(
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+        markerId: MarkerId('marker 2'),
+        position: LatLng(43.6426, -79.3871),
+        onTap: () {
+          setState(() {
+            print('entered');
+            broadcast = !broadcast;
+          });
+        }));
   }
 }
