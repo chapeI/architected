@@ -1,5 +1,6 @@
 import 'package:architectured/models/event_model.dart';
 import 'package:architectured/services/firestore_service.dart';
+import 'package:architectured/services/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -69,13 +70,12 @@ class _Maps2State extends State<Maps2> {
     }
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.sync),
-          onPressed: () {
-            setState(() {
-              broadcast = !broadcast;
-            });
-          }),
+      appBar: AppBar(
+        title: Text(event.lastMessage),
+        leading: CircleAvatar(
+            backgroundImage:
+                NetworkImage(UserController().currentUser.avatarUrl!)),
+      ),
       body: GoogleMap(
         zoomControlsEnabled: false,
         initialCameraPosition:
