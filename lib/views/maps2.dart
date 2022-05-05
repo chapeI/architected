@@ -14,22 +14,59 @@ class Maps2 extends StatefulWidget {
 
 class _Maps2State extends State<Maps2> {
   late GoogleMapController googleMapController;
-  Set<Marker> _m1 = {};
-  Set<Marker> _m2 = {};
+  Set<Marker> _markers = {};
   bool broadcast = true;
+
+  @override
+  void initState() {
+    super.initState();
+    // _markers.add(
+    //     Marker(position: LatLng(43.6426, -79.3871), markerId: (MarkerId('1'))));
+  }
 
   @override
   Widget build(BuildContext context) {
     var event = Provider.of<EventModel>(context);
 
-    // checkMyMarker()
-    // me.broadcast ? green : blue
-    // onPress => broadcast
+    print('looping through markers');
+    _markers.forEach((marker) {
+      print(marker.markerId);
+    });
 
-    // checkFriend()
-    // locatio
+    final me = _markers.lookup(Marker(markerId: MarkerId('me')));
+    print(me);
 
-    // checkLocation()
+    if (event.me.broadcasting == true) {
+      setState(() {
+        _markers = {};
+        _markers.add(
+          Marker(
+              markerId: MarkerId('me'),
+              position: LatLng(43.6499, -79.3579),
+              icon: BitmapDescriptor.defaultMarkerWithHue(
+                  BitmapDescriptor.hueGreen),
+              onTap: () {
+                FirestoreService()
+                    .toggleMyBroadcast('0mdXNlkwnjX304uZPpbJ', false, event.me);
+              }),
+        );
+      });
+    } else {
+      setState(() {
+        _markers = {};
+        _markers.add(
+          Marker(
+              markerId: MarkerId('2'),
+              position: LatLng(43.6499, -79.3579),
+              icon: BitmapDescriptor.defaultMarkerWithHue(
+                  BitmapDescriptor.hueRed),
+              onTap: () {
+                FirestoreService()
+                    .toggleMyBroadcast('0mdXNlkwnjX304uZPpbJ', true, event.me);
+              }),
+        );
+      });
+    }
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
@@ -43,42 +80,11 @@ class _Maps2State extends State<Maps2> {
         zoomControlsEnabled: false,
         initialCameraPosition:
             CameraPosition(target: LatLng(43.6426, -79.3871), zoom: 12),
-        markers: event.me.broadcasting ||
-                event.friend.broadcasting ||
-                event.location != null
-            ? _m1
-            : _m2,
+        markers: _markers,
         onMapCreated: (GoogleMapController controller) async {
-          _setM1(event);
-          _setM2(event);
+          // not sure if I should set markers here or in initState
         },
       ),
     );
-  }
-
-  _setM1(EventModel event) {
-    _m1 = {};
-    _m1.add(Marker(
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
-        markerId: MarkerId('marker 1'),
-        position: LatLng(43.6426, -79.3871),
-        onTap: () {
-          print('entered setm1');
-          FirestoreService()
-              .toggleMyBroadcast('fJFza8YUFQNXawP0XO3H', false, event.me);
-        }));
-  }
-
-  _setM2(EventModel event) {
-    _m2 = {};
-    _m2.add(Marker(
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-        markerId: MarkerId('marker 2'),
-        position: LatLng(43.6426, -79.3871),
-        onTap: () {
-          print('entered setm2');
-          FirestoreService()
-              .toggleMyBroadcast('fJFza8YUFQNXawP0XO3H', true, event.me);
-        }));
   }
 }
