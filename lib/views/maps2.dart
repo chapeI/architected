@@ -20,21 +20,11 @@ class _Maps2State extends State<Maps2> {
   @override
   void initState() {
     super.initState();
-    // _markers.add(
-    //     Marker(position: LatLng(43.6426, -79.3871), markerId: (MarkerId('1'))));
   }
 
   @override
   Widget build(BuildContext context) {
     var event = Provider.of<EventModel>(context);
-
-    print('looping through markers');
-    _markers.forEach((marker) {
-      print(marker.markerId);
-    });
-
-    final me = _markers.lookup(Marker(markerId: MarkerId('me')));
-    print(me);
 
     if (event.me.broadcasting == true) {
       setState(() {
@@ -47,7 +37,7 @@ class _Maps2State extends State<Maps2> {
                   BitmapDescriptor.hueGreen),
               onTap: () {
                 FirestoreService()
-                    .toggleMyBroadcast('0mdXNlkwnjX304uZPpbJ', false, event.me);
+                    .toggleMyBroadcast('fJFza8YUFQNXawP0XO3H', false, event.me);
               }),
         );
       });
@@ -56,15 +46,25 @@ class _Maps2State extends State<Maps2> {
         _markers = {};
         _markers.add(
           Marker(
-              markerId: MarkerId('2'),
+              markerId: MarkerId('me'),
               position: LatLng(43.6499, -79.3579),
               icon: BitmapDescriptor.defaultMarkerWithHue(
                   BitmapDescriptor.hueRed),
               onTap: () {
                 FirestoreService()
-                    .toggleMyBroadcast('0mdXNlkwnjX304uZPpbJ', true, event.me);
+                    .toggleMyBroadcast('fJFza8YUFQNXawP0XO3H', true, event.me);
               }),
         );
+      });
+    }
+
+    if (event.friend.broadcasting) {
+      setState(() {
+        _markers.add(Marker(
+            markerId: MarkerId('friend'),
+            position: LatLng(43.6599, -79.3579),
+            icon: BitmapDescriptor.defaultMarkerWithHue(
+                BitmapDescriptor.hueYellow)));
       });
     }
 
