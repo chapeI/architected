@@ -40,16 +40,18 @@ class _Maps2State extends State<Maps2> {
         widget.friend.avatarUrl,
         title: 'friendo',
         color: Colors.green);
+    Future<Position> position = _determineMyLocation();
 
     return FutureBuilder(
-        future: Future.wait([myCircleAvatar, friendCircleAvatar]),
-        builder: (context, AsyncSnapshot<List<BitmapDescriptor>> snapshot) {
+        future: Future.wait([myCircleAvatar, friendCircleAvatar, position]),
+        builder: (context, AsyncSnapshot<List> snapshot) {
           _markers = {};
+          Position myLocation = snapshot.data![2];
           _markers.add(
             Marker(
                 markerId: MarkerId('me'),
                 icon: snapshot.data![0],
-                position: LatLng(43.6499, -79.3579),
+                position: LatLng(myLocation.latitude, myLocation.longitude),
                 onTap: () {
                   FirestoreService().toggleMyBroadcast(
                       widget.friend.chatsID!.id,
@@ -77,7 +79,10 @@ class _Maps2State extends State<Maps2> {
               initialCameraPosition: const CameraPosition(
                   target: LatLng(43.6426, -79.3871), zoom: 12),
               markers: _markers,
-              onMapCreated: (GoogleMapController controller) async {},
+              onMapCreated: (GoogleMapController controller) async {
+                googleMapController = controller;
+                _animateCamera(myLocation.latitude, myLocation.longitude);
+              },
             ),
           );
         });
@@ -149,5 +154,38 @@ class _Maps2State extends State<Maps2> {
 
     // convert PNG bytes as BitmapDescriptor
     return BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
+  }
+
+  Future<Position> _determineMyLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+
+    if (!serviceEnabled) {
+      return Future.error('location service not enabled');
+    }
+
+    permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+
+      if (permission == LocationPermission.denied) {
+        return Future.error('locatoin permisison denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error('denied forver');
+    }
+
+    Position position = await Geolocator.getCurrentPosition();
+    return position;
+  }
+
+  _animateCamera(lat, lng) {
+    googleMapController.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(zoom: 20, target: LatLng(lat, lng))));
   }
 }
