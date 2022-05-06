@@ -234,7 +234,7 @@ class FirestoreService {
 
   void toggleMyBroadcast(String chatId, bool broadcast, UserInfo me) {
     eventCollection.doc(chatId).update({
-      '${me.userNumber}.broadcasting': broadcast,
+      '${me.userNumber}.broadcasting': !broadcast,
     });
   }
 }

@@ -3,6 +3,7 @@
 import 'dart:typed_data';
 
 import 'package:architectured/models/event_model.dart';
+import 'package:architectured/models/user_model.dart';
 import 'package:architectured/services/firestore_service.dart';
 import 'package:architectured/services/user_controller.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,8 @@ import 'package:http/http.dart' as http;
 import 'dart:ui' as ui;
 
 class Maps2 extends StatefulWidget {
-  const Maps2({Key? key}) : super(key: key);
+  final UserModel friend;
+  const Maps2({Key? key, required this.friend}) : super(key: key);
 
   @override
   State<Maps2> createState() => _Maps2State();
@@ -22,6 +24,7 @@ class Maps2 extends StatefulWidget {
 class _Maps2State extends State<Maps2> {
   late GoogleMapController googleMapController;
   Set<Marker> _markers = {};
+  Set<Marker> _badMarkers = {};
   bool broadcast = true;
 
   @override
@@ -29,25 +32,49 @@ class _Maps2State extends State<Maps2> {
     var event = Provider.of<EventModel>(context);
     var color = event.me.broadcasting ? Colors.green : Colors.blue;
 
-    return FutureBuilder<BitmapDescriptor>(
-        future: circleMarker(UserController().currentUser.avatarUrl,
-            title: 'future', color: color),
-        builder: (context, snapshot) {
+    Future<BitmapDescriptor> myCircleAvatar = circleMarker(
+        UserController().currentUser.avatarUrl,
+        title: 'me',
+        color: color);
+    Future<BitmapDescriptor> friendCircleAvatar = circleMarker(
+        widget.friend.avatarUrl,
+        title: 'friendo',
+        color: Colors.green);
+
+    return FutureBuilder(
+        future: Future.wait([myCircleAvatar, friendCircleAvatar]),
+        builder: (context, AsyncSnapshot<List<BitmapDescriptor>> snapshot) {
           _markers = {};
-          _markers.add(Marker(
-              markerId: MarkerId('futurebuilder'),
-              icon: snapshot.data!,
-              position: LatLng(43.6499, -79.3579),
-              onTap: () {
-                FirestoreService()
-                    .toggleMyBroadcast('fJFza8YUFQNXawP0XO3H', true, event.me);
-                setState(() {
-                  print('set color to red on error');
-                });
-              }));
+          _markers.add(
+            Marker(
+                markerId: MarkerId('me'),
+                icon: snapshot.data![0],
+                position: LatLng(43.6499, -79.3579),
+                onTap: () {
+                  FirestoreService().toggleMyBroadcast(
+                      widget.friend.chatsID!.id,
+                      event.me.broadcasting,
+                      event.me);
+                  setState(() {
+                    print('if error, setstate to red');
+                  });
+                }),
+          );
+
+          if (event.friend.broadcasting) {
+            _markers.add(Marker(
+              markerId: MarkerId('friend'),
+              position: LatLng(43.6699, -79.3579),
+              icon: snapshot.data![1],
+            ));
+          } else {
+            _markers =
+                _markers.where((m) => m.markerId != MarkerId('friend')).toSet();
+          }
+
           return Scaffold(
+            appBar: AppBar(title: Text(widget.friend.displayName!)),
             body: GoogleMap(
-              zoomControlsEnabled: false,
               initialCameraPosition: const CameraPosition(
                   target: LatLng(43.6426, -79.3871), zoom: 12),
               markers: _markers,

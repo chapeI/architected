@@ -65,7 +65,9 @@ class _ChatState extends State<Chat> {
             value: FirestoreService().events(friend.chatsID!),
             initialData: null,
             child: Scaffold(
-              body: Maps2(),
+              body: Maps2(
+                friend: friend,
+              ),
             ),
           );
   }
