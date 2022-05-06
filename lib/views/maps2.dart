@@ -73,7 +73,6 @@ class _Maps2State extends State<Maps2> {
           }
 
           return Scaffold(
-            appBar: AppBar(title: Text(widget.friend.displayName!)),
             body: GoogleMap(
               initialCameraPosition: const CameraPosition(
                   target: LatLng(43.6426, -79.3871), zoom: 12),

@@ -61,14 +61,439 @@ class _ChatState extends State<Chat> {
               ],
             ),
           )
-        : StreamProvider<EventModel?>.value(
-            value: FirestoreService().events(friend.chatsID!),
-            initialData: null,
-            child: Scaffold(
-              body: Maps2(
-                friend: friend,
-              ),
-            ),
+        : WillPopScope(
+            // not sure why we're returning false
+            onWillPop: () async {
+              if (_panelController.isPanelClosed) {
+                _panelController.open();
+                return false;
+              }
+              final result = await Navigator.pushNamed(context, '/friends');
+              setState(() {
+                friend = result as UserModel;
+              });
+              return false;
+            },
+            child: StreamProvider<EventModel?>.value(
+                value: _firestore.events(friend.chatsID!),
+                initialData: null,
+                builder: (context, snapshot) {
+                  if (true) {
+                    var eventData = Provider.of<EventModel>(context);
+                    return Theme(
+                      data: eventData!.me.broadcasting
+                          ? ThemeData.from(
+                              colorScheme: ColorScheme.fromSwatch(
+                                  primarySwatch: Colors.green))
+                          : Theme.of(context),
+                      child: Builder(
+                        builder: (context) => Scaffold(
+                            appBar: mapMode
+                                ? AppBar(
+                                    elevation: 0,
+                                    leading: ElevatedButton(
+                                      child: Icon(Icons.cancel),
+                                      onPressed: () {
+                                        _panelController.open();
+                                      },
+                                    ),
+                                    title: Text(friend.displayName!),
+                                    actions: [
+                                      eventData.placeName == null
+                                          ? Container()
+                                          : Container(
+                                              margin: EdgeInsets.all(4),
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          ui.Radius.circular(
+                                                              10)),
+                                                  border: Border.all(
+                                                      width: 0.4,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .inversePrimary)),
+                                              child: Row(
+                                                children: [
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      _panelController.close();
+                                                    },
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          horizontal: 8.0),
+                                                      child: Text(
+                                                          eventData.placeName!),
+                                                    ),
+                                                  ),
+                                                  VerticalDivider(
+                                                    thickness: 0.4,
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .inversePrimary,
+                                                  ),
+                                                  IconButton(
+                                                      onPressed: () {
+                                                        _firestore.deleteEvent(
+                                                            friend.chatsID!);
+                                                      },
+                                                      icon:
+                                                          Icon(Icons.settings))
+                                                ],
+                                              ),
+                                            ),
+                                      PopupMenuButton(
+                                        itemBuilder: ((context) => [
+                                              PopupMenuItem(
+                                                  child: eventData!
+                                                          .me.broadcasting
+                                                      ? Text(
+                                                          'stop sharing my location',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.red),
+                                                        )
+                                                      : Text(
+                                                          'DBG: share location'),
+                                                  onTap: () {
+                                                    _firestore
+                                                        .toggleMyBroadcast(
+                                                            friend.chatsID!.id,
+                                                            eventData.me
+                                                                .broadcasting,
+                                                            eventData.me);
+                                                  }),
+                                              PopupMenuItem(
+                                                child: Text('search map'),
+                                                onTap: () {
+                                                  globalKey.currentState!
+                                                      .toggleShowSearch();
+                                                },
+                                              ),
+                                            ]),
+                                      )
+                                    ],
+                                  )
+                                : AppBar(
+                                    title: Text(friend.displayName!),
+                                    leading: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        IconButton(
+                                          padding: EdgeInsets.zero,
+                                          constraints: BoxConstraints(),
+                                          onPressed: () async {
+                                            final result =
+                                                await Navigator.pushNamed(
+                                                    context, '/friends');
+                                            setState(() {
+                                              friend = result as UserModel;
+                                            });
+                                          },
+                                          icon: Icon(
+                                            Icons.chevron_left,
+                                          ),
+                                        ),
+                                        Flexible(
+                                          child: PopupMenuButton(
+                                            child: eventData!
+                                                    .friend.broadcasting
+                                                ? CircleAvatar(
+                                                    radius: 22,
+                                                    backgroundColor:
+                                                        Colors.green,
+                                                    child: CircleAvatar(
+                                                      radius: 17,
+                                                      backgroundImage:
+                                                          NetworkImage(friend
+                                                              .avatarUrl!),
+                                                    ),
+                                                  )
+                                                : CircleAvatar(
+                                                    backgroundImage:
+                                                        NetworkImage(
+                                                            friend.avatarUrl!),
+                                                  ),
+                                            itemBuilder: ((context) => [
+                                                  PopupMenuItem(
+                                                      child: Text(
+                                                          'only if friend is broadcasting will i see this'))
+                                                ]),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    elevation: 0,
+                                    actions: [
+                                        eventData.placeName == null
+                                            ? Container()
+                                            : Container(
+                                                margin: EdgeInsets.all(4),
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            ui.Radius.circular(
+                                                                10)),
+                                                    border: Border.all(
+                                                        width: 0.4,
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .inversePrimary)),
+                                                child: Row(
+                                                  children: [
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        _panelController
+                                                            .close();
+                                                      },
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                horizontal:
+                                                                    8.0),
+                                                        child: Text(eventData
+                                                            .placeName!),
+                                                      ),
+                                                    ),
+                                                    VerticalDivider(
+                                                      thickness: 0.4,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .inversePrimary,
+                                                    ),
+                                                    IconButton(
+                                                        onPressed: () {
+                                                          _firestore.deleteEvent(
+                                                              friend.chatsID!);
+                                                        },
+                                                        icon: Icon(
+                                                            Icons.settings))
+                                                  ],
+                                                ),
+                                              ),
+                                        PopupMenuButton(
+                                          itemBuilder: ((context) => [
+                                                PopupMenuItem(
+                                                    child: eventData
+                                                            .me.broadcasting
+                                                        ? Text(
+                                                            'stop sharing location',
+                                                            style: TextStyle(
+                                                                color:
+                                                                    Colors.red),
+                                                          )
+                                                        : Text(
+                                                            'DBG: share locatoin'),
+                                                    onTap: () {
+                                                      _firestore
+                                                          .toggleMyBroadcast(
+                                                              friend
+                                                                  .chatsID!.id,
+                                                              eventData.me
+                                                                  .broadcasting,
+                                                              eventData.me);
+                                                    }),
+                                                PopupMenuItem(
+                                                    child: Text(
+                                                        'search (go to map mode first)'),
+                                                    onTap: () {
+                                                      _panelController.close();
+                                                    }),
+                                              ]),
+                                        ),
+                                      ]),
+                            body: Stack(children: [
+                              SlidingUpPanel(
+                                  controller: _panelController,
+                                  maxHeight: MediaQuery.of(context).size.height,
+                                  minHeight:
+                                      eventData.placeName == null ? 0 : 40,
+                                  onPanelClosed: () {
+                                    setState(() {
+                                      mapMode = true;
+                                    });
+                                  },
+                                  onPanelOpened: () {
+                                    setState(() {
+                                      mapMode = false;
+                                    });
+                                  },
+                                  defaultPanelState: PanelState.OPEN,
+                                  body: Maps2(
+                                    friend: friend,
+                                  ),
+                                  panel: Column(
+                                    children: [
+                                      eventData.placeName == null
+                                          ? Container()
+                                          : Container(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
+                                              padding: const EdgeInsets.all(12),
+                                              child: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.location_on,
+                                                    color:
+                                                        Colors.purple.shade300,
+                                                    size: 15,
+                                                  ),
+                                                  SizedBox(
+                                                    width: 4,
+                                                  ),
+                                                  Text(
+                                                    '${eventData.address!.substring(0, 38)}',
+                                                    style: TextStyle(
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .inversePrimary,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      StreamBuilder<List<ChatModel>>(
+                                        stream: _firestore.getChats(friend),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.hasData) {
+                                            var data = snapshot.data;
+                                            return Expanded(
+                                              child: ListView.builder(
+                                                  reverse: false,
+                                                  itemCount: data!.length,
+                                                  itemBuilder:
+                                                      ((context, index) {
+                                                    return Row(
+                                                      mainAxisAlignment: data[
+                                                                      index]
+                                                                  .uid ==
+                                                              _auth.me.uid
+                                                          ? MainAxisAlignment
+                                                              .end
+                                                          : MainAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Container(
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                                    horizontal:
+                                                                        10,
+                                                                    vertical:
+                                                                        2),
+                                                            child: Material(
+                                                              shape:
+                                                                  RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            10),
+                                                              ),
+                                                              color: data[index]
+                                                                          .uid ==
+                                                                      _auth.me
+                                                                          .uid
+                                                                  ? Theme.of(
+                                                                          context)
+                                                                      .colorScheme
+                                                                      .primary
+                                                                      .withOpacity(
+                                                                          0.7)
+                                                                  : Theme.of(
+                                                                          context)
+                                                                      .colorScheme
+                                                                      .primary
+                                                                      .withOpacity(
+                                                                          0.8),
+                                                              child: Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                            .all(
+                                                                        8.0),
+                                                                child: Text(
+                                                                  data[index]
+                                                                      .text,
+                                                                  style: TextStyle(
+                                                                      color: Theme.of(
+                                                                              context)
+                                                                          .colorScheme
+                                                                          .inversePrimary),
+                                                                ),
+                                                              ),
+                                                            ))
+                                                      ],
+                                                    );
+                                                  })),
+                                            );
+                                          }
+                                          return LinearProgressIndicator();
+                                        },
+                                      ),
+                                      SizedBox(
+                                        height: 120,
+                                      )
+                                    ],
+                                  )),
+                              mapMode
+                                  ? Container()
+                                  : Positioned(
+                                      bottom: 3,
+                                      left: 0,
+                                      right: 0,
+                                      child: Container(
+                                        height: 70,
+                                        padding: EdgeInsets.all(9),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: TextField(
+                                                  onChanged: (val) {
+                                                    message = val;
+                                                  },
+                                                  cursorWidth: 8,
+                                                  decoration: InputDecoration(
+                                                    filled: true,
+                                                    border: OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(50.0),
+                                                        borderSide:
+                                                            BorderSide.none),
+                                                    hintText:
+                                                        '    send a message',
+                                                  ),
+                                                  controller: _controller),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 8.0),
+                                              child: OutlinedButton(
+                                                onPressed: () {
+                                                  _firestore.sendMessage(
+                                                      message,
+                                                      friend.chatsID!.id);
+                                                  _controller.clear();
+                                                },
+                                                child: Icon(
+                                                  Icons.chat,
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                            ])),
+                      ),
+                    );
+                  }
+                  return CircularProgressIndicator();
+                }),
           );
   }
 }
