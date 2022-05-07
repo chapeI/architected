@@ -46,12 +46,12 @@ class _Maps2State extends State<Maps2> {
         future: Future.wait([myCircleAvatar, friendCircleAvatar, myPosition]),
         builder: (context, AsyncSnapshot<List> snapshot) {
           _markers = {};
-          Position myLocation = snapshot.data![2];
+          Position myPosn = snapshot.data![2];
           _markers.add(
             Marker(
                 markerId: MarkerId('me'),
                 icon: snapshot.data![0],
-                position: LatLng(myLocation.latitude, myLocation.longitude),
+                position: LatLng(myPosn.latitude, myPosn.longitude),
                 onTap: () {
                   FirestoreService().toggleMyBroadcast(
                       widget.friend.chatsID!.id,
@@ -81,7 +81,7 @@ class _Maps2State extends State<Maps2> {
               markers: _markers,
               onMapCreated: (GoogleMapController controller) async {
                 googleMapController = controller;
-                _animateCamera(myLocation.latitude, myLocation.longitude);
+                _animateCamera(myPosn.latitude, myPosn.longitude);
               },
             ),
           );
@@ -186,6 +186,6 @@ class _Maps2State extends State<Maps2> {
 
   _animateCamera(lat, lng) {
     googleMapController.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(zoom: 20, target: LatLng(lat, lng))));
+        CameraPosition(zoom: 14, target: LatLng(lat, lng))));
   }
 }

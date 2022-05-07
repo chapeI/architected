@@ -84,7 +84,7 @@ class _ChatState extends State<Chat> {
                       data: eventData!.me.broadcasting
                           ? ThemeData.from(
                               colorScheme: ColorScheme.fromSwatch(
-                                  primarySwatch: Colors.green))
+                                  primarySwatch: Colors.lightGreen))
                           : Theme.of(context),
                       child: Builder(
                         builder: (context) => Scaffold(
@@ -254,11 +254,23 @@ class _ChatState extends State<Chat> {
                                                     width: 4,
                                                   ),
                                                   Text(
-                                                    '${eventData.address!.substring(0, 38)}',
+                                                    eventData.placeName!,
                                                     style: TextStyle(
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .inversePrimary,
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .inversePrimary),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 4,
+                                                  ),
+                                                  Expanded(
+                                                    child: Text(
+                                                      '(${eventData.address!})',
+                                                      style: TextStyle(
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .inversePrimary,
+                                                      ),
                                                     ),
                                                   ),
                                                 ],
