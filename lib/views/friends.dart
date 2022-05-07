@@ -68,26 +68,6 @@ class Friends extends StatelessWidget {
                                         ? Colors.green
                                         : null),
                               ),
-                              trailing: eventData.placeName == null
-                                  ? null
-                                  : ElevatedButton.icon(
-                                      style: ElevatedButton.styleFrom(
-                                          elevation: 0,
-                                          shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              side: BorderSide(
-                                                width: 1.5,
-                                              )),
-                                          primary: Colors.purple.shade200
-                                              .withOpacity(0)),
-                                      onPressed: () {},
-                                      icon: Icon(Icons.location_on,
-                                          color: Colors.purple),
-                                      label: Text(
-                                        '${eventData.placeName}',
-                                        style: TextStyle(color: Colors.black),
-                                      )),
                               tileColor: eventData.me.broadcasting
                                   ? Colors.lightGreen[50]
                                   : null,
@@ -105,9 +85,24 @@ class Friends extends StatelessWidget {
                                           friends[index].avatarUrl!),
                                     ),
                               subtitle: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
+                                  eventData.placeName == null
+                                      ? Container()
+                                      : Row(
+                                          children: [
+                                            Icon(
+                                              Icons.location_on,
+                                              size: 15,
+                                              color: Colors.purple,
+                                            ),
+                                            Text(
+                                              '${eventData.placeName} ',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ],
+                                        ),
                                   Text(eventData!.lastMessage),
                                 ],
                               ),
