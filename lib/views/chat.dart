@@ -99,50 +99,6 @@ class _ChatState extends State<Chat> {
                                     ),
                                     title: Text(friend.displayName!),
                                     actions: [
-                                      eventData.placeName == null
-                                          ? Container()
-                                          : Container(
-                                              margin: EdgeInsets.all(4),
-                                              decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          ui.Radius.circular(
-                                                              10)),
-                                                  border: Border.all(
-                                                      width: 0.4,
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .inversePrimary)),
-                                              child: Row(
-                                                children: [
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      _panelController.close();
-                                                    },
-                                                    child: Padding(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          horizontal: 8.0),
-                                                      child: Text(
-                                                          eventData.placeName!),
-                                                    ),
-                                                  ),
-                                                  VerticalDivider(
-                                                    thickness: 0.4,
-                                                    color: Theme.of(context)
-                                                        .colorScheme
-                                                        .inversePrimary,
-                                                  ),
-                                                  IconButton(
-                                                      onPressed: () {
-                                                        _firestore.deleteEvent(
-                                                            friend.chatsID!);
-                                                      },
-                                                      icon:
-                                                          Icon(Icons.settings))
-                                                ],
-                                              ),
-                                            ),
                                       PopupMenuButton(
                                         itemBuilder: ((context) => [
                                               PopupMenuItem(
@@ -226,53 +182,6 @@ class _ChatState extends State<Chat> {
                                     ),
                                     elevation: 0,
                                     actions: [
-                                        eventData.placeName == null
-                                            ? Container()
-                                            : Container(
-                                                margin: EdgeInsets.all(4),
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.all(
-                                                            ui.Radius.circular(
-                                                                10)),
-                                                    border: Border.all(
-                                                        width: 0.4,
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .inversePrimary)),
-                                                child: Row(
-                                                  children: [
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        _panelController
-                                                            .close();
-                                                      },
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .symmetric(
-                                                                horizontal:
-                                                                    8.0),
-                                                        child: Text(eventData
-                                                            .placeName!),
-                                                      ),
-                                                    ),
-                                                    VerticalDivider(
-                                                      thickness: 0.4,
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .inversePrimary,
-                                                    ),
-                                                    IconButton(
-                                                        onPressed: () {
-                                                          _firestore.deleteEvent(
-                                                              friend.chatsID!);
-                                                        },
-                                                        icon: Icon(
-                                                            Icons.settings))
-                                                  ],
-                                                ),
-                                              ),
                                         PopupMenuButton(
                                           itemBuilder: ((context) => [
                                                 PopupMenuItem(

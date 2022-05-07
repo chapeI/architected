@@ -40,10 +40,10 @@ class _Maps2State extends State<Maps2> {
         widget.friend.avatarUrl,
         title: 'friendo',
         color: Colors.green);
-    Future<Position> position = _determineMyLocation();
+    Future<Position> myPosition = _determineMyLocation();
 
     return FutureBuilder(
-        future: Future.wait([myCircleAvatar, friendCircleAvatar, position]),
+        future: Future.wait([myCircleAvatar, friendCircleAvatar, myPosition]),
         builder: (context, AsyncSnapshot<List> snapshot) {
           _markers = {};
           Position myLocation = snapshot.data![2];
