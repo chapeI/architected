@@ -24,8 +24,6 @@ class Maps2 extends StatefulWidget {
 class _Maps2State extends State<Maps2> {
   late GoogleMapController googleMapController;
   Set<Marker> _markers = {};
-  Set<Marker> _badMarkers = {};
-  bool broadcast = true;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +36,7 @@ class _Maps2State extends State<Maps2> {
         color: color);
     Future<BitmapDescriptor> friendCircleAvatar = circleMarker(
         widget.friend.avatarUrl,
-        title: 'friendo',
+        title: widget.friend.displayName,
         color: Colors.green);
     Future<Position> myPosition = _determineMyLocation();
 
@@ -137,7 +135,7 @@ class _Maps2State extends State<Maps2> {
         paint);
 
     textPainter.text = TextSpan(
-        text: 'me',
+        text: title,
         style: TextStyle(
             fontSize: radius / 2.5,
             fontWeight: FontWeight.bold,
@@ -158,10 +156,6 @@ class _Maps2State extends State<Maps2> {
     // convert PNG bytes as BitmapDescriptor
     return BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
   }
-
-  // Future<Position> _determineFriendsLocation() {
-  //   return ;
-  // }
 
   Future<Position> _determineMyLocation() async {
     bool serviceEnabled;
