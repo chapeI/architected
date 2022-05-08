@@ -112,14 +112,7 @@ class _ChatState extends State<Chat> {
                                                         )
                                                       : Text(
                                                           'DBG: share location'),
-                                                  onTap: () {
-                                                    _firestore
-                                                        .toggleMyBroadcast(
-                                                            friend.chatsID!.id,
-                                                            eventData.me
-                                                                .broadcasting,
-                                                            eventData.me);
-                                                  }),
+                                                  onTap: () {}),
                                               PopupMenuItem(
                                                 child: Text('search map'),
                                                 onTap: () {
@@ -195,15 +188,7 @@ class _ChatState extends State<Chat> {
                                                           )
                                                         : Text(
                                                             'DBG: share locatoin'),
-                                                    onTap: () {
-                                                      _firestore
-                                                          .toggleMyBroadcast(
-                                                              friend
-                                                                  .chatsID!.id,
-                                                              eventData.me
-                                                                  .broadcasting,
-                                                              eventData.me);
-                                                    }),
+                                                    onTap: () {}),
                                                 PopupMenuItem(
                                                     child: Text(
                                                         'search (go to map mode first)'),

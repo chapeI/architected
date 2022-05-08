@@ -63,7 +63,11 @@ class FirestoreService {
   Future<void> addFriend(UserModel friend) async {
     final me = _authService.me;
     _firestore.collection('chats').add({
-      'user1': {'uid': me.uid, 'broadcasting': false},
+      'user1': {
+        'uid': me.uid,
+        'broadcasting': false,
+        'location': GeoPoint(43.6426, -79.3871), // toronto
+      },
       'user2': {'uid': friend.uid, 'broadcasting': false},
       'lastMessage': 'Start chatting with ${friend.displayName}!',
       'event': null,
@@ -203,10 +207,12 @@ class FirestoreService {
       me: UserInfo(
           uid: snapshot['$me.uid'],
           broadcasting: snapshot['$me.broadcasting'],
+          location: snapshot['$me.location'],
           userNumber: me),
       friend: UserInfo(
           uid: snapshot['$friend.uid'],
           broadcasting: snapshot['$friend.broadcasting'],
+          location: snapshot['$friend.location'],
           userNumber: friend),
       event: snapshot['event'],
       hour: snapshot['hour'],
@@ -232,9 +238,11 @@ class FirestoreService {
     });
   }
 
-  void toggleMyBroadcast(String chatId, bool broadcast, UserInfo me) {
+  void toggleMyBroadcast(
+      String chatId, bool broadcast, UserInfo me, LatLng latLng) {
     eventCollection.doc(chatId).update({
       '${me.userNumber}.broadcasting': !broadcast,
+      '${me.userNumber}.location': GeoPoint(latLng.latitude, latLng.longitude)
     });
   }
 }

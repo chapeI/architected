@@ -28,9 +28,11 @@ class UserInfo {
   String uid;
   bool broadcasting;
   String userNumber;
+  GeoPoint location;
 
   UserInfo(
       {required this.uid,
       required this.broadcasting,
+      required this.location,
       required this.userNumber});
 }

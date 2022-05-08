@@ -30,7 +30,7 @@ class _Maps2State extends State<Maps2> {
   @override
   Widget build(BuildContext context) {
     var event = Provider.of<EventModel>(context);
-    var color = event.me.broadcasting ? Colors.green : Colors.blue;
+    var color = event.me.broadcasting ? Colors.green : Colors.red;
 
     Future<BitmapDescriptor> myCircleAvatar = circleMarker(
         UserController().currentUser.avatarUrl,
@@ -56,7 +56,8 @@ class _Maps2State extends State<Maps2> {
                   FirestoreService().toggleMyBroadcast(
                       widget.friend.chatsID!.id,
                       event.me.broadcasting,
-                      event.me);
+                      event.me,
+                      LatLng(myPosn.latitude, myPosn.longitude));
                   setState(() {
                     print('if error, setstate to red');
                   });
@@ -66,7 +67,8 @@ class _Maps2State extends State<Maps2> {
           if (event.friend.broadcasting) {
             _markers.add(Marker(
               markerId: MarkerId('friend'),
-              position: LatLng(43.6699, -79.3579),
+              position: LatLng(event.friend.location.latitude,
+                  event.friend.location.longitude),
               icon: snapshot.data![1],
             ));
           } else {
@@ -155,6 +157,10 @@ class _Maps2State extends State<Maps2> {
     // convert PNG bytes as BitmapDescriptor
     return BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
   }
+
+  // Future<Position> _determineFriendsLocation() {
+  //   return ;
+  // }
 
   Future<Position> _determineMyLocation() async {
     bool serviceEnabled;

@@ -20,7 +20,7 @@ class Friends extends StatelessWidget {
                   elevation: 0,
                   title: Text(
                     AuthService().me.uid!,
-                    style: TextStyle(color: Colors.blue[300], fontSize: 12),
+                    style: TextStyle(color: Colors.green[300], fontSize: 12),
                   ),
                   automaticallyImplyLeading: false,
                   actions: [
@@ -76,7 +76,7 @@ class Friends extends StatelessWidget {
                                       backgroundColor: Colors.green,
                                       radius: 20,
                                       child: CircleAvatar(
-                                          radius: 18,
+                                          radius: 17,
                                           backgroundImage: NetworkImage(
                                               friends[index].avatarUrl!)),
                                     )
