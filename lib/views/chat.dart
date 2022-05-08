@@ -1,16 +1,16 @@
 import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
-import 'package:architectured/views/google_maps.dart';
-import 'package:architectured/views/maps2.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:architectured/models/chat_model.dart';
 import 'package:architectured/models/event_model.dart';
 import 'package:architectured/models/user_model.dart';
 import 'package:architectured/services/auth_service.dart';
 import 'package:architectured/services/firestore_service.dart';
+import 'package:architectured/views/google_maps.dart';
+import 'package:architectured/views/maps2.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
@@ -27,10 +27,6 @@ class _ChatState extends State<Chat> {
   String message = '';
   var mapMode = false;
   final _panelController = PanelController();
-
-  void openChat() {
-    _panelController.open();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -262,6 +258,19 @@ class _ChatState extends State<Chat> {
                                                               .ellipsis),
                                                     ),
                                                   ),
+                                                  IconButton(
+                                                      padding: EdgeInsets.only(
+                                                          left: 5),
+                                                      constraints:
+                                                          BoxConstraints(),
+                                                      icon: Icon(
+                                                        Icons.settings,
+                                                        size: 18,
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .inversePrimary,
+                                                      ),
+                                                      onPressed: () {})
                                                 ],
                                               ),
                                             ),
@@ -405,5 +414,9 @@ class _ChatState extends State<Chat> {
                   return CircularProgressIndicator();
                 }),
           );
+  }
+
+  void openChat() {
+    _panelController.open();
   }
 }
