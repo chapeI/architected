@@ -30,7 +30,16 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             title: 'Flutter Demo',
             theme: ThemeData(
-              primarySwatch: Colors.green,
+              appBarTheme: AppBarTheme(
+                elevation: 0,
+              ),
+              colorScheme: ColorScheme.fromSwatch(
+                  // brightness: Brightness.dark,
+                  primarySwatch: Colors.pink,
+                  primaryColorDark: Colors.red,
+                  accentColor: Colors.purple,
+                  backgroundColor: Colors.orange,
+                  cardColor: Colors.brown),
             ),
             initialRoute: '/wrapper',
             routes: {

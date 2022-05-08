@@ -20,7 +20,7 @@ class Friends extends StatelessWidget {
                   elevation: 0,
                   title: Text(
                     AuthService().me.uid!,
-                    style: TextStyle(color: Colors.green[300], fontSize: 12),
+                    style: TextStyle(color: Colors.pink[300], fontSize: 12),
                   ),
                   automaticallyImplyLeading: false,
                   actions: [
@@ -69,7 +69,7 @@ class Friends extends StatelessWidget {
                                         : null),
                               ),
                               tileColor: eventData.me.broadcasting
-                                  ? Colors.lightGreen[50]
+                                  ? Colors.lightGreen[100]
                                   : null,
                               leading: eventData.friend.broadcasting
                                   ? CircleAvatar(

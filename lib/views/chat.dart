@@ -203,7 +203,7 @@ class _ChatState extends State<Chat> {
                                   controller: _panelController,
                                   maxHeight: MediaQuery.of(context).size.height,
                                   minHeight:
-                                      eventData.placeName == null ? 0 : 40,
+                                      eventData.placeName == null ? 0 : 55,
                                   onPanelClosed: () {
                                     setState(() {
                                       mapMode = true;

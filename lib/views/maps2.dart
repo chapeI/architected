@@ -30,7 +30,7 @@ class _Maps2State extends State<Maps2> {
   @override
   Widget build(BuildContext context) {
     var event = Provider.of<EventModel>(context);
-    var color = event.me.broadcasting ? Colors.green : Colors.red;
+    var color = event.me.broadcasting ? Colors.green : Colors.pink;
 
     Future<BitmapDescriptor> myCircleAvatar = circleMarker(
         UserController().currentUser.avatarUrl,
@@ -81,6 +81,7 @@ class _Maps2State extends State<Maps2> {
               initialCameraPosition: const CameraPosition(
                   target: LatLng(43.6426, -79.3871), zoom: 12),
               markers: _markers,
+              rotateGesturesEnabled: false,
               onMapCreated: (GoogleMapController controller) async {
                 googleMapController = controller;
                 _animateCamera(myPosn.latitude, myPosn.longitude);
