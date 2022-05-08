@@ -53,20 +53,14 @@ class Friends extends StatelessWidget {
                         builder: (context, snapshot2) {
                           if (snapshot2.hasData) {
                             var eventData = snapshot2.data;
-                            if (eventData!.hour == null) {
-                              _time = null;
-                            } else {
-                              _time = TimeOfDay(
-                                  hour: eventData.hour!,
-                                  minute: eventData.minute!);
-                            }
                             return ListTile(
                               title: Text(
                                 friends[index].displayName!,
-                                style: TextStyle(
-                                    color: eventData.friend.broadcasting
-                                        ? Colors.green
-                                        : null),
+                                style: eventData!.friend.broadcasting
+                                    ? TextStyle(
+                                        color: Colors.green,
+                                        fontWeight: FontWeight.bold)
+                                    : null,
                               ),
                               tileColor: eventData.me.broadcasting
                                   ? Colors.lightGreen[100]
@@ -103,7 +97,12 @@ class Friends extends StatelessWidget {
                                             ),
                                           ],
                                         ),
-                                  Text(eventData!.lastMessage),
+                                  Expanded(
+                                    child: Text(
+                                      eventData!.lastMessage,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
                                 ],
                               ),
                               onTap: () {

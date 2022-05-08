@@ -203,7 +203,7 @@ class _ChatState extends State<Chat> {
                                   controller: _panelController,
                                   maxHeight: MediaQuery.of(context).size.height,
                                   minHeight:
-                                      eventData.placeName == null ? 0 : 55,
+                                      eventData.placeName == null ? 0 : 40,
                                   onPanelClosed: () {
                                     setState(() {
                                       mapMode = true;
@@ -243,7 +243,9 @@ class _ChatState extends State<Chat> {
                                                     style: TextStyle(
                                                         color: Theme.of(context)
                                                             .colorScheme
-                                                            .inversePrimary),
+                                                            .inversePrimary,
+                                                        overflow: TextOverflow
+                                                            .visible),
                                                   ),
                                                   SizedBox(
                                                     width: 4,
@@ -252,10 +254,12 @@ class _ChatState extends State<Chat> {
                                                     child: Text(
                                                       '(${eventData.address!})',
                                                       style: TextStyle(
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .inversePrimary,
-                                                      ),
+                                                          color: Theme.of(
+                                                                  context)
+                                                              .colorScheme
+                                                              .inversePrimary,
+                                                          overflow: TextOverflow
+                                                              .ellipsis),
                                                     ),
                                                   ),
                                                 ],
