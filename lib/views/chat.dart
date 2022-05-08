@@ -145,11 +145,11 @@ class _ChatState extends State<Chat> {
                                             child: eventData!
                                                     .friend.broadcasting
                                                 ? CircleAvatar(
-                                                    radius: 22,
+                                                    radius: 16,
                                                     backgroundColor:
-                                                        Colors.green,
+                                                        Colors.green[800],
                                                     child: CircleAvatar(
-                                                      radius: 17,
+                                                      radius: 13,
                                                       backgroundImage:
                                                           NetworkImage(friend
                                                               .avatarUrl!),
@@ -163,7 +163,7 @@ class _ChatState extends State<Chat> {
                                             itemBuilder: ((context) => [
                                                   PopupMenuItem(
                                                       child: Text(
-                                                          'only if friend is broadcasting will i see this'))
+                                                          'woah only if friend is broadcasting will i see this'))
                                                 ]),
                                           ),
                                         ),
@@ -265,7 +265,7 @@ class _ChatState extends State<Chat> {
                                                           BoxConstraints(),
                                                       icon: Icon(
                                                         Icons.settings,
-                                                        size: 18,
+                                                        size: 15,
                                                         color: Theme.of(context)
                                                             .colorScheme
                                                             .inversePrimary,
