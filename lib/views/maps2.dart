@@ -38,10 +38,12 @@ class _Maps2State extends State<Maps2> {
         widget.friend.avatarUrl,
         title: widget.friend.displayName,
         color: Colors.green);
+    Future<BitmapDescriptor> eventMarker = _setCustomMapPin();
     Future<Position> myPosition = _determineMyLocation();
 
     return FutureBuilder(
-        future: Future.wait([myCircleAvatar, friendCircleAvatar, myPosition]),
+        future: Future.wait(
+            [myCircleAvatar, friendCircleAvatar, myPosition, eventMarker]),
         builder: (context, AsyncSnapshot<List> snapshot) {
           _markers = {};
           Position myPosn = snapshot.data![2];
@@ -75,8 +77,10 @@ class _Maps2State extends State<Maps2> {
           }
 
           if (event.placeName != null) {
+            _setCustomMapPin();
             _markers.add(Marker(
                 markerId: MarkerId('event'),
+                icon: snapshot.data![3],
                 position: LatLng(
                     event.location!.latitude, event.location!.longitude)));
           }
@@ -214,6 +218,11 @@ class _Maps2State extends State<Maps2> {
 
     Position position = await Geolocator.getCurrentPosition();
     return position;
+  }
+
+  Future<BitmapDescriptor> _setCustomMapPin() async {
+    return BitmapDescriptor.fromAssetImage(
+        ImageConfiguration(devicePixelRatio: 2.5), 'assets/mapMarker.png');
   }
 
   _animateCamera(lat, lng) {
