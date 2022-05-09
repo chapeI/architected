@@ -162,11 +162,6 @@ class FirestoreService {
         .toList();
   }
 
-  // anoops way, time to do it properly
-  Future<void> addEvent(DocumentReference docRef, eventName) async {
-    return await eventCollection.doc(docRef.id).update({'event': eventName});
-  }
-
   void deleteEvent(DocumentReference doc) {
     eventCollection.doc(doc.id).update({
       'event': null,
@@ -214,20 +209,11 @@ class FirestoreService {
           broadcasting: snapshot['$friend.broadcasting'],
           location: snapshot['$friend.location'],
           userNumber: friend),
-      event: snapshot['event'],
-      hour: snapshot['hour'],
-      minute: snapshot['minute'],
       address: snapshot['address'],
       placeName: snapshot['placeName'],
       location: snapshot['location'],
       lastMessage: snapshot['lastMessage'] ?? 'lastmessageDebug',
     );
-  }
-
-  void addEventTime(DocumentReference doc, TimeOfDay time) {
-    eventCollection
-        .doc(doc.id)
-        .update({'hour': time.hour, 'minute': time.minute});
   }
 
   void addLocation(String doc, LatLng latLng, name, address) {

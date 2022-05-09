@@ -74,6 +74,13 @@ class _Maps2State extends State<Maps2> {
                 _markers.where((m) => m.markerId != MarkerId('friend')).toSet();
           }
 
+          if (event.placeName != null) {
+            _markers.add(Marker(
+                markerId: MarkerId('event'),
+                position: LatLng(
+                    event.location!.latitude, event.location!.longitude)));
+          }
+
           return Scaffold(
             floatingActionButton: Stack(
               children: [
@@ -98,12 +105,14 @@ class _Maps2State extends State<Maps2> {
               ],
             ),
             body: GoogleMap(
+              zoomControlsEnabled: false,
               initialCameraPosition: const CameraPosition(
                   target: LatLng(43.6426, -79.3871), zoom: 12),
               markers: _markers,
               rotateGesturesEnabled: false,
               onMapCreated: (GoogleMapController controller) async {
                 googleMapController = controller;
+                googleMapController.setMapStyle(Utils.mapStyles);
                 _animateCamera(myPosn.latitude, myPosn.longitude);
               },
             ),
@@ -211,4 +220,45 @@ class _Maps2State extends State<Maps2> {
     googleMapController.animateCamera(CameraUpdate.newCameraPosition(
         CameraPosition(zoom: 14, target: LatLng(lat, lng))));
   }
+}
+
+class Utils {
+  static String mapStyles = '''
+  [
+  {
+    "featureType": "administrative",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "labels.icon",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "transit",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  }
+]
+  ''';
 }

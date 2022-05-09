@@ -1,27 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EventModel {
-  String? event;
-  int? hour;
-  int? minute;
   GeoPoint? location;
   String? address;
   String? placeName;
-  String? picture;
   String lastMessage;
   UserInfo me;
   UserInfo friend;
-  EventModel(
-      {this.event,
-      required this.lastMessage,
-      required this.me,
-      required this.friend,
-      this.minute,
-      this.address,
-      this.placeName,
-      this.hour,
-      this.location,
-      this.picture});
+  EventModel({
+    required this.lastMessage,
+    required this.me,
+    required this.friend,
+    this.address,
+    this.placeName,
+    this.location,
+  });
 }
 
 class UserInfo {
