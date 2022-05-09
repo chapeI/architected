@@ -86,39 +86,7 @@ class _ChatState extends State<Chat> {
                         builder: (context) => Scaffold(
                             appBar: mapMode
                                 ? AppBar(
-                                    elevation: 0,
-                                    leading: ElevatedButton(
-                                      child: Icon(Icons.cancel),
-                                      onPressed: () {
-                                        _panelController.open();
-                                      },
-                                    ),
-                                    title: Text(friend.displayName!),
-                                    actions: [
-                                      PopupMenuButton(
-                                        itemBuilder: ((context) => [
-                                              PopupMenuItem(
-                                                  child: eventData!
-                                                          .me.broadcasting
-                                                      ? Text(
-                                                          'stop sharing my location',
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.red),
-                                                        )
-                                                      : Text(
-                                                          'DBG: share location'),
-                                                  onTap: () {}),
-                                              PopupMenuItem(
-                                                child: Text('search map'),
-                                                onTap: () {
-                                                  globalKey.currentState!
-                                                      .toggleShowSearch();
-                                                },
-                                              ),
-                                            ]),
-                                      )
-                                    ],
+                                    toolbarHeight: 0,
                                   )
                                 : AppBar(
                                     title: Text(friend.displayName!),
@@ -199,7 +167,7 @@ class _ChatState extends State<Chat> {
                                   controller: _panelController,
                                   maxHeight: MediaQuery.of(context).size.height,
                                   minHeight:
-                                      eventData.placeName == null ? 0 : 40,
+                                      eventData.placeName == null ? 0 : 45,
                                   onPanelClosed: () {
                                     setState(() {
                                       mapMode = true;

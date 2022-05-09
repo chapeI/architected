@@ -75,6 +75,28 @@ class _Maps2State extends State<Maps2> {
           }
 
           return Scaffold(
+            floatingActionButton: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(30),
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: FloatingActionButton(
+                        onPressed: () {}, child: Icon(Icons.cancel_outlined)),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 0, bottom: 100),
+                  child: Align(
+                    alignment: Alignment.bottomRight,
+                    child: FloatingActionButton(
+                      onPressed: () {},
+                      child: Icon(Icons.search),
+                    ),
+                  ),
+                ),
+              ],
+            ),
             body: GoogleMap(
               initialCameraPosition: const CameraPosition(
                   target: LatLng(43.6426, -79.3871), zoom: 12),

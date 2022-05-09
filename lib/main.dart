@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
                   // brightness: Brightness.dark,
                   primarySwatch: Colors.pink,
                   primaryColorDark: Colors.red,
-                  accentColor: Colors.purple,
+                  // accentColor: Colors.purple,
                   backgroundColor: Colors.orange,
                   cardColor: Colors.brown),
             ),
