@@ -2,6 +2,7 @@
 
 import 'dart:typed_data';
 
+import 'package:architectured/bloc/application_bloc.dart';
 import 'package:architectured/models/event_model.dart';
 import 'package:architectured/models/user_model.dart';
 import 'package:architectured/services/firestore_service.dart';
@@ -27,6 +28,7 @@ class _Maps2State extends State<Maps2> {
 
   @override
   Widget build(BuildContext context) {
+    final applicationBloc = Provider.of<ApplicationBloc>(context);
     var event = Provider.of<EventModel>(context);
     var color = event.me.broadcasting ? Colors.green : Colors.pink;
 
@@ -86,39 +88,51 @@ class _Maps2State extends State<Maps2> {
           }
 
           return Scaffold(
-            floatingActionButton: Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(30),
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: FloatingActionButton(
-                        onPressed: () {}, child: Icon(Icons.cancel_outlined)),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 0, bottom: 100),
-                  child: Align(
-                    alignment: Alignment.bottomRight,
-                    child: FloatingActionButton(
-                      onPressed: () {},
-                      child: Icon(Icons.search),
-                    ),
-                  ),
-                ),
+            appBar: AppBar(
+              elevation: 0,
+              title: TextFormField(
+                onChanged: (val) {
+                  applicationBloc.searchPlaces(val);
+                },
+              ),
+              actions: [
+                ElevatedButton(onPressed: () {}, child: Icon(Icons.search))
               ],
             ),
-            body: GoogleMap(
-              zoomControlsEnabled: false,
-              initialCameraPosition: const CameraPosition(
-                  target: LatLng(43.6426, -79.3871), zoom: 12),
-              markers: _markers,
-              rotateGesturesEnabled: false,
-              onMapCreated: (GoogleMapController controller) async {
-                googleMapController = controller;
-                googleMapController.setMapStyle(Utils.mapStyles);
-                _animateCamera(myPosn.latitude, myPosn.longitude);
-              },
+            body: Stack(
+              children: [
+                GoogleMap(
+                  zoomControlsEnabled: false,
+                  initialCameraPosition: const CameraPosition(
+                      target: LatLng(43.6426, -79.3871), zoom: 12),
+                  markers: _markers,
+                  rotateGesturesEnabled: false,
+                  onMapCreated: (GoogleMapController controller) async {
+                    googleMapController = controller;
+                    // googleMapController.setMapStyle(Utils.mapStyles);
+                    _animateCamera(myPosn.latitude, myPosn.longitude);
+                  },
+                ),
+                Container(
+                  height: 300,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.6),
+                      backgroundBlendMode: BlendMode.darken),
+                ),
+                Container(
+                    height: 300,
+                    child: ListView.builder(
+                        itemCount: applicationBloc.searchResults!.length,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: Text(
+                              applicationBloc.searchResults![index].desc,
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          );
+                        }))
+              ],
             ),
           );
         });
