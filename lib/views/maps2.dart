@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:architectured/bloc/application_bloc.dart';
 import 'package:architectured/models/event_model.dart';
+import 'package:architectured/models/place_model.dart';
 import 'package:architectured/models/user_model.dart';
 import 'package:architectured/services/firestore_service.dart';
 import 'package:architectured/services/user_controller.dart';
@@ -140,6 +141,13 @@ class _Maps2State extends State<Maps2> {
             ),
           );
         });
+  }
+
+  Future<void> _goToPlace(PlaceModel place) async {
+    googleMapController.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(
+            target: LatLng(place.geometryModel.locationModel.lat,
+                place.geometryModel.locationModel.lng))));
   }
 
   Future<BitmapDescriptor> _setCustomMapPin() async {
