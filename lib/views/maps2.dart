@@ -122,22 +122,62 @@ class _Maps2State extends State<Maps2> {
                         color: Colors.black.withOpacity(0.6),
                         backgroundBlendMode: BlendMode.darken),
                   ),
-                Container(
-                    height: 300,
-                    child: ListView.builder(
-                        itemCount: applicationBloc.searchResults!.length,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            title: Text(
-                              applicationBloc.searchResults![index].desc,
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          );
-                        }))
+                if (applicationBloc.searchResults != null &&
+                    applicationBloc.searchResults!.isNotEmpty)
+                  Container(
+                      height: 300,
+                      child: ListView.builder(
+                          itemCount: applicationBloc.searchResults!.length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              title: Text(
+                                applicationBloc.searchResults![index].desc,
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            );
+                          }))
               ],
             ),
           );
         });
+  }
+
+  Future<BitmapDescriptor> _setCustomMapPin() async {
+    return BitmapDescriptor.fromAssetImage(
+        ImageConfiguration(devicePixelRatio: 2.5), 'assets/mapMarker.png');
+  }
+
+  _animateCamera(lat, lng) {
+    googleMapController.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(zoom: 14, target: LatLng(lat, lng))));
+  }
+
+  Future<Position> _determineMyLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+
+    if (!serviceEnabled) {
+      return Future.error('location service not enabled');
+    }
+
+    permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+
+      if (permission == LocationPermission.denied) {
+        return Future.error('locatoin permisison denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error('denied forver');
+    }
+
+    Position position = await Geolocator.getCurrentPosition();
+    return position;
   }
 
   Future<BitmapDescriptor> circleMarker(String? myAvatarUrl,
@@ -206,44 +246,6 @@ class _Maps2State extends State<Maps2> {
 
     // convert PNG bytes as BitmapDescriptor
     return BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
-  }
-
-  Future<Position> _determineMyLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-
-    if (!serviceEnabled) {
-      return Future.error('location service not enabled');
-    }
-
-    permission = await Geolocator.checkPermission();
-
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-
-      if (permission == LocationPermission.denied) {
-        return Future.error('locatoin permisison denied');
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error('denied forver');
-    }
-
-    Position position = await Geolocator.getCurrentPosition();
-    return position;
-  }
-
-  Future<BitmapDescriptor> _setCustomMapPin() async {
-    return BitmapDescriptor.fromAssetImage(
-        ImageConfiguration(devicePixelRatio: 2.5), 'assets/mapMarker.png');
-  }
-
-  _animateCamera(lat, lng) {
-    googleMapController.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(zoom: 14, target: LatLng(lat, lng))));
   }
 }
 
