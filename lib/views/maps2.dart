@@ -113,13 +113,15 @@ class _Maps2State extends State<Maps2> {
                     _animateCamera(myPosn.latitude, myPosn.longitude);
                   },
                 ),
-                Container(
-                  height: 300,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.6),
-                      backgroundBlendMode: BlendMode.darken),
-                ),
+                if (applicationBloc.searchResults != null &&
+                    applicationBloc.searchResults!.isNotEmpty)
+                  Container(
+                    height: 300,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.6),
+                        backgroundBlendMode: BlendMode.darken),
+                  ),
                 Container(
                     height: 300,
                     child: ListView.builder(
