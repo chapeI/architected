@@ -52,12 +52,13 @@ class _ChatState extends State<Chat> {
             ),
           )
         : WillPopScope(
-            // not sure why we're returning false
             onWillPop: () async {
               if (_panelController.isPanelClosed) {
+                // closing the panel before going to friends.dart
                 _panelController.open();
                 return false;
               }
+              FocusManager.instance.primaryFocus?.unfocus();
               final result = await Navigator.pushNamed(context, '/friends');
               setState(() {
                 friend = result as UserModel;
