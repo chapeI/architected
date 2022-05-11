@@ -1,3 +1,4 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 
@@ -29,9 +30,10 @@ class LocationService {
     return results;
   }
 
-  Future<List<PlaceSearch>> getAutoComplete(String search) async {
+  Future<List<PlaceSearch>> getAutoComplete(
+      String search, LatLng latLng) async {
     var url =
-        'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${search}&types=%28cities%29&key=${key}';
+        'https://maps.googleapis.com/maps/api/place/autocomplete/json?key=&input=${search}&location=${latLng.latitude}%2C${latLng.longitude}&radius=500';
     var response = await http.get(Uri.parse(url));
     var json = convert.jsonDecode(response.body);
     var results = json['predictions'] as List;

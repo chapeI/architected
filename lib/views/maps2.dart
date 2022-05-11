@@ -92,7 +92,7 @@ class _Maps2State extends State<Maps2> {
               elevation: 0,
               title: TextFormField(
                 onChanged: (val) {
-                  applicationBloc.searchPlaces(val);
+                  applicationBloc.searchPlaces(val, LatLng(43, -79));
                 },
               ),
               actions: [
