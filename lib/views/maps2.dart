@@ -116,11 +116,17 @@ class _Maps2State extends State<Maps2> {
 
           return Scaffold(
             appBar: AppBar(
+              leading: ElevatedButton(
+                child: Icon(Icons.clear),
+                onPressed: () {},
+              ),
               elevation: 0,
               title: TextFormField(
+                cursorColor: Theme.of(context).colorScheme.inversePrimary,
+                cursorWidth: 4,
                 controller: searchController,
                 decoration:
-                    InputDecoration(hintText: 'click here to search map'),
+                    InputDecoration(hintText: '    click here to search map'),
                 onChanged: (val) {
                   applicationBloc.searchPlaces(
                       val, LatLng(myPosn.latitude, myPosn.longitude));
