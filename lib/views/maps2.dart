@@ -127,13 +127,15 @@ class _Maps2State extends State<Maps2> {
                 },
               ),
               actions: [
-                ElevatedButton(
-                    onPressed: () {
-                      searchController.clear();
-                      applicationBloc.searchPlaces(
-                          '', LatLng(myPosn.latitude, myPosn.longitude));
-                    },
-                    child: Icon(Icons.cancel))
+                if (applicationBloc.searchResults != null &&
+                    applicationBloc.searchResults!.isNotEmpty)
+                  ElevatedButton(
+                      onPressed: () {
+                        searchController.clear();
+                        applicationBloc.searchPlaces(
+                            '', LatLng(myPosn.latitude, myPosn.longitude));
+                      },
+                      child: Icon(Icons.cancel))
               ],
             ),
             body: Stack(
