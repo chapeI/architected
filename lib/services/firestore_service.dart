@@ -68,7 +68,10 @@ class FirestoreService {
         'broadcasting': false,
         'location': GeoPoint(43.6426, -79.3871), // toronto
       },
-      'user2': {'uid': friend.uid, 'broadcasting': false},
+      'user2': {
+        'uid': friend.uid, 'broadcasting': false,
+        'location': GeoPoint(43.6426, -79.3871), // toronto
+      },
       'lastMessage': 'Start chatting with ${friend.displayName}!',
       'event': null,
       'location': null,
