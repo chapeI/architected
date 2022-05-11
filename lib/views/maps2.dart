@@ -169,22 +169,22 @@ class _Maps2State extends State<Maps2> {
                           itemCount: applicationBloc.searchResults!.length,
                           itemBuilder: (context, index) {
                             return ListTile(
-                              onTap: () {
-                                applicationBloc.setSelectedLocation(
-                                    applicationBloc
-                                        .searchResults![index].placeId);
-                                searchController.clear();
-                              },
+                              onTap: () {},
                               title: Text(
                                 applicationBloc.searchResults![index].desc,
                                 style: TextStyle(color: Colors.white),
                               ),
-                              trailing: IconButton(
-                                icon: Icon(
+                              trailing: ElevatedButton(
+                                child: Icon(
                                   Icons.add,
                                   color: Colors.white,
                                 ),
-                                onPressed: () {},
+                                onPressed: () {
+                                  applicationBloc.setSelectedLocation(
+                                      applicationBloc
+                                          .searchResults![index].placeId);
+                                  searchController.clear();
+                                },
                               ),
                             );
                           }))
