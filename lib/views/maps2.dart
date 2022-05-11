@@ -1,9 +1,10 @@
 // ignore_for_file: unused_local_variable
 
-import 'dart:typed_data';
+import 'dart:async';
 
 import 'package:architectured/bloc/application_bloc.dart';
 import 'package:architectured/models/event_model.dart';
+import 'package:architectured/models/place_model.dart';
 import 'package:architectured/models/user_model.dart';
 import 'package:architectured/services/firestore_service.dart';
 import 'package:architectured/services/user_controller.dart';
@@ -24,7 +25,33 @@ class Maps2 extends StatefulWidget {
 
 class _Maps2State extends State<Maps2> {
   late GoogleMapController googleMapController;
+  late StreamSubscription locationSubscription;
+  final searchController = TextEditingController();
   Set<Marker> _markers = {};
+
+  @override
+  void initState() {
+    final applicationBloc =
+        Provider.of<ApplicationBloc>(context, listen: false);
+    locationSubscription =
+        applicationBloc.selectedLocation.stream.listen((place) {
+      if (place != null) {
+        _goToPlace(place);
+      }
+    });
+    super.initState();
+  }
+
+  @override // this may never be getting called, it always exists in our app
+  void dispose() {
+    print('DISPOSE CALLED');
+    // TODO: implement dispose
+    final applicationBloc =
+        Provider.of<ApplicationBloc>(context, listen: false);
+    applicationBloc.dispose();
+    locationSubscription.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,13 +118,15 @@ class _Maps2State extends State<Maps2> {
             appBar: AppBar(
               elevation: 0,
               title: TextFormField(
+                controller: searchController,
+                decoration: InputDecoration(hintText: 'search for a city'),
                 onChanged: (val) {
                   applicationBloc.searchPlaces(val, LatLng(43, -79));
                 },
               ),
-              actions: [
-                ElevatedButton(onPressed: () {}, child: Icon(Icons.search))
-              ],
+              // actions: [
+              //   ElevatedButton(onPressed: () {}, child: Icon(Icons.search))
+              // ],
             ),
             body: Stack(
               children: [
@@ -130,6 +159,12 @@ class _Maps2State extends State<Maps2> {
                           itemCount: applicationBloc.searchResults!.length,
                           itemBuilder: (context, index) {
                             return ListTile(
+                              onTap: () {
+                                applicationBloc.setSelectedLocation(
+                                    applicationBloc
+                                        .searchResults![index].placeId);
+                                searchController.clear();
+                              },
                               title: Text(
                                 applicationBloc.searchResults![index].desc,
                                 style: TextStyle(color: Colors.white),
@@ -140,6 +175,14 @@ class _Maps2State extends State<Maps2> {
             ),
           );
         });
+  }
+
+  Future<void> _goToPlace(PlaceModel place) async {
+    googleMapController.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(
+            zoom: 14,
+            target: LatLng(place.geometryModel.locationModel.lat,
+                place.geometryModel.locationModel.lng))));
   }
 
   Future<BitmapDescriptor> _setCustomMapPin() async {

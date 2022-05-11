@@ -2,7 +2,6 @@ import 'package:architectured/models/event_model.dart';
 import 'package:architectured/models/user_model.dart';
 import 'package:architectured/services/auth_service.dart';
 import 'package:architectured/services/firestore_service.dart';
-import 'package:architectured/services/user_controller.dart';
 import 'package:architectured/views/auth_views/sign_out.dart';
 import 'package:flutter/material.dart';
 
