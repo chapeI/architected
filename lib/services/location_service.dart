@@ -34,7 +34,7 @@ class LocationService {
   Future<List<PlaceSearch>> getAutoComplete(
       String search, LatLng latLng) async {
     var url =
-        'https://maps.googleapis.com/maps/api/place/autocomplete/json?key=&input=${search}&location=${latLng.latitude}%2C${latLng.longitude}&radius=500';
+        'https://maps.googleapis.com/maps/api/place/autocomplete/json?key=${key}&input=${search}&location=${latLng.latitude}%2C${latLng.longitude}&radius=500';
     var response = await http.get(Uri.parse(url));
     var json = convert.jsonDecode(response.body);
     var results = json['predictions'] as List;

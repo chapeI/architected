@@ -121,7 +121,8 @@ class _Maps2State extends State<Maps2> {
                 controller: searchController,
                 decoration: InputDecoration(hintText: 'search for a city'),
                 onChanged: (val) {
-                  applicationBloc.searchPlaces(val, LatLng(43, -79));
+                  applicationBloc.searchPlaces(
+                      val, LatLng(myPosn.latitude, myPosn.longitude));
                 },
               ),
               // actions: [
