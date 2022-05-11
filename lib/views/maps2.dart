@@ -119,15 +119,22 @@ class _Maps2State extends State<Maps2> {
               elevation: 0,
               title: TextFormField(
                 controller: searchController,
-                decoration: InputDecoration(hintText: 'search for a city'),
+                decoration:
+                    InputDecoration(hintText: 'click here to search map'),
                 onChanged: (val) {
                   applicationBloc.searchPlaces(
                       val, LatLng(myPosn.latitude, myPosn.longitude));
                 },
               ),
-              // actions: [
-              //   ElevatedButton(onPressed: () {}, child: Icon(Icons.search))
-              // ],
+              actions: [
+                ElevatedButton(
+                    onPressed: () {
+                      searchController.clear();
+                      applicationBloc.searchPlaces(
+                          '', LatLng(myPosn.latitude, myPosn.longitude));
+                    },
+                    child: Icon(Icons.cancel))
+              ],
             ),
             body: Stack(
               children: [
@@ -169,6 +176,13 @@ class _Maps2State extends State<Maps2> {
                               title: Text(
                                 applicationBloc.searchResults![index].desc,
                                 style: TextStyle(color: Colors.white),
+                              ),
+                              trailing: IconButton(
+                                icon: Icon(
+                                  Icons.add,
+                                  color: Colors.white,
+                                ),
+                                onPressed: () {},
                               ),
                             );
                           }))
