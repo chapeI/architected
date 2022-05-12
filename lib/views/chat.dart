@@ -174,7 +174,11 @@ class _ChatState extends State<Chat> {
                                     });
                                   },
                                   defaultPanelState: PanelState.OPEN,
-                                  body: Maps2(
+                                  body:
+                                      // Center(
+                                      //   child: Text('denguing'),
+                                      // ),
+                                      Maps2(
                                     friend: friend,
                                   ),
                                   panel: Column(

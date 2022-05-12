@@ -40,23 +40,23 @@ class _Maps2State extends State<Maps2> {
         applicationBloc.selectedLocation.stream.listen((place) {
       if (place != null) {
         _goToPlace(place);
-        _dropPin(place);
-        _addCard(place);
+        // _dropPin(place);
+        // _addCard(place);
       }
     });
     super.initState();
   }
 
-  @override // this may never be getting called, it always exists in our app
-  void dispose() {
-    print('DISPOSE CALLED');
-    // TODO: implement dispose
-    final applicationBloc =
-        Provider.of<ApplicationBloc>(context, listen: false);
-    applicationBloc.dispose();
-    locationSubscription.cancel();
-    super.dispose();
-  }
+  // @override // this may never be getting called, it always exists in our app
+  // void dispose() {
+  //   print('DISPOSE CALLED');
+  //   // TODO: implement dispose
+  //   final applicationBloc =
+  //       Provider.of<ApplicationBloc>(context, listen: false);
+  //   applicationBloc.dispose();
+  //   locationSubscription.cancel();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
