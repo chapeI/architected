@@ -28,6 +28,9 @@ class _Maps2State extends State<Maps2> {
   late StreamSubscription locationSubscription;
   final searchController = TextEditingController();
   Set<Marker> _markers = {};
+  var tempEventMarker = Marker(markerId: MarkerId('unset'));
+  bool _showCard = true;
+  var card = Card();
 
   @override
   void initState() {
@@ -37,6 +40,8 @@ class _Maps2State extends State<Maps2> {
         applicationBloc.selectedLocation.stream.listen((place) {
       if (place != null) {
         _goToPlace(place);
+        _dropPin(place);
+        _addCard(place);
       }
     });
     super.initState();
@@ -114,6 +119,10 @@ class _Maps2State extends State<Maps2> {
                     event.location!.latitude, event.location!.longitude)));
           }
 
+          if (tempEventMarker.markerId == MarkerId('set')) {
+            _markers.add(tempEventMarker);
+          }
+
           return Scaffold(
             appBar: AppBar(
               leading: ElevatedButton(
@@ -175,7 +184,17 @@ class _Maps2State extends State<Maps2> {
                           itemCount: applicationBloc.searchResults!.length,
                           itemBuilder: (context, index) {
                             return ListTile(
-                              onTap: () {},
+                              onTap: () {
+                                applicationBloc.setSelectedLocation(
+                                    applicationBloc
+                                        .searchResults![index].placeId);
+
+                                searchController.clear();
+                                FocusScope.of(context).unfocus();
+                                setState(() {
+                                  _showCard = true;
+                                });
+                              },
                               title: Text(
                                 applicationBloc.searchResults![index].desc,
                                 style: TextStyle(color: Colors.white),
@@ -185,19 +204,86 @@ class _Maps2State extends State<Maps2> {
                                   Icons.add,
                                   color: Colors.white,
                                 ),
-                                onPressed: () {
-                                  applicationBloc.setSelectedLocation(
-                                      applicationBloc
-                                          .searchResults![index].placeId);
-                                  searchController.clear();
-                                },
+                                onPressed: () {},
                               ),
                             );
-                          }))
+                          })),
+                if (_showCard)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 60.0),
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Stack(
+                        children: [
+                          card,
+                          Positioned(
+                              top: 5,
+                              left: 3,
+                              child: IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _showCard = false;
+                                      tempEventMarker =
+                                          Marker(markerId: MarkerId('unset'));
+                                    });
+                                  },
+                                  icon: Icon(
+                                    Icons.cancel,
+                                    color: Colors.redAccent,
+                                  ))),
+                        ],
+                      ),
+                    ),
+                  )
               ],
             ),
           );
         });
+  }
+
+  _addCard(PlaceModel place) {
+    setState(() {
+      card = Card(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          margin: EdgeInsets.all(25),
+          child: ListTile(
+            contentPadding: EdgeInsets.all(9),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                VerticalDivider(thickness: 2),
+                IconButton(
+                    icon: Icon(
+                      Icons.add,
+                    ),
+                    onPressed: () {
+                      FirestoreService().addLocation(
+                          widget.friend.chatsID!.id,
+                          LatLng(place.geometryModel.locationModel.lat,
+                              place.geometryModel.locationModel.lng),
+                          place.name,
+                          place.vicinity);
+                      setState(() {
+                        _showCard = false;
+                        tempEventMarker =
+                            Marker(markerId: MarkerId('added to chat'));
+                      });
+                    }),
+              ],
+            ),
+            title: Text(place.name),
+            subtitle: Text(place.vicinity),
+          ));
+    });
+  }
+
+  _dropPin(PlaceModel place) {
+    setState(() {
+      tempEventMarker = Marker(
+          markerId: MarkerId('set'),
+          position: LatLng(place.geometryModel.locationModel.lat,
+              place.geometryModel.locationModel.lng));
+    });
   }
 
   Future<void> _goToPlace(PlaceModel place) async {
