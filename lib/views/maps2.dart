@@ -29,8 +29,7 @@ class _Maps2State extends State<Maps2> {
   final searchController = TextEditingController();
   Set<Marker> _markers = {};
   var tempEventMarker = Marker(markerId: MarkerId('unset'));
-  bool _showCard = true;
-  var card = Card();
+  var _eventCard = Card();
 
   @override
   void initState() {
@@ -46,17 +45,6 @@ class _Maps2State extends State<Maps2> {
     });
     super.initState();
   }
-
-  // @override // this may never be getting called, it always exists in our app
-  // void dispose() {
-  //   print('DISPOSE CALLED');
-  //   // TODO: implement dispose
-  //   final applicationBloc =
-  //       Provider.of<ApplicationBloc>(context, listen: false);
-  //   applicationBloc.dispose();
-  //   locationSubscription.cancel();
-  //   super.dispose();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -188,62 +176,62 @@ class _Maps2State extends State<Maps2> {
                                 applicationBloc.setSelectedLocation(
                                     applicationBloc
                                         .searchResults![index].placeId);
-
                                 searchController.clear();
                                 FocusScope.of(context).unfocus();
                                 setState(() {
-                                  _showCard = true;
+                                  _eventCard = Card();
                                 });
                               },
                               title: Text(
                                 applicationBloc.searchResults![index].desc,
                                 style: TextStyle(color: Colors.white),
                               ),
-                              trailing: ElevatedButton(
-                                child: Icon(
-                                  Icons.add,
-                                  color: Colors.white,
-                                ),
-                                onPressed: () {},
-                              ),
                             );
                           })),
-                if (_showCard)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 60.0),
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Stack(
-                        children: [
-                          card,
-                          Positioned(
-                              top: 5,
-                              left: 3,
-                              child: IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _showCard = false;
-                                      tempEventMarker =
-                                          Marker(markerId: MarkerId('unset'));
-                                    });
-                                  },
-                                  icon: Icon(
-                                    Icons.cancel,
-                                    color: Colors.redAccent,
-                                  ))),
-                        ],
-                      ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 60.0),
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Stack(
+                      children: [
+                        _eventCard,
+                        Positioned(
+                            top: 5,
+                            left: 3,
+                            child: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _eventCard = Card();
+                                    tempEventMarker =
+                                        Marker(markerId: MarkerId('unset'));
+                                  });
+                                },
+                                icon: Icon(
+                                  Icons.cancel,
+                                  color: Colors.redAccent,
+                                ))),
+                      ],
                     ),
-                  )
+                  ),
+                )
               ],
             ),
           );
         });
   }
 
-  _addCard(PlaceModel place) {
+  Future<void> _goToPlace(PlaceModel place) async {
+    final lat = place.geometryModel.locationModel.lat;
+    final lng = place.geometryModel.locationModel.lng;
+
+    googleMapController.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(zoom: 14, target: LatLng(lat, lng))));
+
     setState(() {
-      card = Card(
+      tempEventMarker =
+          Marker(markerId: MarkerId('set'), position: LatLng(lat, lng));
+
+      _eventCard = Card(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           margin: EdgeInsets.all(25),
           child: ListTile(
@@ -251,20 +239,16 @@ class _Maps2State extends State<Maps2> {
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                VerticalDivider(thickness: 2),
+                const VerticalDivider(thickness: 2),
                 IconButton(
                     icon: Icon(
                       Icons.add,
                     ),
                     onPressed: () {
-                      FirestoreService().addLocation(
-                          widget.friend.chatsID!.id,
-                          LatLng(place.geometryModel.locationModel.lat,
-                              place.geometryModel.locationModel.lng),
-                          place.name,
-                          place.vicinity);
+                      FirestoreService().addLocation(widget.friend.chatsID!.id,
+                          LatLng(lat, lng), place.name, place.vicinity);
                       setState(() {
-                        _showCard = false;
+                        _eventCard = Card();
                         tempEventMarker =
                             Marker(markerId: MarkerId('added to chat'));
                       });
@@ -275,23 +259,6 @@ class _Maps2State extends State<Maps2> {
             subtitle: Text(place.vicinity),
           ));
     });
-  }
-
-  _dropPin(PlaceModel place) {
-    setState(() {
-      tempEventMarker = Marker(
-          markerId: MarkerId('set'),
-          position: LatLng(place.geometryModel.locationModel.lat,
-              place.geometryModel.locationModel.lng));
-    });
-  }
-
-  Future<void> _goToPlace(PlaceModel place) async {
-    googleMapController.animateCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(
-            zoom: 14,
-            target: LatLng(place.geometryModel.locationModel.lat,
-                place.geometryModel.locationModel.lng))));
   }
 
   Future<BitmapDescriptor> _setCustomMapPin() async {
