@@ -43,7 +43,6 @@ class MyApp extends StatelessWidget {
             ),
             initialRoute: '/wrapper',
             routes: {
-              // '/maps': (context) => GoogleMaps2(),
               '/wrapper': (context) => Wrapper(),
               '/chat': (context) => Chat(),
               '/sandbox': (context) => SandBox()

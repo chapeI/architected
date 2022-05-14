@@ -58,31 +58,35 @@ class Friends extends StatelessWidget {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    friends[index].displayName!,
+                                    '${friends[index].displayName}       ',
                                     style: eventData!.friend.broadcasting
                                         ? TextStyle(
                                             color: Colors.green,
                                             fontWeight: FontWeight.bold)
                                         : null,
                                   ),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.location_on,
-                                        size: 15,
-                                        color: Colors.purple,
-                                      ),
-                                      SizedBox(
-                                        width: 4,
-                                      ),
-                                      Text(
-                                        '${eventData.placeName} ',
-                                        style: TextStyle(
-                                            color: Colors.green,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  )
+                                  Flexible(
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.location_on,
+                                          size: 15,
+                                          color: Colors.purple,
+                                        ),
+                                        SizedBox(
+                                          width: 5,
+                                        ),
+                                        Flexible(
+                                          child: Text(
+                                            '${eventData!.placeName}',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ],
                               ),
                               tileColor: eventData.me.broadcasting
