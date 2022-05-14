@@ -81,10 +81,31 @@ class _ChatState extends State<Chat> {
                         builder: (context) => Scaffold(
                             appBar: mapMode
                                 ? AppBar(
-                                    toolbarHeight: 0,
+                                    title: Text(
+                                      friend.displayName!,
+                                      style: TextStyle(
+                                          color: eventData.friend.broadcasting
+                                              ? Colors.green[700]
+                                              : null),
+                                    ),
+                                    elevation: 0,
+                                    leading: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          elevation: 0),
+                                      child: Icon(Icons.cancel),
+                                      onPressed: () {
+                                        _panelController.open();
+                                      },
+                                    ),
                                   )
                                 : AppBar(
-                                    title: Text(friend.displayName!),
+                                    title: Text(
+                                      friend.displayName!,
+                                      style: TextStyle(
+                                          color: eventData.friend.broadcasting
+                                              ? Colors.green[700]
+                                              : null),
+                                    ),
                                     leading: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
@@ -197,14 +218,17 @@ class _ChatState extends State<Chat> {
                                                   SizedBox(
                                                     width: 4,
                                                   ),
-                                                  Text(
-                                                    eventData.placeName!,
-                                                    style: TextStyle(
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .inversePrimary,
-                                                        overflow: TextOverflow
-                                                            .visible),
+                                                  Flexible(
+                                                    child: Text(
+                                                      eventData.placeName!,
+                                                      style: TextStyle(
+                                                          color: Theme.of(
+                                                                  context)
+                                                              .colorScheme
+                                                              .inversePrimary,
+                                                          overflow: TextOverflow
+                                                              .ellipsis),
+                                                    ),
                                                   ),
                                                   SizedBox(
                                                     width: 4,

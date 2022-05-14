@@ -113,17 +113,23 @@ class _Maps2State extends State<Maps2> {
 
           return Scaffold(
             appBar: AppBar(
-              leading: ElevatedButton(
-                child: Icon(Icons.clear),
-                onPressed: () {},
-              ),
               elevation: 0,
               title: TextFormField(
                 cursorColor: Theme.of(context).colorScheme.inversePrimary,
                 cursorWidth: 4,
                 controller: searchController,
-                decoration:
-                    InputDecoration(hintText: '    click here to search map'),
+                decoration: InputDecoration(
+                    enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color:
+                                Theme.of(context).colorScheme.inversePrimary)),
+                    focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(
+                            color:
+                                Theme.of(context).colorScheme.inversePrimary)),
+                    hintText: '    type here to query',
+                    hintStyle: TextStyle(
+                        color: Theme.of(context).colorScheme.inversePrimary)),
                 onChanged: (val) {
                   applicationBloc.searchPlaces(
                       val, LatLng(myPosn.latitude, myPosn.longitude));
@@ -189,7 +195,7 @@ class _Maps2State extends State<Maps2> {
                             );
                           })),
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 60.0),
+                  padding: const EdgeInsets.only(bottom: 120.0),
                   child: Align(
                     alignment: Alignment.bottomCenter,
                     child: Stack(
@@ -242,7 +248,8 @@ class _Maps2State extends State<Maps2> {
                 const VerticalDivider(thickness: 2),
                 IconButton(
                     icon: Icon(
-                      Icons.add,
+                      Icons.pin_drop_outlined,
+                      color: Colors.purple,
                     ),
                     onPressed: () {
                       FirestoreService().addLocation(widget.friend.chatsID!.id,

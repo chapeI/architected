@@ -14,110 +14,120 @@ class Friends extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final List<UserModel>? friends = snapshot.data as List<UserModel>;
-            return Scaffold(
-              appBar: AppBar(
-                  elevation: 0,
-                  title: Text(
-                    AuthService().me.uid!,
-                    style: TextStyle(color: Colors.pink[300], fontSize: 12),
-                  ),
-                  automaticallyImplyLeading: false,
-                  actions: [
-                    PopupMenuButton(
-                        child: CircleAvatar(
-                          backgroundImage:
-                              NetworkImage(AuthService().me.avatarUrl!),
+            return Theme(
+              data: Theme.of(context).copyWith(
+                  appBarTheme: AppBarTheme(color: Colors.white, elevation: 1),
+                  splashColor: Colors.green[50]),
+              child: Builder(builder: (context) {
+                return Scaffold(
+                  appBar: AppBar(
+                      elevation: 0,
+                      title: Text(
+                        AuthService().me.uid!,
+                        style: TextStyle(color: Colors.grey[300], fontSize: 12),
+                      ),
+                      automaticallyImplyLeading: false,
+                      actions: [
+                        PopupMenuButton(
+                            child: CircleAvatar(
+                              backgroundImage:
+                                  NetworkImage(AuthService().me.avatarUrl!),
+                            ),
+                            itemBuilder: (context) {
+                              return [
+                                PopupMenuItem(
+                                    child: TextButton(
+                                  onPressed: () {},
+                                  child: Text('create a group'),
+                                )),
+                                PopupMenuItem(child: AddFriendButton()),
+                                PopupMenuItem(child: SignOut()),
+                              ];
+                            }),
+                        SizedBox(
+                          width: 20,
                         ),
-                        itemBuilder: (context) {
-                          return [
-                            PopupMenuItem(
-                                child: TextButton(
-                              onPressed: () {},
-                              child: Text('create a group'),
-                            )),
-                            PopupMenuItem(child: AddFriendButton()),
-                            PopupMenuItem(child: SignOut()),
-                          ];
-                        }),
-                    SizedBox(
-                      width: 20,
-                    ),
-                  ]),
-              body: ListView.builder(
-                  itemCount: friends!.length,
-                  itemBuilder: (context, index) {
-                    return StreamBuilder<EventModel>(
-                        stream:
-                            FirestoreService().events(friends[index].chatsID!),
-                        builder: (context, snapshot2) {
-                          if (snapshot2.hasData) {
-                            var eventData = snapshot2.data;
-                            return ListTile(
-                              title: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    '${friends[index].displayName}       ',
-                                    style: eventData!.friend.broadcasting
-                                        ? TextStyle(
-                                            color: Colors.green,
-                                            fontWeight: FontWeight.bold)
-                                        : null,
+                      ]),
+                  body: ListView.builder(
+                      itemCount: friends!.length,
+                      itemBuilder: (context, index) {
+                        return StreamBuilder<EventModel>(
+                            stream: FirestoreService()
+                                .events(friends[index].chatsID!),
+                            builder: (context, snapshot2) {
+                              if (snapshot2.hasData) {
+                                var eventData = snapshot2.data;
+                                return ListTile(
+                                  title: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        '${friends[index].displayName}       ',
+                                        style: eventData!.friend.broadcasting
+                                            ? TextStyle(
+                                                color: Colors.green,
+                                                fontWeight: FontWeight.bold)
+                                            : null,
+                                      ),
+                                      Flexible(
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(
+                                              Icons.location_on,
+                                              size: 15,
+                                              color: Colors.purple,
+                                            ),
+                                            SizedBox(
+                                              width: 5,
+                                            ),
+                                            Flexible(
+                                              child: Text(
+                                                '${eventData!.placeName}',
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  Flexible(
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          Icons.location_on,
-                                          size: 15,
-                                          color: Colors.purple,
-                                        ),
-                                        SizedBox(
-                                          width: 5,
-                                        ),
-                                        Flexible(
-                                          child: Text(
-                                            '${eventData!.placeName}',
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              tileColor: eventData.me.broadcasting
-                                  ? Colors.lightGreen[100]
-                                  : null,
-                              leading: eventData.friend.broadcasting
-                                  ? CircleAvatar(
-                                      backgroundColor: Colors.green,
-                                      radius: 20,
-                                      child: CircleAvatar(
-                                          radius: 17,
+                                  tileColor: eventData.me.broadcasting
+                                      ? Colors.lightGreen[100]
+                                      : null,
+                                  leading: eventData.friend.broadcasting
+                                      ? CircleAvatar(
+                                          backgroundColor: Colors.green,
+                                          radius: 20,
+                                          child: CircleAvatar(
+                                              radius: 17,
+                                              backgroundImage: NetworkImage(
+                                                  friends[index].avatarUrl!)),
+                                        )
+                                      : CircleAvatar(
                                           backgroundImage: NetworkImage(
-                                              friends[index].avatarUrl!)),
-                                    )
-                                  : CircleAvatar(
-                                      backgroundImage: NetworkImage(
-                                          friends[index].avatarUrl!),
-                                    ),
-                              subtitle: Text(
-                                eventData!.lastMessage,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              onTap: () {
-                                Navigator.pop(context, friends[index]);
-                              },
-                            );
-                          }
-                          return Text(
-                              'DEBUG: missing a field (ie. hour) in this chatroom document');
-                        });
-                  }),
+                                              friends[index].avatarUrl!),
+                                        ),
+                                  subtitle: Text(
+                                    eventData!.lastMessage,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  // onLongPress: () {
+                                  //   print('triggered');
+                                  // },
+                                  onTap: () {
+                                    Navigator.pop(context, friends[index]);
+                                  },
+                                );
+                              }
+                              return Text(
+                                  'DEBUG: missing a field (ie. hour) in this chatroom document');
+                            });
+                      }),
+                );
+              }),
             );
           }
           return Text('FRIENDS.dart');
