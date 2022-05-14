@@ -53,13 +53,37 @@ class Friends extends StatelessWidget {
                           if (snapshot2.hasData) {
                             var eventData = snapshot2.data;
                             return ListTile(
-                              title: Text(
-                                friends[index].displayName!,
-                                style: eventData!.friend.broadcasting
-                                    ? TextStyle(
-                                        color: Colors.green,
-                                        fontWeight: FontWeight.bold)
-                                    : null,
+                              title: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    friends[index].displayName!,
+                                    style: eventData!.friend.broadcasting
+                                        ? TextStyle(
+                                            color: Colors.green,
+                                            fontWeight: FontWeight.bold)
+                                        : null,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.location_on,
+                                        size: 15,
+                                        color: Colors.purple,
+                                      ),
+                                      SizedBox(
+                                        width: 4,
+                                      ),
+                                      Text(
+                                        '${eventData.placeName} ',
+                                        style: TextStyle(
+                                            color: Colors.green,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  )
+                                ],
                               ),
                               tileColor: eventData.me.broadcasting
                                   ? Colors.lightGreen[100]
@@ -77,32 +101,9 @@ class Friends extends StatelessWidget {
                                       backgroundImage: NetworkImage(
                                           friends[index].avatarUrl!),
                                     ),
-                              subtitle: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  eventData.placeName == null
-                                      ? Container()
-                                      : Row(
-                                          children: [
-                                            Icon(
-                                              Icons.location_on,
-                                              size: 15,
-                                              color: Colors.purple,
-                                            ),
-                                            Text(
-                                              '${eventData.placeName} ',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ],
-                                        ),
-                                  Expanded(
-                                    child: Text(
-                                      eventData!.lastMessage,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
+                              subtitle: Text(
+                                eventData!.lastMessage,
+                                overflow: TextOverflow.ellipsis,
                               ),
                               onTap: () {
                                 Navigator.pop(context, friends[index]);
