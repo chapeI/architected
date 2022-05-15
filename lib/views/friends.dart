@@ -15,9 +15,7 @@ class Friends extends StatelessWidget {
           if (snapshot.hasData) {
             final List<UserModel>? friends = snapshot.data as List<UserModel>;
             return Theme(
-              data: Theme.of(context).copyWith(
-                  appBarTheme: AppBarTheme(color: Colors.white, elevation: 1),
-                  splashColor: Colors.green[50]),
+              data: Theme.of(context).copyWith(splashColor: Colors.green[50]),
               child: Builder(builder: (context) {
                 return Scaffold(
                   appBar: AppBar(
@@ -80,7 +78,7 @@ class Friends extends StatelessWidget {
                                               color: Colors.purple,
                                             ),
                                             SizedBox(
-                                              width: 5,
+                                              width: 2,
                                             ),
                                             Flexible(
                                               child: Text(
